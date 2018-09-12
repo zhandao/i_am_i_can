@@ -1,9 +1,11 @@
-require "bundler/setup"
-require "i_am_i_can"
+require 'bundler/setup'
+require 'i_am_i_can'
+
+require './spec/mocks/user'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
-  config.example_status_persistence_file_path = ".rspec_status"
+  config.example_status_persistence_file_path = '.rspec_status'
 
   # Disable RSpec exposing methods globally on `Module` and `main`
   config.disable_monkey_patching!

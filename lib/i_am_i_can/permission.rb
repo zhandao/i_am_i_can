@@ -47,7 +47,7 @@ module IAmICan::Permission
 
   # user.can? :use, Func.find(1)
   # user.can? :manage_nodes, on: node
-  def can? action, source = nil, on:
+  def can? action, source = nil, on: nil
     return true if action.nil?
     permissions_setting # TODO: 优化，考虑询问非预设置的 action 时再查相应数据
 
@@ -58,7 +58,7 @@ module IAmICan::Permission
 
   def permission_blocks_result(source, key)
     blocks = current_permissions["#{key}_block"]
-    return true if blocks.nil?
+    return true if blocks.nil? || source.nil?
     blocks.each { |block| return true if instance_exec(source, &block) }
     false
   end
