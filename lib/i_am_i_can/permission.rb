@@ -20,7 +20,7 @@ module IAmICan::Permission
   end
 
   def role_group group, options, &block
-    roles_groups[group].each do |role|
+    role_groups[group].each do |role|
       self.role role, options, &block
     end
   end
@@ -101,6 +101,4 @@ module IAmICan::Permission
     @_current_permissions = { }
     load_permissions_from_database
   end
-
-  class InsufficientPermission < StandardError; end
 end

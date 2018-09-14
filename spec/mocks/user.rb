@@ -1,5 +1,6 @@
 class User
-  include IAmICan
+  extend IAmICan
+  act_as_i_am_i_can
 
   def load_roles_from_database
     nil
