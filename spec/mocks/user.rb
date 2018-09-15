@@ -6,3 +6,7 @@ class User
     nil
   end
 end
+
+class Hash
+  alias names keys
+end

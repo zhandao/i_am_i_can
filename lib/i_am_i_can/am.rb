@@ -21,8 +21,9 @@ module IAmICan
       return roles.each { |role| is role, save: save } unless roles.size == 1
 
       role = roles.first.to_sym
-      raise Error, 'This role has not been defined.' unless role.in?(model_roles.keys) # TODO: error
-      self.roles << role
+      raise Error, 'This role has not been defined.' unless role.in?(model_roles.keys)
+      # TODO: save
+      self.roles << role unless role.in?(self.roles)
     end
 
     alias add_role  is
@@ -46,6 +47,7 @@ module IAmICan
 
     def is! role
       raise VerificationFailed if isnt? role
+      true
     end
 
     alias is_role! is!
@@ -57,7 +59,7 @@ module IAmICan
     alias is_every_role_in? is_every?
 
     def is_every! *roles
-      roles.each { |role| is! role }
+      roles.each { |role| is! role } && true
     end
 
     alias is_every_role_in! is_every!

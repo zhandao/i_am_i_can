@@ -14,3 +14,12 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 end
+
+RSpec::Matchers.define :contain do |expected|
+  match do |actual|
+    (expected - actual).empty?
+  end
+
+  failure_message { |actual| " expected: #{actual}\ncontain: #{expected}" }
+  # description { "#{expected}" }
+end

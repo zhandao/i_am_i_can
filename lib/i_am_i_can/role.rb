@@ -3,38 +3,44 @@ module IAmICan
     def roles;       @_roles ||= { } end
     def role_groups; @_role_groups ||= { } end
 
-    def has_role *names, children: nil, parent: nil
-      names.each { |name| roles[name] = { children: children ? Array(children) : nil, parent: parent } }
+    def has_role *names, save: false
+      names.each { |name| roles[name] ||= { } }
     end
 
-    alias declare_role has_role
+    alias has_roles     has_role
+    alias declare_role  has_role
+    alias declare_roles has_role
 
-    def store_role name, *args
-      has_role name, *args
+    def store_role *names, **options
+      has_roles *names, **options
       # real_name = :"#{name.underscore}_#{name}"
       # TODO
     end
 
-    # Case 1: *roles, by_name:
-    # Case 2: by_name: , &block
-    def group_roles *members, by_name:, &block
-      if block_given?
-        _roles = roles
-        instance_eval(&block)
-        members = roles.keys - _roles.keys
-      end
+    alias store_roles store_role
 
-      role_groups[by_name] = members
+    # TODO: RoleGroup model
+    def group_roles *members, by_name:, save: false
+      raise Error, 'This role has not been defined.' unless (members - roles.keys).empty?
+
+      members.each { |member| ((roles[member][:group] ||= [ ]) << by_name).uniq! }
+      ((role_groups[by_name] ||= [ ]).concat(members)).uniq!
     end
 
-    def org_role parent:, **options, &block
-      _roles = roles
-      instance_eval(&block)
-      new_roles = roles.keys - _roles.keys
-      has_role parent, options.merge!(children: new_roles)
-      new_roles.each do |new_role|
-        roles[new_role][:parent] = parent
-      end
+    alias groups_roles group_roles
+
+    def has_and_group_roles *members, by_name:, save: false
+      has_roles *members, save: save
+      group_roles *members, by_name: by_name, save: save
     end
+
+    alias has_and_groups_roles has_and_group_roles
+
+  #   # TODO: base_role => parent_role
+  #   # TODO: support multi-level tree
+  #   def org_roles *children, by_parent:, **options
+  #     has_role  by_parent, options.merge!(children: children)
+  #     has_roles children, options.merge!(parent: by_parent)
+  #   end
   end
 end

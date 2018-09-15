@@ -8,17 +8,21 @@ RSpec.describe IAmICan::Am do
   end
 
   describe '#is' do
-    before { he.is :admin, save: true }
+    before { he.is :admin }
     it { expect(:admin).to be_in(his.roles) }
-    it { }
 
-    context 'when given a role which is not defined' do
+    context 'when giving a role which is not defined' do
       it { expect{ he.is :someone }.to raise_error(IAmICan::Error)  }
     end
 
-    context 'when given multi roles' do
+    context 'when giving multi roles' do
       before { he.is :master, :guest }
-      it { expect(%i[master guest] - User.roles.keys).to be_empty }
+      it { expect(User.roles.names).to contain(%i[master guest]) }
+    end
+
+    context 'when assigning the role which is assigned before' do
+      before { he.is :admin }
+      it { expect(:admin).to be_in(his.roles) }
     end
   end
 
@@ -26,6 +30,7 @@ RSpec.describe IAmICan::Am do
     before { he.is :admin }
     it { expect(he.is? :admin).to be_truthy }
     it { expect(he.isnt? :admin).to be_falsey }
+    it { expect(he.is! :admin).to be_truthy }
     it { expect{ he.is! :someone }.to raise_error(IAmICan::VerificationFailed) }
   end
 
@@ -33,5 +38,7 @@ RSpec.describe IAmICan::Am do
     before { he.is :admin, :master }
     it { expect(he.is_every? :admin, :master).to be_truthy }
     it { expect(he.is_every? :admin, :guest).to be_falsey }
+    it { expect(he.is_every! :master, :admin).to be_truthy }
+    it { expect{ he.is_every! :guest, :admin }.to raise_error(IAmICan::VerificationFailed) }
   end
 end
