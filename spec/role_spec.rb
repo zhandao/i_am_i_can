@@ -30,5 +30,9 @@ RSpec.describe IAmICan::Am do
     context 'nested group' do
       # TODO
     end
+
+    describe '#members_of_role_group' do
+      it { expect(their.members_of_role_group :vip).to eq(%i[vip1 vip2 vip3]) }
+    end
   end
 end

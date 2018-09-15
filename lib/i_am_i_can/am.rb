@@ -10,12 +10,12 @@ module IAmICan
       roles.keys.map { |key| is?(key) ? key : nil }.compact
     end
 
-    def in_the_group?(group)
-      role_groups.fetch(group).each do |role|
-        return true if is? role
-      end
-      false
+    def is_in_role_group?(name)
+      group_members = self.class.members_of_role_group(name)
+      (roles & group_members).present?
     end
+
+    alias in_role_group? is_in_role_group?
 
     def is *roles, save: false
       return roles.each { |role| is role, save: save } unless roles.size == 1

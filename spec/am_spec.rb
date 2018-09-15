@@ -41,4 +41,13 @@ RSpec.describe IAmICan::Am do
     it { expect(he.is_every! :master, :admin).to be_truthy }
     it { expect{ he.is_every! :guest, :admin }.to raise_error(IAmICan::VerificationFailed) }
   end
+
+  # TODO: 测试数据库变化时的情况
+  describe '#is_in_role_group?' do
+    before { User.has_and_group_roles :vip1, :vip2, :vip3, by_name: :vip }
+    before { User.has_and_group_roles :a, :b, :c, by_name: :abc }
+    before { he.is :vip1 }
+    it { expect(he.is_in_role_group? :vip).to be_truthy }
+    it { expect(he.is_in_role_group? :abc).to be_falsey }
+  end
 end

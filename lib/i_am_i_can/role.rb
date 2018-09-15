@@ -36,6 +36,10 @@ module IAmICan
 
     alias has_and_groups_roles has_and_group_roles
 
+    def members_of_role_group name
+      role_groups.fetch(name)
+    end
+
   #   # TODO: base_role => parent_role
   #   # TODO: support multi-level tree
   #   def org_roles *children, by_parent:, **options
