@@ -3,8 +3,16 @@ module IAmICan
     def roles;       @_roles ||= { } end
     def role_groups; @_role_groups ||= { } end
 
-    def has_role *names, save: false
-      names.each { |name| roles[name] ||= { } }
+    def has_role *names, desc: nil, save: false
+      names.map do |name|
+        description = desc || name.to_s.humanize
+        if save
+          next "role #{name} has been stored" if ii_config.role_model.exists?(name: name)
+          ii_config.role_model.create!(name: name, desc: description)
+        end
+        next "role #{name} has been defined" if roles.key?(name)
+        roles[name] ||= { desc: description } && name
+      end
     end
 
     alias has_roles     has_role
@@ -12,18 +20,21 @@ module IAmICan
     alias declare_roles has_role
 
     def store_role *names, **options
-      has_roles *names, **options
-      # real_name = :"#{name.underscore}_#{name}"
-      # TODO
+      has_role *names, save: true, **options
     end
-
-    alias store_roles store_role
 
     # TODO: RoleGroup model
     def group_roles *members, by_name:, save: false
       raise Error, 'This role has not been defined.' unless (members - roles.keys).empty?
 
-      members.each { |member| ((roles[member][:group] ||= [ ]) << by_name).uniq! }
+      # members.each { |member| ((roles[member][:group] ||= [ ]) << by_name).uniq! }
+      if save
+        role_group = ii_config.role_group_model.find_or_create_by!(name: by_name)
+        role_ids = ii_config.role_model.where(name: members).ids
+        (role_group.member_ids.concat(role_ids)).uniq!
+        role_group.save!
+      end
+
       ((role_groups[by_name] ||= [ ]).concat(members)).uniq!
     end
 
@@ -35,6 +46,11 @@ module IAmICan
     end
 
     alias has_and_groups_roles has_and_group_roles
+
+    def store_group_roles *members, by_name:
+      has_roles *members, save: true
+      group_roles *members, by_name: by_name, save: true
+    end
 
     def members_of_role_group name
       role_groups.fetch(name)
@@ -48,3 +64,19 @@ module IAmICan
   #   end
   end
 end
+
+__END__
+
+=== ModelRole ===
+
+    t.string :name, null: false
+    t.string :desc
+
+    add_index :user_roles, :name, unique: true, using: :btree
+
+=== ModelRoleGroup ===
+
+    t.string  :name,    null: false, index: true
+    t.integer :members, array: true, default: [ ]
+
+    add_index :user_role_groups, :name, unique: true, using: :btree

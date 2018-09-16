@@ -1,7 +1,12 @@
 require 'bundler/setup'
 require 'i_am_i_can'
+require 'database_cleaner'
+require 'pp'
 
-require './spec/mocks/user'
+require 'support/database'
+require 'app/models/user_role'
+require 'app/models/user_role_group'
+require 'app/models/user'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -13,6 +18,17 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
+    end
+  end
 end
 
 RSpec::Matchers.define :contain do |expected|
@@ -22,4 +38,17 @@ RSpec::Matchers.define :contain do |expected|
 
   failure_message { |actual| " expected: #{actual}\ncontain: #{expected}" }
   # description { "#{expected}" }
+end
+
+RSpec::Matchers.define :have_size do |expected|
+  match do |actual|
+    actual.size == expected
+  end
+
+  failure_message { |actual| " expected: #{actual} (size: #{actual.size})\nhave size: #{expected}" }
+  description { "have #{expected} items" }
+end
+
+class Hash
+  alias names keys
 end

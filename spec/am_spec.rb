@@ -1,5 +1,5 @@
 RSpec.describe IAmICan::Am do
-  subject { User.new }
+  subject { User.create }
   let(:he) { subject }
   let(:his) { subject }
 
