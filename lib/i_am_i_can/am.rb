@@ -2,17 +2,28 @@ module IAmICan
   module Am
     def roles; @_roles ||= [ ] end
 
-    def is *roles, save: false
-      return roles.each { |role| is role, save: save } unless roles.size == 1
+    # TODO: get data from db
 
-      role = roles.first.to_sym
-      raise Error, 'This role has not been defined.' unless role.in?(model_roles.keys)
-      # TODO: save
-      self.roles << role unless role.in?(self.roles)
+    def is *roles, save: false
+      roles.each do |role|
+        raise Error, 'This role has not been defined.' unless role.in?(model_roles.keys)
+        self.roles << role unless role.in?(self.roles)
+        to_store_role role if save
+      end
     end
 
     alias add_role  is
     alias add_roles is
+
+    def store_role *roles
+      is *roles, save: true
+    end
+
+    def to_store_role name
+      rid = ii_config.role_model.find_by(name: name)&.id
+      raise Error, "Could not find role #{name}" unless rid
+      (role_ids << rid).uniq! and save!
+    end
 
     def is? role
       roles_setting # TODO: 优化

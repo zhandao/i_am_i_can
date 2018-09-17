@@ -1,10 +1,13 @@
 RSpec.describe IAmICan::Am do
   subject { User.create }
+  let(:they) { User }
+  let(:their) { User }
+  let(:their_role_model) { UserRole }
   let(:he) { subject }
   let(:his) { subject }
 
   before do
-    User.has_role :admin, :master, :guest
+    they.has_role :admin, :master, :guest
   end
 
   describe '#is' do
@@ -17,12 +20,28 @@ RSpec.describe IAmICan::Am do
 
     context 'when giving multi roles' do
       before { he.is :master, :guest }
-      it { expect(User.roles.names).to contain(%i[master guest]) }
+      it { expect(their.roles.names).to contain(%i[master guest]) }
     end
 
     context 'when assigning the role which is assigned before' do
       before { he.is :admin }
       it { expect(:admin).to be_in(his.roles) }
+    end
+
+    context 'save' do
+      context 'when the role is not saved' do
+        it { expect{ he.store_role :master }.to raise_error(IAmICan::Error) }
+      end
+
+      context 'correct' do
+        before { they.store_role :dev }
+        it do
+          expect(his.role_ids).to have_size(0)
+          expect{ he.store_role :dev }.not_to raise_error
+          expect(:dev).to be_in(his.roles)
+          expect(his.role_ids).to have_size(1)
+        end
+      end
     end
   end
 

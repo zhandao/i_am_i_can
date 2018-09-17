@@ -20,6 +20,7 @@ ActiveRecord::Schema.define do
 
   create_table "users", force: :cascade do |t|
     t.string "name"#, null: false
+    t.integer "role_ids", default: [ ], array: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

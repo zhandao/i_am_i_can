@@ -1,13 +1,13 @@
 module IAmICan
   module Role
-    def roles;       @_roles ||= { } end
+    def roles;       @_roles ||= { }       end
     def role_groups; @_role_groups ||= { } end
 
     def has_role *names, desc: nil, save: false
       names.map do |name|
         description = desc || name.to_s.humanize
         to_store_role(name: name, desc: description) if save
-        next "role #{name} has been defined" if roles.key?(name)
+        next "Role #{name} has been defined" if roles.key?(name)
         roles[name] ||= { desc: description } && name
       end
     end
@@ -17,7 +17,7 @@ module IAmICan
     alias declare_roles has_role
 
     def group_roles *members, by_name:, save: false
-      raise Error, 'some of members have not been defined' unless (members - roles.keys).empty?
+      raise Error, 'Some of members have not been defined' unless (members - roles.keys).empty?
       to_store_role_group(by_name, members) if save
       ((role_groups[by_name] ||= [ ]).concat(members)).uniq!
     end
@@ -29,7 +29,7 @@ module IAmICan
 
   module Role::SecondaryMethods
     def to_store_role(name:, **options)
-      return "role #{name} has been stored" if ii_config.role_model.exists?(name: name)
+      return "Role #{name} has been stored" if ii_config.role_model.exists?(name: name)
       ii_config.role_model.create!(name: name, **options)
     end
 
