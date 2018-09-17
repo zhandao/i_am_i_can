@@ -6,10 +6,7 @@ module IAmICan
     def has_role *names, desc: nil, save: false
       names.map do |name|
         description = desc || name.to_s.humanize
-        if save
-          next "role #{name} has been stored" if ii_config.role_model.exists?(name: name)
-          ii_config.role_model.create!(name: name, desc: description)
-        end
+        to_store_role(name: name, desc: description) if save
         next "role #{name} has been defined" if roles.key?(name)
         roles[name] ||= { desc: description } && name
       end
@@ -19,26 +16,33 @@ module IAmICan
     alias declare_role  has_role
     alias declare_roles has_role
 
-    def store_role *names, **options
-      has_role *names, save: true, **options
-    end
-
-    # TODO: RoleGroup model
     def group_roles *members, by_name:, save: false
-      raise Error, 'This role has not been defined.' unless (members - roles.keys).empty?
-
-      # members.each { |member| ((roles[member][:group] ||= [ ]) << by_name).uniq! }
-      if save
-        role_group = ii_config.role_group_model.find_or_create_by!(name: by_name)
-        role_ids = ii_config.role_model.where(name: members).ids
-        (role_group.member_ids.concat(role_ids)).uniq!
-        role_group.save!
-      end
-
+      raise Error, 'some of members have not been defined' unless (members - roles.keys).empty?
+      to_store_role_group(by_name, members) if save
       ((role_groups[by_name] ||= [ ]).concat(members)).uniq!
     end
 
     alias groups_roles group_roles
+  end
+
+  # === End of MainMethods ===
+
+  module Role::SecondaryMethods
+    def to_store_role(name:, **options)
+      return "role #{name} has been stored" if ii_config.role_model.exists?(name: name)
+      ii_config.role_model.create!(name: name, **options)
+    end
+
+    def to_store_role_group name, members
+      role_group = ii_config.role_group_model.find_or_create_by!(name: name)
+      role_ids = ii_config.role_model.where(name: members).ids
+      (role_group.member_ids.concat(role_ids)).uniq!
+      role_group.save!
+    end
+
+    def store_role *names, **options
+      has_role *names, save: true, **options
+    end
 
     def has_and_group_roles *members, by_name:, save: false
       has_roles *members, save: save
@@ -56,12 +60,14 @@ module IAmICan
       role_groups.fetch(name)
     end
 
-  #   # TODO: base_role => parent_role
-  #   # TODO: support multi-level tree
-  #   def org_roles *children, by_parent:, **options
-  #     has_role  by_parent, options.merge!(children: children)
-  #     has_roles children, options.merge!(parent: by_parent)
-  #   end
+    #   # TODO: base_role => parent_role
+    #   # TODO: support multi-level tree
+    #   def org_roles *children, by_parent:, **options
+    #     has_role  by_parent, options.merge!(children: children)
+    #     has_roles children, options.merge!(parent: by_parent)
+    #   end
+
+    Role.include self
   end
 end
 

@@ -15,8 +15,15 @@ RSpec.describe IAmICan::Am do
     end
 
     context 'save' do
-      before { they.store_role :dev }
-      it { expect(their_role_records.last).to have_attributes(name: 'dev', desc: 'Dev') }
+      before { they.store_role :master }
+      it { expect(their_role_records.last).to have_attributes(name: 'master', desc: 'Master') }
+
+      context 'when saving by the same role' do
+        it 'does nothing' do
+          expect{ they.to_store_role name: :master }.not_to raise_error
+          expect(their_role_records.count).to eq 1
+        end
+      end
     end
   end
 
@@ -31,12 +38,15 @@ RSpec.describe IAmICan::Am do
 
     context 'save' do
       before { they.store_group_roles :a, :b, :c, by_name: :az }
-      it { expect(their_role_group_records.last).to have_attributes(name: 'az', member_ids: [2, 3, 4]) }
+      it { expect(their_role_group_records.last.name).to eq 'az' }
+      it { expect(their_role_group_records.last.member_ids).to have_size 3 }
 
       context 'when multi-calling by the same group name' do
         before { they.store_group_roles :c, :d, by_name: :az }
         it { expect(their.role_groups).to include(az: %i[a b c d]) }
-        it { expect(their_role_group_records.last.member_ids).to have_size(%i[a b c d].size) }
+        it 'pushes the NEW members into the list' do
+          expect(their_role_group_records.last.member_ids).to have_size(%i[a b c d].size)
+        end
       end
     end
 
