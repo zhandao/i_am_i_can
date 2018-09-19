@@ -10,22 +10,22 @@ RSpec.describe IAmICan::Am do
     they.has_role :admin, :master, :guest
   end
 
-  describe '#becomes' do
+  describe '#becomes_a' do
     before { he.becomes_a :admin }
-    it { expect(:admin).to be_in(his.roles) }
+    it { expect(:admin).to be_in(his.local_roles) }
 
     context 'when giving a role which is not defined' do
       it { expect{ he.becomes_a :someone_else }.to raise_error(IAmICan::Error)  }
     end
 
     context 'when giving multi roles' do
-      before { he.becomes :master, :guest }
-      it { expect(their.roles.names).to contain(%i[master guest]) }
+      before { he.becomes_a :master, :guest }
+      it { expect(their.local_roles.names).to contain(%i[master guest]) }
     end
 
     context 'when assigning the role which is assigned before' do
       before { he.becomes_a :admin }
-      it { expect(:admin).to be_in(his.roles) }
+      it { expect(:admin).to be_in(his.local_roles) }
     end
 
     context 'save' do
@@ -38,7 +38,7 @@ RSpec.describe IAmICan::Am do
         it do
           expect(his.role_ids).to be_empty
           expect{ he.store_role :dev }.not_to raise_error
-          expect(:dev).to be_in(his.roles)
+          expect(:dev).to be_in(his.local_roles)
           expect(his.role_ids).to have_size(1)
         end
       end

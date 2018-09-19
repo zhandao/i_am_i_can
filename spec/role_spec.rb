@@ -7,11 +7,11 @@ RSpec.describe IAmICan::Am do
 
   describe '#has_role(s)' do
     before { they.has_role :admin }
-    it { expect(:admin).to be_in(their.roles.names) }
+    it { expect(:admin).to be_in(their.local_roles.names) }
 
     context 'when giving multi roles' do
       before { they.has_roles :master, :guest }
-      it { expect(their.roles.keys).to contain(%i[admin guest]) }
+      it { expect(their.local_roles.keys).to contain(%i[admin guest]) }
     end
 
     context 'save' do

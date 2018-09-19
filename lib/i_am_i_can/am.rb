@@ -1,39 +1,38 @@
 module IAmICan
   module Am
-    def roles; @_roles ||= [ ] end
+    def local_roles; @local_roles ||= [ ] end
 
     # TODO: get data from db
     # TODO: local_roles
+    # TODO: cache
     # TODO: default save
-    def becomes *roles, save: false
+    def becomes_a *roles, save: false
       roles.each do |role|
-        raise Error, 'This role has not been defined' unless role.in?(model_roles.keys)
-        self.roles << role unless role.in?(self.roles)
+        raise Error, 'This role has not been defined' unless role.in?(model_local_roles.keys)
+        self.local_roles << role unless role.in?(self.local_roles)
         to_store_role role if save
       end
     end
 
-    alias becomes_a becomes
-    alias is_roles  becomes
-    alias is_a_role becomes
-    alias role_is   becomes
-    alias roles_are becomes
-    alias has_roles becomes
-    alias has_role  becomes
+    alias is_roles  becomes_a
+    alias is_a_role becomes_a
+    alias role_is   becomes_a
+    alias roles_are becomes_a
+    alias has_roles becomes_a
+    alias has_role  becomes_a
 
     def store_role *roles
       is_roles *roles, save: true
     end
 
+    # TODO: no need ii_config.role_model
     def to_store_role name
-      rid = ii_config.role_model.find_by(name: name)&.id
-      raise Error, "Could not find role #{name}" unless rid
-      (role_ids << rid).uniq! and save!
+      raise Error, "Could not find role #{name}" unless stored_roles_add(name: name)
     end
 
     def is? role
       roles_setting # TODO: 优化
-      role.to_sym.in?(roles) || false
+      role.to_sym.in?(local_roles) || false
     end
 
     alias is_role? is?
@@ -50,20 +49,20 @@ module IAmICan
     alias is_role! is!
 
     def is_every? *roles
-      roles.each { |role| return false if isnt? role } && true
+      local_roles.each { |role| return false if isnt? role } && true
     end
 
     alias is_every_role_in? is_every?
 
     def is_every! *roles
-      roles.each { |role| is! role } && true
+      local_roles.each { |role| is! role } && true
     end
 
     alias is_every_role_in! is_every!
 
     def is_in_role_group?(name)
       group_members = self.class.members_of_role_group(name)
-      (roles & group_members).present?
+      (local_roles & group_members).present?
     end
 
     alias in_role_group? is_in_role_group?

@@ -1,14 +1,14 @@
 module IAmICan
   module Role
-    def roles;       @_roles ||= { }       end
-    def role_groups; @_role_groups ||= { } end
+    def local_roles; @local_roles ||= { } end
+    def role_groups; @role_groups ||= { } end
 
     def has_role *names, desc: nil, save: false
       names.map do |name|
         description = desc || name.to_s.humanize
         to_store_role(name: name, desc: description) if save
-        next "Role #{name} has been defined" if roles.key?(name)
-        roles[name] ||= { desc: description } && name
+        next "Role #{name} has been defined" if local_roles.key?(name)
+        local_roles[name] ||= { desc: description } && name
       end
     end
 
@@ -16,8 +16,9 @@ module IAmICan
     alias declare_role  has_role
     alias declare_roles has_role
 
+    # TODO: must be saved
     def group_roles *members, by_name:, save: false
-      raise Error, 'Some of members have not been defined' unless (members - roles.keys).empty?
+      raise Error, 'Some of members have not been defined' unless (members - local_roles.keys).empty?
       to_store_role_group(by_name, members) if save
       ((role_groups[by_name] ||= [ ]).concat(members)).uniq!
     end
