@@ -27,7 +27,7 @@ module IAmICan
 
     # TODO: no need ii_config.role_model
     def to_store_role name
-      raise Error, "Could not find role #{name}" unless stored_roles_add(name: name)
+      raise Error, "Could not find role #{name}" unless stored_roles_add(name)
     end
 
     def is? role
@@ -49,13 +49,13 @@ module IAmICan
     alias is_role! is!
 
     def is_every? *roles
-      local_roles.each { |role| return false if isnt? role } && true
+      roles.each { |role| return false if isnt? role } && true
     end
 
     alias is_every_role_in? is_every?
 
     def is_every! *roles
-      local_roles.each { |role| is! role } && true
+      roles.each { |role| is! role } && true
     end
 
     alias is_every_role_in! is_every!

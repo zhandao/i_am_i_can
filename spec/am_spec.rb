@@ -29,7 +29,7 @@ RSpec.describe IAmICan::Am do
     end
 
     context 'save' do
-      context 'when the role is not saved' do
+      context 'when the role definition is not stored' do
         it { expect{ he.store_role :master }.to raise_error(IAmICan::Error) }
       end
 

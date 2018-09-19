@@ -20,8 +20,13 @@ module IAmICan
     include IAmICan::Am
     include IAmICan::Permission
 
-    has_an_array_of :roles, model: 'UserRole', prefix: :stored, attrs: [:name]
-    "#{name}RoleGroup".constantize.has_an_array_of :members, model: 'UserRole'
+    has_an_array_of :roles,
+                    model: options[:role_model] || 'UserRole',
+                    prefix: :stored, attrs: [:name], located_by: :name
+    "#{name}RoleGroup".constantize
+        .has_an_array_of :members,
+                         model: options[:role_group_model] || 'UserRole',
+                         located_by: :name
   end
 
   class Error < StandardError;          end

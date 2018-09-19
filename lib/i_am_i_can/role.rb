@@ -36,9 +36,7 @@ module IAmICan
 
     def to_store_role_group name, members
       role_group = ii_config.role_group_model.find_or_create_by!(name: name)
-      role_ids = ii_config.role_model.where(name: members).ids
-      (role_group.member_ids.concat(role_ids)).uniq!
-      role_group.save!
+      raise Error, "Could not find role #{name}" unless role_group.members_add(members)
     end
 
     def store_role *names, **options
