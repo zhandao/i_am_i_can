@@ -26,7 +26,7 @@ module IAmICan
     "#{name}RoleGroup".constantize
         .has_an_array_of :members,
                          model: options[:role_group_model] || 'UserRole',
-                         located_by: :name
+                         attrs: [:name], located_by: :name
   end
 
   class Error < StandardError;          end

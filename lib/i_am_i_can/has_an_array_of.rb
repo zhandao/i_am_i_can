@@ -7,7 +7,7 @@ module IAmICan
 
       # stored_roles
       define_method "#{prefix}#{obj}" do
-        obj_model.where(id: field)
+        obj_model.where(id: send(field))
       end
 
       # stored_roles_add

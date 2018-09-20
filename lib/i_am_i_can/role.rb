@@ -1,8 +1,5 @@
 module IAmICan
   module Role
-    def local_roles; @local_roles ||= { } end
-    def role_groups; @role_groups ||= { } end
-
     def has_role *names, desc: nil, save: false
       names.map do |name|
         description = desc || name.to_s.humanize
@@ -16,11 +13,9 @@ module IAmICan
     alias declare_role  has_role
     alias declare_roles has_role
 
-    # TODO: must be saved
-    def group_roles *members, by_name:, save: false
-      raise Error, 'Some of members have not been defined' unless (members - local_roles.keys).empty?
-      to_store_role_group(by_name, members) if save
-      ((role_groups[by_name] ||= [ ]).concat(members)).uniq!
+    def group_roles *members, by_name:
+      raise Error, 'Some of members have not been defined' unless (members - stored_role_names).empty?
+      to_store_role_group(by_name, members)
     end
 
     alias groups_roles group_roles
@@ -29,6 +24,18 @@ module IAmICan
   # === End of MainMethods ===
 
   module Role::SecondaryMethods
+    def local_roles
+      @local_roles ||= { }
+    end
+
+    def stored_role_names
+      ii_config.role_model.pluck(:name).map(&:to_sym)
+    end
+
+    def stored_roles
+      ii_config.role_model.all.map { |role| [ role.name.to_sym, role.desc ] }.to_h
+    end
+
     def to_store_role(name:, **options)
       return "Role #{name} has been stored" if ii_config.role_model.exists?(name: name)
       ii_config.role_model.create!(name: name, **options)
@@ -43,20 +50,23 @@ module IAmICan
       has_role *names, save: true, **options
     end
 
-    def has_and_group_roles *members, by_name:, save: false
-      has_roles *members, save: save
-      group_roles *members, by_name: by_name, save: save
+    def has_and_group_roles *members, by_name:
+      has_roles *members, save: true
+      group_roles *members, by_name: by_name
     end
 
     alias has_and_groups_roles has_and_group_roles
 
-    def store_group_roles *members, by_name:
-      has_roles *members, save: true
-      group_roles *members, by_name: by_name, save: true
+    def role_group_names
+      ii_config.role_group_model.pluck(:name).map(&:to_sym)
+
+    end
+    def role_groups
+      ii_config.role_group_model.all.map { |group| [ group.name.to_sym, group.member_names.map(&:to_sym) ] }.to_h
     end
 
     def members_of_role_group name
-      role_groups.fetch(name)
+      ii_config.role_group_model.find_by!(name: name).member_names.map(&:to_sym)
     end
 
     #   # TODO: base_role => parent_role

@@ -36,13 +36,17 @@ RSpec.describe IAmICan::Am do
       # TODO
     end
 
+    context 'when giving some roles which have not been stored' do
+      #
+    end
+
     context 'save' do
-      before { they.store_group_roles :a, :b, :c, by_name: :az }
+      before { they.has_and_group_roles :a, :b, :c, by_name: :az }
       it { expect(their_role_group_records.last.name).to eq 'az' }
       it { expect(their_role_group_records.last.member_ids).to have_size 3 }
 
       context 'when multi-calling by the same group name' do
-        before { they.store_group_roles :c, :d, by_name: :az }
+        before { they.has_and_group_roles :c, :d, by_name: :az }
         it { expect(their.role_groups).to include(az: %i[a b c d]) }
         it 'pushes the NEW members into the list' do
           expect(their_role_group_records.last.member_ids).to have_size(%i[a b c d].size)
