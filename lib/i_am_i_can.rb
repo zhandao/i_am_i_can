@@ -22,11 +22,13 @@ module IAmICan
 
     has_an_array_of :roles,
                     model: options[:role_model] || 'UserRole',
-                    prefix: :stored, attrs: [:name], located_by: :name
+                    prefix: :stored, attrs: [:name], located_by: :name,
+                    cache_expires_in: options[:cache_expires_in] || 15.minutes
     "#{name}RoleGroup".constantize
         .has_an_array_of :members,
                          model: options[:role_group_model] || 'UserRole',
-                         attrs: [:name], located_by: :name
+                         attrs: [:name], located_by: :name,
+                         cache_expires_in: options[:cache_expires_in] || 15.minutes
   end
 
   class Error < StandardError;          end

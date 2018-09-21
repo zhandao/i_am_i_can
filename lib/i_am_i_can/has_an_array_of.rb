@@ -1,6 +1,7 @@
 module IAmICan
   module HasAnArrayOf
-    def has_an_array_of obj, model: nil, field: nil, prefix: nil, attrs: [ ], located_by: nil
+    def has_an_array_of obj, model: nil, field: nil,
+                        prefix: nil, attrs: [ ], located_by: nil, cache_expires_in: nil
       obj_model = model.constantize || obj.to_s.singularize.camelize.constantize
       field = field || :"#{obj.to_s.singularize}_ids"
       prefix = "#{prefix}_" if prefix
@@ -8,6 +9,13 @@ module IAmICan
       # stored_roles
       define_method "#{prefix}#{obj}" do
         obj_model.where(id: send(field))
+      end
+
+      # cached_stored_roles
+      define_method "cached_#{prefix}#{obj}" do |**options|
+        Rails.cache.fetch("#{self.class.name}/#{id}/#{obj}", expires_in: cache_expires_in, **options) do
+          obj_model.where(id: send(field))
+        end
       end
 
       # stored_roles_add
