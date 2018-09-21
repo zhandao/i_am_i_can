@@ -1,6 +1,6 @@
 module IAmICan
   module Role
-    def has_role *names, desc: nil, save: false
+    def has_role *names, desc: nil, save: false, which_can: []
       names.map do |name|
         description = desc || name.to_s.humanize
         to_store_role(name: name, desc: description) if save
