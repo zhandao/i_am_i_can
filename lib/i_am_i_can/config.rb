@@ -1,10 +1,8 @@
 module IAmICan
   class Config
-    attr_accessor :role_model, :role_group_model
+    attr_accessor :role_model, :role_group_model, :permission_model
 
-    def initialize(model:, **options)
-      self.role_model = "#{model}Role".constantize
-      self.role_group_model = "#{model}RoleGroup".constantize
+    def initialize(**options)
       options.each { |(key, val)| self.send("#{key}=", val) }
     end
   end

@@ -73,4 +73,12 @@ module IAmICan
       actions.each { |action| can! action, source }
     end
   end
+
+  # === End of MainMethods ===
+
+  module Can::SecondaryMethods
+    #
+
+    Can.include self
+  end
 end
