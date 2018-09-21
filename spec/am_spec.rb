@@ -36,10 +36,10 @@ RSpec.describe IAmICan::Am do
       context 'correct' do
         before { they.store_role :dev }
         it do
-          expect(his.role_ids).to be_empty
+          expect(his.stored_roles).to be_empty
           expect{ he.store_role :dev }.not_to raise_error
-          expect(:dev).to be_in(his.local_roles)
-          expect(his.role_ids).to have_size(1)
+          expect(:dev).not_to be_in(his.local_roles)
+          expect(his.stored_roles).to have_size(1)
         end
       end
     end
@@ -61,10 +61,9 @@ RSpec.describe IAmICan::Am do
     it { expect{ he.is_every! :guest, :admin }.to raise_error(IAmICan::VerificationFailed) }
   end
 
-  # TODO: 测试数据库变化时的情况
   describe '#is_in_role_group?' do
-    before { User.has_and_group_roles :vip1, :vip2, :vip3, by_name: :vip }
-    before { User.has_and_group_roles :a, :b, :c, by_name: :abc }
+    before { they.has_and_group_roles :vip1, :vip2, :vip3, by_name: :vip }
+    before { they.has_and_group_roles :a, :b, :c, by_name: :abc }
     before { he.is_roles :vip1 }
     it { expect(he.is_in_role_group? :vip).to be_truthy }
     it { expect(he.is_in_role_group? :abc).to be_falsey }

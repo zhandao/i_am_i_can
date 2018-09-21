@@ -20,7 +20,7 @@ RSpec.describe IAmICan::Am do
 
       context 'when saving by the same role' do
         it 'does nothing' do
-          expect{ they.to_store_role name: :master }.not_to raise_error
+          expect{ they.to_store_role :master }.not_to raise_error
           expect(their_role_records.count).to eq 1
         end
       end

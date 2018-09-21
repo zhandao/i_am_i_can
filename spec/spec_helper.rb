@@ -6,6 +6,7 @@ require 'pp'
 require 'support/database'
 require 'app/models/user_role'
 require 'app/models/user_role_group'
+require 'app/models/user_permission'
 require 'app/models/user'
 
 RSpec.configure do |config|

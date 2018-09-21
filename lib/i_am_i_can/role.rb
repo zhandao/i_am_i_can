@@ -3,9 +3,12 @@ module IAmICan
     def has_role *names, desc: nil, save: false, which_can: []
       names.map do |name|
         description = desc || name.to_s.humanize
-        to_store_role(name: name, desc: description) if save
-        next "Role #{name} has been defined" if local_roles.key?(name)
-        local_roles[name] ||= { desc: description } && name
+        if save
+          to_store_role(name, desc: description)
+        else
+          next "Role #{name} has been defined" if local_roles.key?(name)
+          local_roles[name] ||= { desc: description } && name
+        end
       end
     end
 
@@ -36,14 +39,18 @@ module IAmICan
       ii_config.role_model.all.map { |role| [ role.name.to_sym, role.desc ] }.to_h
     end
 
-    def to_store_role(name:, **options)
+    def roles
+      local_roles.merge(stored_roles)
+    end
+
+    def to_store_role name, **options
       return "Role #{name} has been stored" if ii_config.role_model.exists?(name: name)
       ii_config.role_model.create!(name: name, **options)
     end
 
     def to_store_role_group name, members
       role_group = ii_config.role_group_model.find_or_create_by!(name: name)
-      raise Error, "Could not find role #{name}" unless role_group.members_add(members)
+      raise Error, 'Some of roles can not be found' unless role_group.members_add(members)
     end
 
     def store_role *names, **options

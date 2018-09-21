@@ -17,11 +17,12 @@ module IAmICan
                         role_group_model: "#{name}RoleGroup".constantize,
                         permission_model: "#{name}Permission".constantize,
                         **options
-    options = local_variables.map { |v| [v, binding.instance_eval(v.to_s)] }.to_h
-    cattr_accessor(:ii_config) { IAmICan::Config.new(options) }
+    cattr_accessor :ii_config do
+      IAmICan::Config.new(role_model: role_model, role_group_model: role_group_model, permission_model: permission_model)
+    end
 
     extend  IAmICan::Role
-    delegate :local_roles, to: self, prefix: :model
+    delegate :local_roles, :stored_roles, :roles, to: self, prefix: :model
     include IAmICan::Am
 
     role_model.include IAmICan::Role::Permission
@@ -29,13 +30,12 @@ module IAmICan
     include IAmICan::Can
 
     array_assoc_opts = {
-        prefix: :stored,
-        attrs: [:name],
+        attrs: { name: :to_sym },
         located_by: :name,
         cache_expires_in: options[:cache_expires_in] || 15.minutes
     }
-    has_an_array_of :roles, model: role_model.name, **array_assoc_opts
-    role_group_model.has_an_array_of :members, model: role_group_model.name, **array_assoc_opts
+    has_an_array_of :roles, model: role_model.name, prefix: :stored, **array_assoc_opts
+    role_group_model.has_an_array_of :members, model: role_model.name, **array_assoc_opts
     role_model.has_an_array_of :permissions, model: permission_model.name, **array_assoc_opts
   end
 

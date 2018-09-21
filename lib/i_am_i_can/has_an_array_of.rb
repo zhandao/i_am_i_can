@@ -19,8 +19,8 @@ module IAmICan
       end
 
       # stored_roles_add
-      define_method "#{prefix}#{obj}_add" do |value = nil, check_size: nil, **condition|
-        condition = { located_by => value } if value
+      define_method "#{prefix}#{obj}_add" do |locate_vals = nil, check_size: nil, **condition|
+        condition = { located_by => locate_vals } if locate_vals
         obj_ids = obj_model.where(condition)&.pluck(:id)
         return false if obj_ids.blank? || (check_size && obj_ids != check_size)
         (send(field).concat(obj_ids)).uniq!
@@ -28,17 +28,19 @@ module IAmICan
       end
 
       # stored_roles_rmv
-      define_method "#{prefix}#{obj}_rmv" do |value = nil, **condition|
-        condition = { located_by => value } if value
+      define_method "#{prefix}#{obj}_rmv" do |locate_vals = nil, **condition|
+        condition = { located_by => locate_vals } if locate_vals
         obj_ids = obj_model.where(condition)&.pluck(:id)
         send("#{field}-=", obj_ids)# -= obj_ids
         save!
       end
 
       attrs.each do |attr|
+        attr_name, attr_type = Array(attr).first
         # stored_role_names
-        define_method "#{prefix}#{obj.to_s.singularize}_#{attr.to_s.pluralize}" do
-          send("#{prefix}#{obj}").pluck(attr)
+        define_method "#{prefix}#{obj.to_s.singularize}_#{attr_name.to_s.pluralize}" do
+          res = send("#{prefix}#{obj}").pluck(attr_name)
+          attr_type ? res.map(&res) : res
         end
       end
     end
