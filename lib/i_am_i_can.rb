@@ -1,5 +1,7 @@
 require 'active_record'
 require 'active_support/core_ext/object/inclusion'
+require 'active_support/core_ext/hash/deep_merge'
+require 'active_support/core_ext/hash/keys'
 
 require 'i_am_i_can/version'
 require 'i_am_i_can/has_an_array_of'
@@ -38,12 +40,13 @@ module IAmICan
     opts = {
         attrs: { name: :to_sym },
         located_by: :name,
+        prefix: :stored,
         cache_expires_in: options[:cache_expires_in] || 15.minutes
     }
-                self.has_an_array_of :roles, model: role_model.name, prefix: :stored, **opts
-    role_group_model.has_an_array_of :members, model: role_model.name, **opts
-          role_model.has_an_array_of :permissions, model: permission_model.name, **opts.slice(:cache_expires_in)
-    role_group_model.has_an_array_of :permissions, model: permission_model.name, **opts.slice(:cache_expires_in)
+                self.has_an_array_of :roles, model: role_model.name, **opts
+    role_group_model.has_an_array_of :members, model: role_model.name, **opts.except(:prefix)
+          role_model.has_an_array_of :permissions, model: permission_model.name, **opts.except(:attrs, :located_by)
+    role_group_model.has_an_array_of :permissions, model: permission_model.name, **opts.except(:attrs, :located_by)
   end
 
   class Error < StandardError;          end

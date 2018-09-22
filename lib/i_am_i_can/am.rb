@@ -24,6 +24,12 @@ module IAmICan
     alias has_roles becomes_a
     alias has_role  becomes_a
 
+    def temporarily_is *roles
+      becomes_a *roles, save: false
+    end
+
+    alias locally_is temporarily_is
+
     def is? role
       role.to_sym.in?(local_role_names) || role.to_sym.in?(stored_role_names)
     end
@@ -53,12 +59,6 @@ module IAmICan
     end
 
     alias role_names roles
-
-    def is_temporarily *roles
-      becomes_a *roles, save: false
-    end
-
-    alias is_locally is_temporarily
 
     def isnt? role
       !is? role

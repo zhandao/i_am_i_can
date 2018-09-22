@@ -5,20 +5,20 @@ RSpec.describe IAmICan::Role do
   let(:they) { subject }
   let(:their) { subject }
 
-  describe '#has_role & #declare_role' do
-    context 'when using #has_role' do
+  describe '.has_role & .declare_role' do
+    context 'when using .has_role  (save by default)' do
       before { they.has_role :admin }
       it do
-        expect(:admin).to be_in(their.stored_role_names)
         expect(:admin).not_to be_in(their.local_roles.names)
+        expect(:admin).to be_in(their.stored_role_names)
       end
     end
 
-    context 'when using #declare_role' do
+    context 'when using .declare_role (not save)' do
       before { they.declare_role :admin }
       it do
-        expect(:admin).to be_in(their.local_roles.names)
         expect(:admin).not_to be_in(their.stored_role_names)
+        expect(:admin).to be_in(their.local_roles.names)
       end
     end
 
@@ -35,7 +35,7 @@ RSpec.describe IAmICan::Role do
     end
   end
 
-  describe '#group_roles' do
+  describe '.group_roles' do
     before { they.has_and_group_roles :vip1, :vip2, :vip3, by_name: :vip }
     it { expect(their.role_groups).to include(vip: %i[vip1 vip2 vip3]) }
     it { expect(their_role_group_records.last.name).to eq 'vip' }
@@ -61,7 +61,7 @@ RSpec.describe IAmICan::Role do
       #
     end
 
-    describe '#members_of_role_group' do
+    describe '.members_of_role_group' do
       it { expect(their.members_of_role_group :vip).to eq(%i[vip1 vip2 vip3]) }
     end
   end

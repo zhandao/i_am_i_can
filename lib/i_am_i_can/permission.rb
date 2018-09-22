@@ -25,6 +25,7 @@ module IAmICan
   # === End of ClassMethods ===
 
   module Permission::InstanceMethods
+    # like: manage_User_1
     def name
       otp = "_#{obj_type}" if obj_type.present?
       oid = "_#{obj_id}" if obj_id.present?
@@ -40,6 +41,7 @@ module IAmICan
       obj.has_permission self.pred, obj: self.obj
     end
 
+    # :user, User, user
     def obj
       return obj_type.constantize.find(obj_id) if obj_id.present?
       obj_type[/[A-Z]/] ? obj_type.constantize : obj_type.to_sym
