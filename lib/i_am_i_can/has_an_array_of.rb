@@ -35,12 +35,11 @@ module IAmICan
         save!
       end
 
-      attrs.each do |attr|
-        attr_name, attr_type = Array(attr).first
+      attrs.each do |(attr_name, attr_type)|
         # stored_role_names
         define_method "#{prefix}#{obj.to_s.singularize}_#{attr_name.to_s.pluralize}" do
           res = send("#{prefix}#{obj}").pluck(attr_name)
-          attr_type ? res.map(&res) : res
+          attr_type ? res.map(&attr_type) : res
         end
       end
     end

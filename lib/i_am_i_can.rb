@@ -16,17 +16,22 @@ module IAmICan
   def act_as_i_am_i_can role_model: "#{name}Role".constantize,
                         role_group_model: "#{name}RoleGroup".constantize,
                         permission_model: "#{name}Permission".constantize,
-                        **options
+                        use_after_define: true, **options
     cattr_accessor :ii_config do
-      IAmICan::Config.new(role_model: role_model, role_group_model: role_group_model, permission_model: permission_model)
+      IAmICan::Config.new(
+          role_model: role_model, role_group_model: role_group_model,
+          permission_model: permission_model, use_after_define: use_after_define
+      )
     end
+    role_model.cattr_accessor(:config) { ii_config }
+    role_group_model.cattr_accessor(:config) { ii_config }
 
     extend  IAmICan::Role
     delegate :local_roles, :stored_roles, :roles, to: self, prefix: :model
     include IAmICan::Am
 
-    role_model.include IAmICan::Permission::Owner
-    role_group_model.include IAmICan::Permission::Owner
+    role_model.extend IAmICan::Permission::Owner
+    role_group_model.extend IAmICan::Permission::Owner
     permission_model.include IAmICan::Permission
     include IAmICan::Can
 
@@ -35,9 +40,9 @@ module IAmICan
         located_by: :name,
         cache_expires_in: options[:cache_expires_in] || 15.minutes
     }
-    self.has_an_array_of :roles, model: role_model.name, prefix: :stored, **array_assoc_opts
+                self.has_an_array_of :roles, model: role_model.name, prefix: :stored, **array_assoc_opts
     role_group_model.has_an_array_of :members, model: role_model.name, **array_assoc_opts
-    role_model.has_an_array_of :permissions, model: permission_model.name, **array_assoc_opts
+          role_model.has_an_array_of :permissions, model: permission_model.name, **array_assoc_opts
     role_group_model.has_an_array_of :permissions, model: permission_model.name, **array_assoc_opts
   end
 

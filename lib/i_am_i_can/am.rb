@@ -1,20 +1,21 @@
 module IAmICan
   module Am
-    def local_roles; @local_roles ||= [ ] end
-    alias local_role_names local_roles
-
     # TODO: cache
     # TODO: default save
-    def becomes_a *roles, save: false
+    def becomes_a *roles, save: true
+      self.class.has_roles *roles, save: save unless ii_config.use_after_define
+      failed_items = [ ]
+
       roles.each do |role|
         if save
-          to_store_role role
+          failed_items << role unless stored_roles_add(role)
         else
-          # TODO: raise?
-          raise Error, "This role #{role} has not been defined" unless role.in?(model_roles.keys)
+          next failed_items << role unless role.in?(model_roles.keys)
           local_roles << role unless role.in?(local_roles)
         end
       end
+      raise Error, "Done, but role #{failed_items} have not been defined" if failed_items.present?
+      roles
     end
 
     alias is_roles  becomes_a
@@ -30,9 +31,9 @@ module IAmICan
 
     alias is_role? is?
 
-    def is_in_role_group?(name)
+    def is_in_role_group? name
       group_members = self.class.members_of_role_group(name)
-      (local_role_names & group_members).present?
+      (roles & group_members).present?
     end
 
     alias in_role_group? is_in_role_group?
@@ -42,13 +43,23 @@ module IAmICan
   # === End of MainMethods ===
 
   module Am::SecondaryMethods
-    def store_role *roles
-      is_roles *roles, save: true
+    def local_roles
+      @local_roles ||= [ ]
     end
 
-    def to_store_role name
-      raise Error, "Could not find role #{name}" unless stored_roles_add(name)
+    alias local_role_names local_roles
+
+    def roles
+      local_roles + stored_role_names
     end
+
+    alias role_names roles
+
+    def is_temporarily *roles
+      becomes_a *roles, save: false
+    end
+
+    alias is_locally is_temporarily
 
     def isnt? role
       !is? role

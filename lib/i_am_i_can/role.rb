@@ -1,27 +1,49 @@
 module IAmICan
   module Role
-    def has_role *names, desc: nil, save: false, which_can: []
-      names.map do |name|
+    def has_role *names, desc: nil, save: true, which_can: []
+      failed_items = [ ]
+
+      names.each do |name|
         description = desc || name.to_s.humanize
         if save
-          to_store_role(name, desc: description)
+          failed_items << name unless to_store_role(name, desc: description)
         else
-          next "Role #{name} has been defined" if local_roles.key?(name)
+          failed_items << name if local_roles.key?(name)
           local_roles[name] ||= { desc: description } && name
         end
       end
+
+      raise Error, "Done, but role name #{failed_items} have been used by other role or group" if failed_items.present?
+      names
     end
 
-    alias has_roles     has_role
-    alias declare_role  has_role
+    alias has_roles has_role
+
+    def to_store_role name, **options
+      return false if ii_config.role_model.exists?(name: name) || ii_config.role_group_model.exists?(name: name)
+      ii_config.role_model.create!(name: name, **options)
+    end
+
+    def declare_role *names, **options
+      has_role *names, save: false, **options
+    end
+
     alias declare_roles has_role
 
     def group_roles *members, by_name:
       raise Error, 'Some of members have not been defined' unless (members - stored_role_names).empty?
-      to_store_role_group(by_name, members)
+      raise Error, "Given name #{by_name} has been used by a role" if ii_config.role_model.exists?(name: by_name)
+      ii_config.role_group_model.find_or_create_by!(name: by_name).members_add(members)
     end
 
     alias groups_roles group_roles
+
+    def has_and_group_roles *members, by_name:
+      has_roles *members
+      group_roles *members, by_name: by_name
+    end
+
+    alias has_and_groups_roles has_and_group_roles
   end
 
   # === End of MainMethods ===
@@ -43,30 +65,6 @@ module IAmICan
       local_roles.merge(stored_roles)
     end
 
-    # TODO: error or group by a return hash
-    def to_store_role name, **options
-      return "Role #{name} has been stored" if ii_config.role_model.exists?(name: name)
-      return "Given name #{name} has been used by a group" if ii_config.role_group_model.exists?(name: name)
-      ii_config.role_model.create!(name: name, **options)
-    end
-
-    def to_store_role_group name, members
-      return "Given name #{name} has been used by a role" if ii_config.role_model.exists?(name: name)
-      role_group = ii_config.role_group_model.find_or_create_by!(name: name)
-      raise Error, 'Some of roles can not be found' unless role_group.members_add(members)
-    end
-
-    def store_role *names, **options
-      has_role *names, save: true, **options
-    end
-
-    def has_and_group_roles *members, by_name:
-      has_roles *members, save: true
-      group_roles *members, by_name: by_name
-    end
-
-    alias has_and_groups_roles has_and_group_roles
-
     def role_group_names
       ii_config.role_group_model.pluck(:name).map(&:to_sym)
 
@@ -76,7 +74,7 @@ module IAmICan
     end
 
     def members_of_role_group name
-      ii_config.role_group_model.find_by!(name: name).member_names.map(&:to_sym)
+      ii_config.role_group_model.find_by!(name: name).member_names
     end
 
     #   # TODO: base_role => parent_role
