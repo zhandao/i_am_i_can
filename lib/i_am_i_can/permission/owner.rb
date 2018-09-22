@@ -1,7 +1,7 @@
 module IAmICan
   module Permission
     module Owner
-      def has_permission *preds, obj: nil, desc: nil, save: true
+      def have_permission *preds, obj: nil, desc: nil, save: true
         failed_items = [ ]
 
         preds.each do |pred|
@@ -20,7 +20,9 @@ module IAmICan
         preds
       end
 
-      alias has_permissions has_permission
+      alias have_permissions have_permission
+      alias has_permission   have_permission
+      alias has_permissions  have_permission
 
       def to_store_permission(pred, obj, **options)
         return false if config.permission_model.exists?(pred, obj)
@@ -69,7 +71,7 @@ module IAmICan
 
     module Owner::InstanceMethods
       def can *preds, obj: nil, save: true
-        self.class.has_permissions *preds, obj: obj, save: save unless config.use_after_define
+        self.class.have_permissions *preds, obj: obj, save: save unless config.use_after_define
         failed_items = [ ]
 
         preds.each do |pred|

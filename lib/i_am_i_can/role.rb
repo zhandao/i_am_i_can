@@ -1,6 +1,6 @@
 module IAmICan
   module Role
-    def has_role *names, desc: nil, save: true, which_can: []
+    def have_role *names, desc: nil, save: true, which_can: []
       failed_items = [ ]
 
       names.each do |name|
@@ -17,7 +17,9 @@ module IAmICan
       names
     end
 
-    alias has_roles has_role
+    alias have_roles have_role
+    alias has_role   have_role
+    alias has_roles  have_role
 
     def to_store_role name, **options
       return false if ii_config.role_model.exists?(name: name) || ii_config.role_group_model.exists?(name: name)
@@ -36,14 +38,16 @@ module IAmICan
       ii_config.role_group_model.find_or_create_by!(name: by_name).members_add(members)
     end
 
+    alias group_role   group_roles
+    alias groups_role  group_roles
     alias groups_roles group_roles
 
-    def has_and_group_roles *members, by_name:
+    def have_and_group_roles *members, by_name:
       has_roles *members
       group_roles *members, by_name: by_name
     end
 
-    alias has_and_groups_roles has_and_group_roles
+    alias has_and_groups_roles have_and_group_roles
   end
 
   # === End of MainMethods ===

@@ -1,7 +1,5 @@
 require 'active_record'
 require 'active_support/core_ext/object/inclusion'
-require 'active_support/core_ext/hash/deep_merge'
-require 'active_support/core_ext/hash/keys'
 
 require 'i_am_i_can/version'
 require 'i_am_i_can/has_an_array_of'

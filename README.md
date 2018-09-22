@@ -6,6 +6,33 @@
 
 Concise and Natural DSL for `ActiveModel - Role(Role Group) - Permission` Management.
 
+```ruby
+# let:
+he = People.take
+
+# Role
+People.have_role :admin # role definition
+he.becomes_a :admin     # role assignment
+he.is? :admin           # role querying
+
+# Role Group
+#   role definition and grouping
+People.have_and_group_roles :dev, :master, :committer, by_name: :team
+he.becomes_a :master    # role assignment
+he.in_role_group? :team # role group querying
+
+# Role - Permission
+People.have_role :coder           # role definition
+Role.which(name: :coder).can :fly # permission assignment (by predicate)
+he.becomes_a :coder               # role assignment
+he.can? :fly                      # permission querying
+
+# Role Group - Permission
+RoleGroup.which(name: :team).can :manage, obj: User # permission assignment (by predicate and object)
+he.is? :master                                      # yes
+he.can? :manage, User                               # permission querying
+```
+
 ## Installation
 
 Add this line to your application's Gemfile:

@@ -1,13 +1,12 @@
 RSpec.describe IAmICan::Am do
+  let(:people) { User }
+  let(:people) { User }
   subject { User.create }
-  let(:they) { User }
-  let(:their) { User }
-  let(:their_role_model) { UserRole }
   let(:he) { subject }
   let(:his) { subject }
 
   before do
-    they.has_role :admin, :master, :guest, :dev
+    people.have_role :admin, :master, :guest, :dev
   end
 
   describe '#becomes_a & #temporarily_is' do
@@ -35,12 +34,12 @@ RSpec.describe IAmICan::Am do
       it { expect{ he.becomes_a :someone_else }.to raise_error(IAmICan::Error)  }
 
       context 'when setting use_after_define to false' do
-        before { their.ii_config.use_after_define = false }
+        before { people.ii_config.use_after_define = false }
         it do
           expect{ he.becomes_a :someone_else }.not_to raise_error
           expect(:someone_else).to be_in(his.stored_role_names)
         end
-        after  { their.ii_config.use_after_define = true }
+        after  { people.ii_config.use_after_define = true }
       end
     end
 
@@ -72,8 +71,8 @@ RSpec.describe IAmICan::Am do
   end
 
   describe '#is_in_role_group?' do
-    before { they.has_and_group_roles :vip1, :vip2, :vip3, by_name: :vip }
-    before { they.has_and_group_roles :a, :b, :c, by_name: :abc }
+    before { people.have_and_group_roles :vip1, :vip2, :vip3, by_name: :vip }
+    before { people.have_and_group_roles :a, :b, :c, by_name: :abc }
     before { he.becomes_a :vip1 }
     it { expect(he.is_in_role_group? :vip).to be_truthy }
     it { expect(he.is_in_role_group? :abc).to be_falsey }
