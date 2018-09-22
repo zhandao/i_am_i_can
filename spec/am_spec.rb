@@ -30,8 +30,10 @@ RSpec.describe IAmICan::Am do
     end
 
     context 'when giving a role which is not defined' do
-      it { expect{ he.temporarily_is :someone_else }.to raise_error(IAmICan::Error)  }
-      it { expect{ he.becomes_a :someone_else }.to raise_error(IAmICan::Error)  }
+      it { expect{ he.temporarily_is :someone_else }
+               .to raise_error(IAmICan::Error).with_message(/have not been defined/)  }
+      it { expect{ he.becomes_a :someone_else }
+               .to raise_error(IAmICan::Error).with_message(/have not been defined/)  }
 
       context 'when setting use_after_define to false' do
         before { people.ii_config.use_after_define = false }

@@ -13,8 +13,7 @@ module IAmICan
     end
 
     def exists?(pred, obj)
-      # We have `manage User`, then `exists?(:manage, user)` will return true
-      super(pred: pred, **deconstruct_obj(obj).slice(:obj_type)) || super(pred: pred, **deconstruct_obj(obj))
+      super(pred: pred, **deconstruct_obj(obj))
     end
 
     def self.extended(kls)
@@ -38,7 +37,7 @@ module IAmICan
             else
               group.is_a?(Symbol) ? ii_config.role_group_model.find(name: role) : group
             end
-      obj.has_permission self.pred, obj: self.obj
+      obj.have_permission self.pred, obj: self.obj
     end
 
     # :user, User, user

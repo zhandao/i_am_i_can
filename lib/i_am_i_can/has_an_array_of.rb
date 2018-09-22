@@ -22,6 +22,7 @@ module IAmICan
       define_method "#{prefix}#{obj}_add" do |locate_vals = nil, check_size: nil, **condition|
         condition = { located_by => locate_vals } if locate_vals
         obj_ids = obj_model.where(condition)&.pluck(:id)
+        # will return false if it does nothing
         return false if obj_ids.blank? || (check_size && obj_ids != check_size)
         (send(field).concat(obj_ids)).uniq!
         save!

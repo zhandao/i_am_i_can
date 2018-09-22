@@ -2,8 +2,6 @@ RSpec.describe IAmICan::Permission::Owner do
   subject { UserRole }
   let(:roles) { subject }
   let(:role) { roles.create(name: :admin) }
-  let(:role_groups) { UserRoleGroup }
-  let(:role_group) { role_groups.create(name: :vip) }
   let(:permission_records) { UserPermission }
   let(:user) { User.create(id: 1) }
 
@@ -46,16 +44,30 @@ RSpec.describe IAmICan::Permission::Owner do
       end
 
       context 'but obj is not defined' do
-        it { expect{ role.can :manage, obj: :user }.to raise_error(IAmICan::Error) }
+        it { expect{ role.can :manage, obj: :user }
+                 .to raise_error(IAmICan::Error).with_message(/\[:manage_user\] have not been defined/) }
+      end
+
+      context 'but obj is been covered' do
+        before { roles.has_permission :manage, obj: user }
+
+        before { role.can :manage, obj: User }
+        it { expect{ role.can :manage, obj: user }
+                 .to raise_error(IAmICan::Error).with_message(/\[:manage_User_1\] have been covered/) }
       end
     end
 
     context 'when giving pred is not defined' do
-      it { expect{ role.can :fly }.to raise_error(IAmICan::Error) }
+      it { expect{ role.can :fly }
+               .to raise_error(IAmICan::Error).with_message(/\[:fly\] have not been defined/) }
     end
   end
 
   describe '#temporarily_can (not save)' do
+    # like above
+  end
+
+  describe '#can?' do
     #
   end
 end

@@ -6,7 +6,7 @@ module IAmICan
       names.each do |name|
         description = desc || name.to_s.humanize
         if save
-          failed_items << name unless to_store_role(name, desc: description)
+          failed_items << name unless _to_store_role(name, desc: description)
         else
           failed_items << name if local_roles.key?(name)
           local_roles[name] ||= { desc: description }
@@ -21,7 +21,7 @@ module IAmICan
     alias has_role   have_role
     alias has_roles  have_role
 
-    def to_store_role name, **options
+    def _to_store_role name, **options
       return false if ii_config.role_model.exists?(name: name) || ii_config.role_group_model.exists?(name: name)
       ii_config.role_model.create!(name: name, **options)
     end

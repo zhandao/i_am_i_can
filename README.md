@@ -11,23 +11,26 @@ Concise and Natural DSL for `ActiveModel - Role(Role Group) - Permission` Manage
 he = People.take
 
 # Role
-People.have_role :admin # role definition
+People.have_role :admin # role definition (this step can be skipped)
 he.becomes_a :admin     # role assignment
-he.is? :admin           # role querying
+he.is? :admin           # role querying => true
+he.is? :someone_else    # role querying => false
 
 # Role Group
 #   role definition and grouping
 People.have_and_group_roles :dev, :master, :committer, by_name: :team
 he.becomes_a :master    # role assignment
-he.in_role_group? :team # role group querying
+he.in_role_group? :team # role group querying => true
 
 # Role - Permission
 People.have_role :coder           # role definition
+Role.have_permission :fly         # permission definition (this step can be skipped)
 Role.which(name: :coder).can :fly # permission assignment (by predicate)
 he.becomes_a :coder               # role assignment
 he.can? :fly                      # permission querying
 
 # Role Group - Permission
+RoleGroup.have_permission :manage, obj: User        # permission definition (this step can be skipped)
 RoleGroup.which(name: :team).can :manage, obj: User # permission assignment (by predicate and object)
 he.is? :master                                      # yes
 he.can? :manage, User                               # permission querying

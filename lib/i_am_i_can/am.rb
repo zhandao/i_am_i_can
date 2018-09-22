@@ -1,7 +1,7 @@
 module IAmICan
   module Am
     # TODO: cache
-    def becomes_a *roles, save: true
+    def becomes_a *roles, which_can: [], save: true
       self.class.has_roles *roles, save: save unless ii_config.use_after_define
       failed_items = [ ]
 
