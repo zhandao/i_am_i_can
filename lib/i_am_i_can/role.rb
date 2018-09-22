@@ -43,12 +43,15 @@ module IAmICan
       local_roles.merge(stored_roles)
     end
 
+    # TODO: error or group by a return hash
     def to_store_role name, **options
       return "Role #{name} has been stored" if ii_config.role_model.exists?(name: name)
+      return "Given name #{name} has been used by a group" if ii_config.role_group_model.exists?(name: name)
       ii_config.role_model.create!(name: name, **options)
     end
 
     def to_store_role_group name, members
+      return "Given name #{name} has been used by a role" if ii_config.role_model.exists?(name: name)
       role_group = ii_config.role_group_model.find_or_create_by!(name: name)
       raise Error, 'Some of roles can not be found' unless role_group.members_add(members)
     end

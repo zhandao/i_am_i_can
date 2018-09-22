@@ -1,4 +1,4 @@
-RSpec.describe IAmICan::Role::Permission do
+RSpec.describe IAmICan::Permission::Owner do
   subject { Role.new }
   let(:role) { subject }
   # let(:their_role_group_records) { UserRoleGroup }

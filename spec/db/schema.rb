@@ -21,6 +21,7 @@ ActiveRecord::Schema.define do
   create_table "user_role_groups", force: :cascade do |t|
     t.string "name", null: false
     t.integer "member_ids", default: [ ], array: true
+    t.integer "permission_ids", default: [ ], array: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_user_role_groups_on_name", unique: true

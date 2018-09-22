@@ -1,6 +1,6 @@
 module IAmICan
-  module Role
-    module Permission
+  module Permission
+    module Owner
       def has_permission *names, desc: nil, save: true
         names.map do |name|
           description = desc || name.to_s.humanize
@@ -15,7 +15,7 @@ module IAmICan
 
     # === End of MainMethods ===
 
-    module Permission::SecondaryMethods
+    module Owner::SecondaryMethods
       def local_permissions
         @local_permissions ||= { }
       end
@@ -33,7 +33,7 @@ module IAmICan
         ii_config.permission_model.create!(name: name, **options)
       end
 
-      Permission.include self
+      Owner.include self
     end
   end
 end

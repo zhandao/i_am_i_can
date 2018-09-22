@@ -10,6 +10,7 @@ module IAmICan
         if save
           to_store_role role
         else
+          # TODO: raise?
           raise Error, "This role #{role} has not been defined" unless role.in?(model_roles.keys)
           local_roles << role unless role.in?(local_roles)
         end

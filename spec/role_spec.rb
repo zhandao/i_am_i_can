@@ -52,6 +52,12 @@ RSpec.describe IAmICan::Am do
           expect(their_role_group_records.last.member_ids).to have_size(%i[a b c d].size)
         end
       end
+
+      context 'when giving role name which is used by defining a group' do
+        before { they.store_role :az }
+        it { expect(their_role_group_records.exists?(name: :az)).to be_truthy }
+        it { expect(their_role_records.exists?(name: :az)).to be_falsey }
+      end
     end
 
     describe '#members_of_role_group' do
