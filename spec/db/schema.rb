@@ -28,13 +28,13 @@ ActiveRecord::Schema.define do
   end
 
   create_table "user_permissions", force: :cascade do |t|
-    t.string "name", null: false
+    t.string "pred", null: false
+    t.string "obj_type"
+    t.bigint "obj_id"
     t.string "desc"
-    t.string "source_type"
-    t.bigint "source_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name", "source_type", "source_id"], name: "permission_unique_index", unique: true
-    t.index ["source_type", "source_id"], name: "index_permissions_on_source_type_and_source_id"
+    t.index ["pred", "obj_type", "obj_id"], name: "permission_unique_index", unique: true
+    # t.index ["obj_type", "obj_id"], name: "index_permissions_on_source_type_and_source_id"
   end
 end

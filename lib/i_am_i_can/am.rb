@@ -1,7 +1,6 @@
 module IAmICan
   module Am
     # TODO: cache
-    # TODO: default save
     def becomes_a *roles, save: true
       self.class.has_roles *roles, save: save unless ii_config.use_after_define
       failed_items = [ ]
@@ -14,7 +13,7 @@ module IAmICan
           local_roles << role unless role.in?(local_roles)
         end
       end
-      raise Error, "Done, but role #{failed_items} have not been defined" if failed_items.present?
+      raise Error, "Done, but #{failed_items} have not been defined" if failed_items.present?
       roles
     end
 

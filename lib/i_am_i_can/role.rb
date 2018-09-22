@@ -9,11 +9,11 @@ module IAmICan
           failed_items << name unless to_store_role(name, desc: description)
         else
           failed_items << name if local_roles.key?(name)
-          local_roles[name] ||= { desc: description } && name
+          local_roles[name] ||= { desc: description }
         end
       end
 
-      raise Error, "Done, but role name #{failed_items} have been used by other role or group" if failed_items.present?
+      raise Error, "Done, but name #{failed_items} have been used by other role or group" if failed_items.present?
       names
     end
 
@@ -87,19 +87,3 @@ module IAmICan
     Role.include self
   end
 end
-
-__END__
-
-=== ModelRole ===
-
-    t.string :name, null: false
-    t.string :desc
-
-    add_index :user_roles, :name, unique: true, using: :btree
-
-=== ModelRoleGroup ===
-
-    t.string  :name,    null: false, index: true
-    t.integer :members, array: true, default: [ ]
-
-    add_index :user_role_groups, :name, unique: true, using: :btree

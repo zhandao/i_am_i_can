@@ -7,7 +7,7 @@ RSpec.describe IAmICan::Am do
   let(:his) { subject }
 
   before do
-    they.has_role :admin, :master, :guest
+    they.has_role :admin, :master, :guest, :dev
   end
 
   describe '#becomes_a & #is_temporarily' do
@@ -15,12 +15,19 @@ RSpec.describe IAmICan::Am do
       before { he.becomes_a :admin }
       it { expect(:admin).to be_in(his.stored_role_names) }
       it { expect(:admin).not_to be_in(his.local_role_names) }
+
+      # TODO: is reasonable?
+      context 'and then assign the same role by using #is_temporarily' do
+        before { he.is_temporarily :admin }
+        it { expect(:admin).to be_in(his.stored_role_names) }
+        it { expect(:admin).to be_in(his.local_role_names) }
+      end
     end
 
     context 'when using #is_temporarily' do
-      before { he.is_temporarily :admin }
-      it { expect(:admin).to be_in(his.local_role_names) }
-      it { expect(:admin).not_to be_in(his.stored_role_names) }
+      before { he.is_temporarily :master }
+      it { expect(:master).to be_in(his.local_role_names) }
+      it { expect(:master).not_to be_in(his.stored_role_names) }
     end
 
     context 'when giving a role which is not defined' do
@@ -38,8 +45,8 @@ RSpec.describe IAmICan::Am do
     end
 
     context 'when giving multi roles' do
-      before { he.becomes_a :master, :guest }
-      it { expect(his.stored_role_names).to contain(%i[master guest]) }
+      before { he.becomes_a :dev, :guest }
+      it { expect(his.stored_role_names).to contain(%i[dev guest]) }
     end
 
     context 'when assigning the role which is assigned before' do

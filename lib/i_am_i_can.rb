@@ -32,18 +32,18 @@ module IAmICan
 
     role_model.extend IAmICan::Permission::Owner
     role_group_model.extend IAmICan::Permission::Owner
-    permission_model.include IAmICan::Permission
+    permission_model.extend IAmICan::Permission
     include IAmICan::Can
 
-    array_assoc_opts = {
+    opts = {
         attrs: { name: :to_sym },
         located_by: :name,
         cache_expires_in: options[:cache_expires_in] || 15.minutes
     }
-                self.has_an_array_of :roles, model: role_model.name, prefix: :stored, **array_assoc_opts
-    role_group_model.has_an_array_of :members, model: role_model.name, **array_assoc_opts
-          role_model.has_an_array_of :permissions, model: permission_model.name, **array_assoc_opts
-    role_group_model.has_an_array_of :permissions, model: permission_model.name, **array_assoc_opts
+                self.has_an_array_of :roles, model: role_model.name, prefix: :stored, **opts
+    role_group_model.has_an_array_of :members, model: role_model.name, **opts
+          role_model.has_an_array_of :permissions, model: permission_model.name, **opts.slice(:cache_expires_in)
+    role_group_model.has_an_array_of :permissions, model: permission_model.name, **opts.slice(:cache_expires_in)
   end
 
   class Error < StandardError;          end
