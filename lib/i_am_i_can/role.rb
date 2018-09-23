@@ -1,15 +1,17 @@
 module IAmICan
   module Role
-    def have_role *names, desc: nil, save: true, which_can: [ ]
-      failed_items = [ ]
+    def have_role *names, desc: nil, save: true, which_can: [ ], obj: nil
+      failed_items, preds = [ ], which_can
 
       names.each do |name|
         description = desc || name.to_s.humanize
         if save
-          failed_items << name unless _to_store_role(name, desc: description)
+          next failed_items << name unless _to_store_role(name, desc: description)
+          ii_config.role_model.which(name: name).can *which_can, obj: obj, auto_define_before: true, strict_mode: true if which_can.present?
         else
-          failed_items << name if local_roles.key?(name)
-          local_roles[name] ||= { desc: description }
+          next failed_items << name if local_roles.key?(name)
+          local_roles[name] ||= { desc: description, permissions: [ ] }
+          local_role_which(name: name, can: which_can, obj: obj, auto_define_before: true, strict_mode: true) if which_can.present?
         end
       end
 
@@ -20,24 +22,13 @@ module IAmICan
     alias has_role   have_role
     alias has_roles  have_role
 
-    def _to_store_role name, **options
-      return false if ii_config.role_model.exists?(name: name) || ii_config.role_group_model.exists?(name: name)
-      ii_config.role_model.create!(name: name, **options)
-    end
-
-    def _role_definition_result(names, failed_items)
-      fail_msg = "Done, but name #{failed_items} have been used by other role or group" if failed_items.present?
-      raise Error, fail_msg if ii_config.strict_mode && fail_msg
-      fail_msg ? fail_msg : 'Done'
-    end
-
     def declare_role *names, **options
       has_role *names, save: false, **options
     end
 
     alias declare_roles has_role
 
-    def group_roles *members, by_name:, which_can: [ ]
+    def group_roles *members, by_name:, which_can: [ ], obj: nil
       raise Error, 'Some of members have not been defined' unless (members - stored_role_names).empty?
       raise Error, "Given name #{by_name} has been used by a role" if ii_config.role_model.exists?(name: by_name)
       ii_config.role_group_model.find_or_create_by!(name: by_name).members_add(members)
@@ -53,6 +44,13 @@ module IAmICan
     end
 
     alias has_and_groups_roles have_and_group_roles
+
+    # permission assignment locally for local role
+    # User.local_role_which(name: :admin, can: :fly)
+    #   same effect to: UserRole.new(name: :admin).temporarily_can :fly
+    def local_role_which(name:, can:, obj: nil, **options)
+      ii_config.role_model.new(name: name).temporarily_can *Array(can), obj: obj, **options
+    end
   end
 
   # === End of MainMethods ===
@@ -71,7 +69,7 @@ module IAmICan
     end
 
     def roles
-      local_roles.merge(stored_roles)
+      local_roles.deep_merge(stored_roles)
     end
 
     def role_group_names
@@ -92,6 +90,18 @@ module IAmICan
     #     has_role  by_parent, options.merge!(children: children)
     #     has_roles children, options.merge!(parent: by_parent)
     #   end
+
+    def _to_store_role name, **options
+      return false if ii_config.role_model.exists?(name: name) || ii_config.role_group_model.exists?(name: name)
+      ii_config.role_model.create!(name: name, **options)
+    end
+
+    def _role_definition_result(names, failed_items)
+      prefix = 'Role Definition Done'
+      fail_msg = prefix + ", but name #{failed_items} have been used by other role or group" if failed_items.present?
+      raise Error, fail_msg if ii_config.strict_mode && fail_msg
+      fail_msg ? fail_msg : prefix
+    end
 
     Role.include self
   end

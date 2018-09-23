@@ -1,5 +1,6 @@
 require 'active_record'
 require 'active_support/core_ext/object/inclusion'
+require 'active_support/core_ext/hash/deep_merge'
 
 require 'i_am_i_can/version'
 require 'i_am_i_can/has_an_array_of'
@@ -16,11 +17,11 @@ module IAmICan
   def act_as_i_am_i_can role_model: "#{name}Role".constantize,
                         role_group_model: "#{name}RoleGroup".constantize,
                         permission_model: "#{name}Permission".constantize,
-                        use_after_define: true, strict_mode: false, **options
+                        auto_define_before: false, strict_mode: false, **options
     cattr_accessor :ii_config do
       IAmICan::Config.new(
           role_model: role_model, role_group_model: role_group_model, permission_model: permission_model,
-          use_after_define: use_after_define, strict_mode: strict_mode
+          auto_define_before: auto_define_before, strict_mode: strict_mode, model: self
       )
     end
     role_model.cattr_accessor(:config) { ii_config }

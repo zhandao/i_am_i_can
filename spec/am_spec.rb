@@ -35,13 +35,11 @@ RSpec.describe IAmICan::Am do
       it { expect{ he.becomes_a :someone_else }
                .to raise_error(IAmICan::Error).with_message(/have not been defined/)  }
 
-      context 'when setting use_after_define to false' do
-        before { people.ii_config.use_after_define = false }
+      context 'when setting auto_define_before to true' do
         it do
-          expect{ he.becomes_a :someone_else }.not_to raise_error
+          expect{ he.becomes_a :someone_else, auto_define_before: true }.not_to raise_error
           expect(:someone_else).to be_in(his.stored_role_names)
         end
-        after  { people.ii_config.use_after_define = true }
       end
     end
 
@@ -53,6 +51,17 @@ RSpec.describe IAmICan::Am do
     context 'when assigning the role which is assigned before' do
       before { he.becomes_a :admin, :admin }
       it { expect(his.stored_role_names).to eq [:admin] }
+    end
+
+    describe 'which_can' do
+      before { he.becomes_a :coder, which_can: %i[read write], obj: :code }
+      it do
+        expect(:coder).to be_in(people.stored_role_names)
+        expect(UserRole.stored_permission_names).to contain(%i[read_code write_code])
+        expect(UserRole.which(name: :coder).can? :read, obj: :code).to be_truthy
+        expect(he.is? :coder).to be_truthy
+        expect(he.can? :read, obj: :code).to be_truthy
+      end
     end
   end
 

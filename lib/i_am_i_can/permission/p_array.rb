@@ -4,6 +4,7 @@ module IAmICan
       attr_accessor :pms
 
       def matched?(pms_name)
+        return false if self.blank?
         self.pms = pms_name.to_sym
         found? || covered?
       end

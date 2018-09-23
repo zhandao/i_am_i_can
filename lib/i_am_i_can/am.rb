@@ -1,8 +1,9 @@
 module IAmICan
   module Am
     # TODO: cache
-    def becomes_a *roles, which_can: [], save: true
-      self.class.have_roles *roles, which_can: which_can, save: save unless ii_config.use_after_define
+    def becomes_a *roles, which_can: [ ], obj: nil, auto_define_before: false, save: true
+      should_define_role = which_can.present? || auto_define_before || ii_config.auto_define_before
+      self.class.have_roles *roles, which_can: which_can, obj: obj, save: save if should_define_role
       failed_items = [ ]
 
       roles.each do |role|
@@ -32,9 +33,10 @@ module IAmICan
     alias locally_is temporarily_is
 
     def _role_assignment_result(names, failed_items)
-      fail_msg = "Done, but #{failed_items} have not been defined" if failed_items.present?
+      prefix = 'Role Assignment Done'
+      fail_msg = prefix + ", but #{failed_items} have not been defined" if failed_items.present?
       raise Error, fail_msg if ii_config.strict_mode && fail_msg
-      fail_msg ? fail_msg : 'Done'
+      fail_msg ? fail_msg : prefix
     end
 
     def is? role
