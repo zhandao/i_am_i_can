@@ -16,11 +16,11 @@ module IAmICan
   def act_as_i_am_i_can role_model: "#{name}Role".constantize,
                         role_group_model: "#{name}RoleGroup".constantize,
                         permission_model: "#{name}Permission".constantize,
-                        use_after_define: true, **options
+                        use_after_define: true, strict_mode: false, **options
     cattr_accessor :ii_config do
       IAmICan::Config.new(
-          role_model: role_model, role_group_model: role_group_model,
-          permission_model: permission_model, use_after_define: use_after_define
+          role_model: role_model, role_group_model: role_group_model, permission_model: permission_model,
+          use_after_define: use_after_define, strict_mode: strict_mode
       )
     end
     role_model.cattr_accessor(:config) { ii_config }

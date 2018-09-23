@@ -24,7 +24,7 @@ he.in_role_group? :team # role group querying => true
 
 # Role - Permission
 People.have_role :coder           # role definition
-Role.have_permission :fly         # permission definition (this step can be skipped)
+Role.have_permission :fly         # permission definition (this step can also be skipped)
 Role.which(name: :coder).can :fly # permission assignment (by predicate)
 he.becomes_a :coder               # role assignment
 he.can? :fly                      # permission querying

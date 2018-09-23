@@ -2,7 +2,7 @@ module IAmICan
   module Am
     # TODO: cache
     def becomes_a *roles, which_can: [], save: true
-      self.class.has_roles *roles, save: save unless ii_config.use_after_define
+      self.class.have_roles *roles, which_can: which_can, save: save unless ii_config.use_after_define
       failed_items = [ ]
 
       roles.each do |role|
@@ -13,10 +13,11 @@ module IAmICan
           local_roles << role unless role.in?(local_roles)
         end
       end
-      raise Error, "Done, but #{failed_items} have not been defined" if failed_items.present?
-      roles
+
+      _role_assignment_result(roles, failed_items)
     end
 
+    alias is        becomes_a
     alias is_roles  becomes_a
     alias is_a_role becomes_a
     alias role_is   becomes_a
@@ -30,11 +31,18 @@ module IAmICan
 
     alias locally_is temporarily_is
 
+    def _role_assignment_result(names, failed_items)
+      fail_msg = "Done, but #{failed_items} have not been defined" if failed_items.present?
+      raise Error, fail_msg if ii_config.strict_mode && fail_msg
+      fail_msg ? fail_msg : 'Done'
+    end
+
     def is? role
       role.to_sym.in?(local_role_names) || role.to_sym.in?(stored_role_names)
     end
 
-    alias is_role? is?
+    alias is_role?  is?
+    alias has_role? is?
 
     def is_in_role_group? name
       group_members = self.class.members_of_role_group(name)

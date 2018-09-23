@@ -1,8 +1,11 @@
+require 'i_am_i_can/permission/helpers'
 require 'i_am_i_can/permission/p_array'
 
 module IAmICan
   module Permission
     module Owner
+      include Helpers::Cls
+
       def which(name:)
         find_by!(name: name)
       end
@@ -21,8 +24,7 @@ module IAmICan
           end
         end
 
-        raise Error, "Done, but #{failed_items} have been defined" if failed_items.present?
-        preds
+        _pms_definition_result(preds, obj, failed_items)
       end
 
       alias have_permissions have_permission
@@ -34,22 +36,6 @@ module IAmICan
       end
 
       alias declare_permissions declare_permission
-
-      def _to_store_permission(pred, obj, **options)
-        return false if config.permission_model.exists?(pred, obj)
-        config.permission_model.create!(pred: pred, **deconstruct_obj(obj), **options)
-      end
-
-      def pms_naming(pred, obj)
-        obj_type, obj_id = deconstruct_obj(obj).values
-        otp = "_#{obj_type}" if obj_type.present?
-        oid = "_#{obj_id}" if obj_id.present?
-        [pred, otp, oid].join.to_sym
-      end
-
-      def deconstruct_obj(obj)
-        config.permission_model.deconstruct_obj(obj)
-      end
 
       def local_permissions
         @local_permissions ||= { }
@@ -77,6 +63,8 @@ module IAmICan
     # === End of ClassMethods ===
 
     module Owner::InstanceMethods
+      include Helpers::Ins
+
       def can *preds, obj: nil, save: true
         self.class.have_permissions *preds, obj: obj, save: save unless config.use_after_define
         not_defined_items, covered_items = [ ], [ ]
@@ -93,8 +81,7 @@ module IAmICan
           end
         end
 
-        _wrong_assignment_tip(not_defined_items, covered_items)
-        preds
+        _pms_assignment_result(preds, obj, not_defined_items, covered_items)
       end
 
       alias has_permission can
@@ -104,12 +91,6 @@ module IAmICan
       end
 
       alias locally_can temporarily_can
-
-      def _wrong_assignment_tip(not_defined_items, covered_items)
-        msg1 = "#{not_defined_items} have not been defined" if not_defined_items.present?
-        msg2 = "#{covered_items} have been covered" if covered_items.present?
-        raise Error, 'Done, but ' + [msg1, msg2].compact.join(', ') if msg1 || msg2
-      end
 
       # `can? :manage, User` / `can? :manage, obj: User`
       def can? pred, obj0 = nil, obj: nil

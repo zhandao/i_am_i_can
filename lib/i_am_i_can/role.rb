@@ -1,6 +1,6 @@
 module IAmICan
   module Role
-    def have_role *names, desc: nil, save: true, which_can: []
+    def have_role *names, desc: nil, save: true, which_can: [ ]
       failed_items = [ ]
 
       names.each do |name|
@@ -13,8 +13,7 @@ module IAmICan
         end
       end
 
-      raise Error, "Done, but name #{failed_items} have been used by other role or group" if failed_items.present?
-      names
+      _role_definition_result(names, failed_items)
     end
 
     alias have_roles have_role
@@ -26,13 +25,19 @@ module IAmICan
       ii_config.role_model.create!(name: name, **options)
     end
 
+    def _role_definition_result(names, failed_items)
+      fail_msg = "Done, but name #{failed_items} have been used by other role or group" if failed_items.present?
+      raise Error, fail_msg if ii_config.strict_mode && fail_msg
+      fail_msg ? fail_msg : 'Done'
+    end
+
     def declare_role *names, **options
       has_role *names, save: false, **options
     end
 
     alias declare_roles has_role
 
-    def group_roles *members, by_name:
+    def group_roles *members, by_name:, which_can: [ ]
       raise Error, 'Some of members have not been defined' unless (members - stored_role_names).empty?
       raise Error, "Given name #{by_name} has been used by a role" if ii_config.role_model.exists?(name: by_name)
       ii_config.role_group_model.find_or_create_by!(name: by_name).members_add(members)

@@ -6,6 +6,7 @@ database_yml = File.expand_path('../../db/database.yml', __FILE__)
 ActiveRecord::Migration.verbose = false
 # ActiveRecord::Base.default_timezone = :utc
 ActiveRecord::Base.configurations = YAML.load_file(database_yml)
+# ActiveRecord::Base.logger = ActiveSupport::Logger.new(STDOUT)
 ActiveRecord::Base.logger = Logger.new(puts File.join(File.dirname(__FILE__), '../debug.log'))
 ActiveRecord::Base.logger.level = ENV['TRAVIS'] ? ::Logger::ERROR : ::Logger::DEBUG
 

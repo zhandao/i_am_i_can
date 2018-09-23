@@ -16,13 +16,17 @@ module IAmICan
       #
     end
 
-    def can_every?
+    def can_each?
       #
     end
 
-    def can_every!
+    alias can_every? can_each?
+
+    def can_each!
       #
     end
+
+    alias can_every! can_each!
   end
 
   # === End of MainMethods ===
