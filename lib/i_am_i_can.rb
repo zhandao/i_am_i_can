@@ -5,11 +5,13 @@ require 'active_support/core_ext/hash/deep_merge'
 require 'i_am_i_can/version'
 require 'i_am_i_can/has_an_array_of'
 require 'i_am_i_can/config'
-require 'i_am_i_can/role'
-require 'i_am_i_can/am'
-require 'i_am_i_can/permission/owner'
+require 'i_am_i_can/role/definition'
+require 'i_am_i_can/role/assignment'
 require 'i_am_i_can/permission'
-require 'i_am_i_can/can'
+require 'i_am_i_can/permission/definition'
+require 'i_am_i_can/permission/assignment'
+require 'i_am_i_can/subject/role_querying'
+require 'i_am_i_can/subject/permission_querying'
 
 module IAmICan
   include HasAnArrayOf
@@ -21,20 +23,22 @@ module IAmICan
     cattr_accessor :ii_config do
       IAmICan::Config.new(
           role_model: role_model, role_group_model: role_group_model, permission_model: permission_model,
-          auto_define_before: auto_define_before, strict_mode: strict_mode, model: self
+          auto_define_before: auto_define_before, strict_mode: strict_mode, subject_model: self
       )
     end
     role_model.cattr_accessor(:config) { ii_config }
     role_group_model.cattr_accessor(:config) { ii_config }
 
-    extend  IAmICan::Role
-    delegate :local_roles, :stored_roles, :roles, to: self, prefix: :model
-    include IAmICan::Am
+    extend  IAmICan::Role::Definition
+    include IAmICan::Role::Assignment
+    include IAmICan::Subject::RoleQuerying
 
-    role_model.extend IAmICan::Permission::Owner
-    role_group_model.extend IAmICan::Permission::Owner
-    permission_model.extend IAmICan::Permission
-    include IAmICan::Can
+    permission_model.extend  IAmICan::Permission
+          role_model.extend  IAmICan::Permission::Definition
+          role_model.include IAmICan::Permission::Assignment
+    role_group_model.extend  IAmICan::Permission::Definition
+    role_group_model.include IAmICan::Permission::Assignment
+                self.include IAmICan::Subject::PermissionQuerying
 
     opts = {
         attrs: { name: :to_sym },

@@ -1,4 +1,4 @@
-RSpec.describe IAmICan::Can do
+RSpec.describe IAmICan::Subject::PermissionQuerying do
   let(:people) { User }
   let(:people) { User }
   subject { User.create }

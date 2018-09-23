@@ -1,4 +1,4 @@
-RSpec.describe IAmICan::Role do
+RSpec.describe IAmICan::Role::Definition do
   subject { User }
   let(:people) { subject }
   let(:role_group_records) { UserRoleGroup }

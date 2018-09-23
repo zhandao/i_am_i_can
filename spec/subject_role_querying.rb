@@ -1,4 +1,4 @@
-RSpec.describe IAmICan::Am do
+RSpec.describe IAmICan::Subject::RoleQuerying do
   let(:people) { User }
   let(:people) { User }
   subject { User.create }

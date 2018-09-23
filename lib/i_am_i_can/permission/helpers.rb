@@ -26,7 +26,7 @@ module IAmICan
         end
 
         def pms_of_model_local_role(role_name)
-          config.model.local_roles[role_name.to_sym]&.[](:permissions) || []
+          config.subject_model.local_roles[role_name.to_sym]&.[](:permissions) || []
         end
       end
 

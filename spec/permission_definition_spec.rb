@@ -1,4 +1,4 @@
-RSpec.describe IAmICan::Permission::Owner do
+RSpec.describe IAmICan::Permission::Definition do
   subject { UserRole }
   let(:roles) { subject }
   let(:role) { roles.create(name: :admin) }
