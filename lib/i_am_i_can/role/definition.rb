@@ -1,6 +1,10 @@
+require 'i_am_i_can/role/helpers'
+
 module IAmICan
   module Role
     module Definition
+      include Helpers::Cls
+
       def have_role *names, desc: nil, save: true, which_can: [ ], obj: nil
         failed_items, preds = [ ], which_can
 
@@ -87,25 +91,6 @@ module IAmICan
 
       def members_of_role_group name
         ii_config.role_group_model.find_by!(name: name).member_names
-      end
-
-      #   # TODO: base_role => parent_role
-      #   # TODO: support multi-level tree
-      #   def org_roles *children, by_parent:, **options
-      #     has_role  by_parent, options.merge!(children: children)
-      #     has_roles children, options.merge!(parent: by_parent)
-      #   end
-
-      def _to_store_role name, **options
-        return false if ii_config.role_model.exists?(name: name) || ii_config.role_group_model.exists?(name: name)
-        ii_config.role_model.create!(name: name, **options)
-      end
-
-      def _role_definition_result(names, failed_items)
-        prefix = 'Role Definition Done'
-        fail_msg = prefix + ", but name #{failed_items} have been used by other role or group" if failed_items.present?
-        raise Error, fail_msg if ii_config.strict_mode && fail_msg
-        fail_msg ? fail_msg : prefix
       end
 
       Definition.include self

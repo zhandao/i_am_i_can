@@ -1,7 +1,10 @@
+require 'i_am_i_can/role/helpers'
+
 module IAmICan
   module Role
     module Assignment
-      # TODO: cache
+      include Helpers::Ins
+
       def becomes_a *roles, which_can: [ ], obj: nil, auto_define_before: false, save: true
         should_define_role = which_can.present? || auto_define_before || ii_config.auto_define_before
         self.class.have_roles *roles, which_can: which_can, obj: obj, save: save if should_define_role
@@ -32,13 +35,6 @@ module IAmICan
       end
 
       alias locally_is temporarily_is
-
-      def _role_assignment_result(names, failed_items)
-        prefix = 'Role Assignment Done'
-        fail_msg = prefix + ", but #{failed_items} have not been defined" if failed_items.present?
-        raise Error, fail_msg if ii_config.strict_mode && fail_msg
-        fail_msg ? fail_msg : prefix
-      end
 
       def local_roles
         @local_roles ||= [ ]

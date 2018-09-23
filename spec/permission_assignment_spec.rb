@@ -1,40 +1,9 @@
-RSpec.describe IAmICan::Permission::Definition do
+RSpec.describe IAmICan::Permission::Assignment do
   subject { UserRole }
   let(:roles) { subject }
   let(:role) { roles.create(name: :admin) }
   let(:permission_records) { UserPermission }
   let(:user) { User.create(id: 1) }
-
-  describe '.has_permission & .declare_permission' do
-    context '.has_permission (save by default)' do
-      before { roles.has_permission :manage, obj: User }
-      it { expect(:manage_User).to be_in roles.stored_permission_names }
-      it { expect(:manage_User).not_to be_in roles.local_permissions.keys }
-      it { expect(permission_records.last).to have_attributes(pred: 'manage', obj_type: 'User', obj_id: nil) }
-
-      context 'when giving multi preds' do
-        context 'without obj' do
-          before { roles.has_permissions :fly, :run, :jump }
-          it { expect(roles.stored_permission_names).to contain(%i[fly run jump])}
-          it { expect(permission_records.count).to eq(1+3) }
-        end
-
-        context 'with obj' do
-          before { roles.has_permissions *%i[read write copy remove], obj: File }
-          it { expect(roles.stored_permission_names).to contain(%i[read_File write_File copy_File remove_File])}
-          it { expect(permission_records.count).to eq(1+4) }
-        end
-      end
-    end
-
-    context '.declare_permission (not save)' do
-      before { roles.declare_permission :manage, obj: user }
-      it do
-        expect(:manage_User_1).not_to be_in roles.stored_permission_names
-        expect(:manage_User_1).to be_in roles.local_permissions.keys
-      end
-    end
-  end
 
   describe '#can (save case)' do
     before { roles.has_permission :manage, obj: User }
@@ -78,6 +47,38 @@ RSpec.describe IAmICan::Permission::Definition do
   end
 
   describe '#temporarily_can (not save)' do
-    # TODO: like above
+    # like above
+  end
+
+  describe 'role#can?' do
+    before { roles.has_permission :fly }
+    before { role.can :fly }
+    before { roles.has_permission :manage, obj: User }
+    before { role.can :manage, obj: User }
+
+    context 'when querying by correct pred' do
+      it { expect(role.can? :fly).to be_truthy }
+      it { expect(role.can? :manage, User).to be_truthy }
+
+      context 'when querying matched' do
+        it { expect(role.can? :fly, obj: :sky).to be_truthy }
+        it { expect(role.can? :manage, user).to be_truthy }
+        it { expect(role.can? :manage).to be_falsey }
+        it { expect(role.can? :manage, :someone_else).to be_falsey }
+
+        before { roles.has_permission :lead, obj: User.create(id: 2) }
+        before { role.can :lead, obj: User.find(2) }
+        it do
+          expect(role.can? :lead).to be_falsey
+          expect(role.can? :lead, User).to be_falsey
+          expect(role.can? :lead, User.find(2)).to be_truthy
+          expect(role.can? :lead, User.create(id: 3)).to be_falsey
+        end
+      end
+    end
+
+    context 'when querying by not defined perd' do
+      it { expect(role.can? :xpred).to be_falsey }
+    end
   end
 end
