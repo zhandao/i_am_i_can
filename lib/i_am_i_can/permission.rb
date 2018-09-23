@@ -1,5 +1,9 @@
 module IAmICan
   module Permission
+    def which(pred:, obj: nil)
+      find_by!(pred: pred, **deconstruct_obj(obj))
+    end
+
     def deconstruct_obj(obj)
       return { } unless obj
 

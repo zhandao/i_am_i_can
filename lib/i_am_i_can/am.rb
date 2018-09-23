@@ -71,6 +71,12 @@ module IAmICan
 
     alias is_role! is!
 
+    def is_one_of? *roles
+      roles.each { |role| return true if is? role } && false
+    end
+
+    alias is_one_of_roles? is_one_of?
+
     def is_every? *roles
       roles.each { |role| return false if isnt? role } && true
     end
@@ -82,6 +88,12 @@ module IAmICan
     end
 
     alias is_every_role_in! is_every!
+
+    def is_in_one_of? *group_names
+      group_names.each { |name| return true if is_in_role_group? name } && false
+    end
+
+    alias in_one_of? is_in_one_of?
 
     Am.include self
   end

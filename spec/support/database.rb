@@ -14,6 +14,7 @@ begin
   ActiveRecord::Base.establish_connection(adapter.to_sym)
   ActiveRecord::Base.connection
 rescue
+  # :nocov:
   case adapter
   when 'mysql'
     ActiveRecord::Base.establish_connection(config.merge('database' => nil))
@@ -24,6 +25,7 @@ rescue
   end
 
   ActiveRecord::Base.establish_connection(config)
+  # :nocov:
 end
 
 require File.dirname(__FILE__) + '/../db/schema.rb'

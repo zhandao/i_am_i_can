@@ -1,7 +1,7 @@
 module IAmICan
   module HasAnArrayOf
     def has_an_array_of obj, model: nil, field: nil,
-                        prefix: nil, attrs: [ ], located_by: nil, cache_expires_in: nil
+                        prefix: nil, attrs: [ ], located_by: nil, cache_expires_in: nil, for_related_name: nil
       obj_model = model.constantize || obj.to_s.singularize.camelize.constantize
       field = field || :"#{obj.to_s.singularize}_ids"
       prefix = "#{prefix}_" if prefix
@@ -41,6 +41,14 @@ module IAmICan
         define_method "#{prefix}#{obj.to_s.singularize}_#{attr_name.to_s.pluralize}" do
           res = send("#{prefix}#{obj}").pluck(attr_name)
           attr_type ? res.map(&attr_type) : res
+        end
+      end
+
+      # === actions for obj_model ===
+      obj_model.class_exec(for_related_name, self, field) do |related_name, related_model, related_field|
+        # role.related_users
+        define_method "related_#{(related_name || related_model.name).underscore.pluralize}" do
+          related_model.where("? = ANY (#{related_field})", self.id)
         end
       end
     end

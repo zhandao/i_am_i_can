@@ -14,7 +14,7 @@ module IAmICan
 
       def covered?
         pred, obj_type, obj_id = pms.to_s.split('_')
-        :"#{pred}_#{obj_type}".in? self
+        pred.to_sym.in?(self) || :"#{pred}_#{obj_type}".in?(self)
       end
     end
   end

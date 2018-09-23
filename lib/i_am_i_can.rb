@@ -41,10 +41,10 @@ module IAmICan
         prefix: :stored,
         cache_expires_in: options[:cache_expires_in] || 15.minutes
     }
-                self.has_an_array_of :roles, model: role_model.name, **opts
-    role_group_model.has_an_array_of :members, model: role_model.name, **opts.except(:prefix)
-          role_model.has_an_array_of :permissions, model: permission_model.name, **opts.except(:attrs, :located_by)
-    role_group_model.has_an_array_of :permissions, model: permission_model.name, **opts.except(:attrs, :located_by)
+                self.has_an_array_of :roles, model: role_model.name, for_related_name: 'user', **opts
+    role_group_model.has_an_array_of :members, model: role_model.name, for_related_name: 'user', **opts.except(:prefix)
+          role_model.has_an_array_of :permissions, model: permission_model.name, for_related_name: 'role', **opts.except(:attrs, :located_by)
+    role_group_model.has_an_array_of :permissions, model: permission_model.name, for_related_name: 'role_group', **opts.except(:attrs, :located_by)
   end
 
   class Error < StandardError;          end

@@ -115,9 +115,15 @@ module IAmICan
       def can? pred, obj0 = nil, obj: nil
         obj = obj0 || obj
         pms_name = pms_naming(pred, obj)
-        PArray.new(local_permission_names).matched?(pms_name) ||
-            PArray.new(stored_permission_names).matched?(pms_name)
+        temporarily_can?(pred, obj) || PArray.new(stored_permission_names).matched?(pms_name)
       end
+
+      def temporarily_can? pred, obj
+        pms_name = pms_naming(pred, obj)
+        PArray.new(local_permission_names).matched?(pms_name)
+      end
+
+      alias locally_can? temporarily_can?
 
       def local_permissions
         @local_permissions ||= [ ]
