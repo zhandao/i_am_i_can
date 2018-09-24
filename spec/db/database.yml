@@ -1,0 +1,11 @@
+postgresql:
+  adapter: postgresql
+  encoding: utf-8
+  # For details on connection pooling, see Rails configuration guide
+  # http://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: 50
+  host: localhost
+  port: 5432
+  username: postgres
+  password:
+  database: i_am_i_can

@@ -9,10 +9,10 @@ Gem::Specification.new do |spec|
   spec.authors       = ["zhandao"]
   spec.email         = ["x@skippingcat.com"]
 
-  spec.summary       = 'access control'
-  spec.description   = 'access control'
-  spec.homepage      = "https://skippingcat.com"
-  spec.license       = "MIT"
+  spec.summary       = 'Concise and Natural DSL for `Subject - Role(Role Group) - Permission` Management.'
+  spec.description   = 'Concise and Natural DSL for `Subject - Role(Role Group) - Permission` Management.'
+  spec.homepage      = 'https://github.com/zhandao/i_am_i_can'
+  spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
@@ -24,4 +24,12 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 1.16"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
+  spec.add_development_dependency 'rspec-rails'
+  spec.add_development_dependency 'database_cleaner'
+  spec.add_development_dependency 'pg'
+  spec.add_development_dependency 'simplecov'
+
+
+  spec.add_dependency 'activerecord'
+  spec.add_dependency 'activesupport'
 end
