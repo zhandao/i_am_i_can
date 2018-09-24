@@ -56,7 +56,7 @@ module IAmICan
       end
 
       def permissions_of_local_roles
-        local_roles.map { |local_role| local_role[:permissions] }.flatten.uniq
+        local_roles.map { |(name, info)| info[:permissions] }.flatten.uniq
       end
     end
   end

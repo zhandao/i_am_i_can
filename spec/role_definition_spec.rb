@@ -61,6 +61,10 @@ RSpec.describe IAmICan::Role::Definition do
       #
     end
 
+    context 'which_can' do
+      #
+    end
+
     describe '.members_of_role_group' do
       it { expect(people.members_of_role_group :vip).to eq(%i[vip1 vip2 vip3]) }
     end

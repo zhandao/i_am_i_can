@@ -30,8 +30,8 @@ module IAmICan
       alias has_roles becomes_a
       alias has_role  becomes_a
 
-      def temporarily_is *roles
-        becomes_a *roles, save: false
+      def temporarily_is *roles, **options
+        becomes_a *roles, save: false, **options
       end
 
       alias locally_is temporarily_is

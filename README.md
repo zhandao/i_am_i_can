@@ -4,11 +4,12 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/27b664da01b6cc7180e3/maintainability)](https://codeclimate.com/github/zhandao/i_am_i_can/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/27b664da01b6cc7180e3/test_coverage)](https://codeclimate.com/github/zhandao/i_am_i_can/test_coverage)
 
-Concise and Natural DSL for `ActiveModel - Role(Role Group) - Permission` Management.
+Concise and Natural DSL for `Subject - Role(Role Group) - Permission` Management.
 
 ```ruby
-# let:
+# our Subject is People, and subject is he:
 he = People.take
+# let: Roles means PeopleRole, Groups means PeopleRoleGroup
 
 # Role
 People.have_role :admin # role definition (this step can be skipped)
@@ -23,38 +24,64 @@ he.becomes_a :master    # role assignment
 he.in_role_group? :team # role group querying => true
 
 # Role - Permission
-People.have_role :coder           # role definition
-Role.have_permission :fly         # permission definition (this step can also be skipped)
-Role.which(name: :coder).can :fly # permission assignment (by predicate)
-he.becomes_a :coder               # role assignment
-he.can? :fly                      # permission querying
+People.have_role :coder            # role definition
+Roles.have_permission :fly         # permission definition (this step can also be skipped)
+Roles.which(name: :coder).can :fly # permission assignment (by predicate)
+he.becomes_a :coder                # role assignment
+he.can? :fly                       # permission querying
 
 # Role Group - Permission
-RoleGroup.have_permission :manage, obj: User        # permission definition (this step can be skipped)
-RoleGroup.which(name: :team).can :manage, obj: User # permission assignment (by predicate and object)
-he.is? :master                                      # yes
-he.can? :manage, User                               # permission querying
+Groups.have_permission :manage, obj: User        # permission definition (this step can be skipped)
+Groups.which(name: :team).can :manage, obj: User # permission assignment (by predicate and object)
+he.is? :master                                   # yes
+he.can? :manage, User                            # permission querying
+
+# more concise way: 
+#   1. define & assign the role to subject
+#   2. define & assign the permission to role
+he.becomes_a :magician, which_can: [:perform], obj: :magic
+he.is? :magician # => true
+Roles.which(name: :magician).can? :perform, :magic # => true
+he.can? :perform, :magic # => true
+
+# Cancel Assignment
+# TODO
 ```
 
-## Installation
+## Installation And Setup
 
-Add this line to your application's Gemfile:
+1. Add this line to your application's Gemfile and then `bundle`:
 
-```ruby
-gem 'i_am_i_can'
-```
+    ```ruby
+    gem 'i_am_i_can'
+    ```
+    
+2. Generate migrations and models by your subject name:
+    
+    ```bash
+    rails g i_am_i_can:setup --subject <name>
+    ```
+    
+    For example, if your subject name is `user`, it will generate
+    model `UserRole`, `UserRoleGroup` and `UserPermission`
+    
+3. enable it in your subject model, like:
 
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install i_am_i_can
+    ```ruby
+    class User
+      i_am_i_can
+    end
+    ```
+    
+    [here]() is some options you can pass to `i_am_i_can` declaration.
+    
+4. run `rails db:migrate`
+    
+That's all!
 
 ## Usage
 
-TODO: Write usage instructions here
+TODO
 
 ## Development
 
