@@ -7,6 +7,7 @@ module IAmICan
         # permission = ii_config.permission_model.which(pred: pred, obj: obj)
         # return true if is_one_of? *permission.related_roles.map(&:name)
         stored_roles.each { |role| return true if role.can? pred, obj }
+        # stored_roles.stored_permissions
         # is_in_one_of? *permission.related_role_groups.map(&:name)
         false
       end

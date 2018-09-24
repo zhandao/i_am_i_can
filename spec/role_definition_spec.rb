@@ -7,29 +7,29 @@ RSpec.describe IAmICan::Role::Definition do
     context 'when using .have_role  (save by default)' do
       before { people.have_role :admin }
       it do
-        expect(:admin).not_to be_in(people.local_roles.names)
-        expect(:admin).to be_in(people.stored_role_names)
+        expect(:admin).not_to be_in(people.defined_local_roles.names)
+        expect(:admin).to be_in(people.defined_stored_role_names)
       end
     end
 
     context 'when using .declare_role (not save)' do
       before { people.declare_role :admin }
       it do
-        expect(:admin).not_to be_in(people.stored_role_names)
-        expect(:admin).to be_in(people.local_roles.names)
+        expect(:admin).not_to be_in(people.defined_stored_role_names)
+        expect(:admin).to be_in(people.defined_local_roles.names)
       end
     end
 
     context 'when giving multi roles' do
       before { people.have_roles :master, :guest }
-      it { expect(people.stored_role_names).to contain(%i[master guest]) }
+      it { expect(people.defined_stored_role_names).to contain(%i[master guest]) }
     end
 
     context 'when defining the role which is defined before' do
       it 'saves the first one, and raise error in saving the last one' do
         expect{ people.have_roles :admin, :admin }
             .to raise_error(IAmICan::Error).with_message(/\[:admin\] have been used by other role or group/)
-        expect(people.stored_role_names.size).to eq 1
+        expect(people.defined_stored_role_names.size).to eq 1
       end
     end
   end

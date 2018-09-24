@@ -23,15 +23,15 @@ module IAmICan
       alias has_permission can
 
       def temporarily_can *preds, obj: nil, strict_mode: false, auto_define_before: false
-        raise Error, 'Permission Assignment: local role was not defined' unless config.subject_model.local_roles.key?(self.name.to_sym)
+        raise Error, 'Permission Assignment: local role was not defined' unless config.subject_model.defined_local_roles.key?(self.name.to_sym)
         self.class.have_permissions *preds, obj: obj, save: false if auto_define_before || config.auto_define_before
         not_defined_items, covered_items = [ ], [ ]
 
         preds.each do |pred|
           pms_name = pms_naming(pred, obj)
-          next not_defined_items << pms_name unless pms_name.in?(model_permissions.keys)
-          covered_items << pms_name if PArray.new(pms_of_model_local_role(self.name)).matched?(pms_name)
-          pms_of_model_local_role(self.name) << pms_name
+          next not_defined_items << pms_name unless pms_name.in?(defined_permissions.keys)
+          covered_items << pms_name if PArray.new(pms_of_defined_local_role(self.name)).matched?(pms_name)
+          pms_of_defined_local_role(self.name) << pms_name
         end
 
         _pms_assignment_result(preds, obj, not_defined_items, covered_items, strict_mode)
@@ -48,7 +48,7 @@ module IAmICan
 
       def temporarily_can? pred, obj
         pms_name = pms_naming(pred, obj)
-        PArray.new(pms_of_model_local_role(self.name)).matched?(pms_name)
+        PArray.new(pms_of_defined_local_role(self.name)).matched?(pms_name)
       end
 
       alias locally_can? temporarily_can?

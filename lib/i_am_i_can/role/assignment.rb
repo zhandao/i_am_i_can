@@ -14,7 +14,7 @@ module IAmICan
           if save
             failed_items << role unless stored_roles_add(role)
           else
-            next failed_items << role unless role.in?(model_roles.keys)
+            next failed_items << role unless role.in?(defined_roles.keys)
             local_roles << role unless role.in?(local_roles)
           end
         end

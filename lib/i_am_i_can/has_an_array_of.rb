@@ -6,7 +6,13 @@ module IAmICan
       field = field || :"#{obj.to_s.singularize}_ids"
       prefix = "#{prefix}_" if prefix
 
-      # stored_roles
+      # User.where(..).stored_roles
+      define_singleton_method "#{prefix}#{obj}" do
+        obj_ids = self.all.map(&field).flatten.uniq
+        obj_model.where(id: obj_ids)
+      end
+
+      # user.stored_roles
       define_method "#{prefix}#{obj}" do
         obj_model.where(id: send(field))
       end
@@ -37,7 +43,13 @@ module IAmICan
       end
 
       attrs.each do |(attr_name, attr_type)|
-        # stored_role_names
+        # User.where(..).stored_role_names
+        define_singleton_method "#{prefix}#{obj.to_s.singularize}_#{attr_name.to_s.pluralize}" do
+          res = send("#{prefix}#{obj}").pluck(attr_name)
+          attr_type ? res.map(&attr_type) : res
+        end
+
+        # user.stored_role_names
         define_method "#{prefix}#{obj.to_s.singularize}_#{attr_name.to_s.pluralize}" do
           res = send("#{prefix}#{obj}").pluck(attr_name)
           attr_type ? res.map(&attr_type) : res

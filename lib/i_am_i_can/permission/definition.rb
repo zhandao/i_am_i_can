@@ -19,8 +19,8 @@ module IAmICan
           if save
             failed_items << pms_name unless _to_store_permission(pred, obj, desc: description)
           else
-            failed_items << pms_name if pms_name.in?(local_permissions.keys)
-            local_permissions[pms_name] ||= { desc: description }
+            failed_items << pms_name if pms_name.in?(defined_local_permissions.keys)
+            defined_local_permissions[pms_name] ||= { desc: description }
           end
         end
 
@@ -37,25 +37,24 @@ module IAmICan
 
       alias declare_permissions declare_permission
 
-      def local_permissions
-        @local_permissions ||= { }
+      def defined_local_permissions
+        @defined_local_permissions ||= { }
       end
 
-      def stored_permission_names
+      def defined_stored_pms_names
         config.permission_model.all.map(&:name)
       end
 
-      def stored_permissions
+      def defined_stored_permissions
         config.permission_model.all.map { |pms| [ pms.name, pms.desc ] }.to_h
       end
 
-      def permissions
-        local_permissions.deep_merge(stored_permissions)
+      def defined_permissions
+        defined_local_permissions.deep_merge(defined_stored_permissions)
       end
 
       def self.extended(kls)
-        kls.delegate :pms_naming, :deconstruct_obj, :pms_of_model_local_role, to: kls
-        kls.delegate :permissions, to: kls, prefix: :model
+        kls.delegate :defined_permissions, :pms_naming, :deconstruct_obj, :pms_of_defined_local_role, to: kls
       end
     end
   end

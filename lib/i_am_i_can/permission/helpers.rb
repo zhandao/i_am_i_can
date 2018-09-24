@@ -25,8 +25,8 @@ module IAmICan
           config.permission_model.deconstruct_obj(obj)
         end
 
-        def pms_of_model_local_role(role_name)
-          config.subject_model.local_roles[role_name.to_sym]&.[](:permissions) || []
+        def pms_of_defined_local_role(role_name)
+          config.subject_model.defined_local_roles[role_name.to_sym]&.[](:permissions) || []
         end
       end
 

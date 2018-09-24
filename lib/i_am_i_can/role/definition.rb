@@ -14,8 +14,8 @@ module IAmICan
             next failed_items << name unless _to_store_role(name, desc: description)
             ii_config.role_model.which(name: name).can *which_can, obj: obj, auto_define_before: true, strict_mode: true if which_can.present?
           else
-            next failed_items << name if local_roles.key?(name)
-            local_roles[name] ||= { desc: description, permissions: [ ] }
+            next failed_items << name if defined_local_roles.key?(name)
+            defined_local_roles[name] ||= { desc: description, permissions: [ ] }
             local_role_which(name: name, can: which_can, obj: obj, auto_define_before: true, strict_mode: true) if which_can.present?
           end
         end
@@ -34,7 +34,7 @@ module IAmICan
       alias declare_roles has_role
 
       def group_roles *members, by_name:, which_can: [ ], obj: nil
-        raise Error, 'Some of members have not been defined' unless (members - stored_role_names).empty?
+        raise Error, 'Some of members have not been defined' unless (members - defined_stored_role_names).empty?
         raise Error, "Given name #{by_name} has been used by a role" if ii_config.role_model.exists?(name: by_name)
         ii_config.role_group_model.find_or_create_by!(name: by_name).members_add(members)
       end
@@ -58,27 +58,27 @@ module IAmICan
       end
 
       def self.extended(kls)
-        kls.delegate :local_roles, :stored_roles, :roles, to: kls, prefix: :model
+        kls.delegate :defined_local_roles, :defined_stored_roles, :defined_roles, to: kls
       end
     end
 
     # === End of MainMethods ===
 
     module Definition::SecondaryMethods
-      def local_roles
+      def defined_local_roles
         @local_roles ||= { }
       end
 
-      def stored_role_names
+      def defined_stored_role_names
         ii_config.role_model.pluck(:name).map(&:to_sym)
       end
 
-      def stored_roles
+      def defined_stored_roles
         ii_config.role_model.all.map { |role| [ role.name.to_sym, role.desc ] }.to_h
       end
 
-      def roles
-        local_roles.deep_merge(stored_roles)
+      def defined_roles
+        defined_local_roles.deep_merge(defined_stored_roles)
       end
 
       def role_group_names

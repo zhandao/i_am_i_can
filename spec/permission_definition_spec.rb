@@ -8,20 +8,20 @@ RSpec.describe IAmICan::Permission::Definition do
   describe '.has_permission & .declare_permission' do
     context '.has_permission (save by default)' do
       before { roles.has_permission :manage, obj: User }
-      it { expect(:manage_User).to be_in roles.stored_permission_names }
-      it { expect(:manage_User).not_to be_in roles.local_permissions.keys }
+      it { expect(:manage_User).to be_in roles.defined_stored_pms_names }
+      it { expect(:manage_User).not_to be_in roles.defined_local_permissions.keys }
       it { expect(permission_records.last).to have_attributes(pred: 'manage', obj_type: 'User', obj_id: nil) }
 
       context 'when giving multi preds' do
         context 'without obj' do
           before { roles.has_permissions :fly, :run, :jump }
-          it { expect(roles.stored_permission_names).to contain(%i[fly run jump])}
+          it { expect(roles.defined_stored_pms_names).to contain(%i[fly run jump])}
           it { expect(permission_records.count).to eq(1+3) }
         end
 
         context 'with obj' do
           before { roles.has_permissions *%i[read write copy remove], obj: File }
-          it { expect(roles.stored_permission_names).to contain(%i[read_File write_File copy_File remove_File])}
+          it { expect(roles.defined_stored_pms_names).to contain(%i[read_File write_File copy_File remove_File])}
           it { expect(permission_records.count).to eq(1+4) }
         end
       end
@@ -30,8 +30,8 @@ RSpec.describe IAmICan::Permission::Definition do
     context '.declare_permission (not save)' do
       before { roles.declare_permission :manage, obj: user }
       it do
-        expect(:manage_User_1).not_to be_in roles.stored_permission_names
-        expect(:manage_User_1).to be_in roles.local_permissions.keys
+        expect(:manage_User_1).not_to be_in roles.defined_stored_pms_names
+        expect(:manage_User_1).to be_in roles.defined_local_permissions.keys
       end
     end
   end
