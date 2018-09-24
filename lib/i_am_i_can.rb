@@ -18,12 +18,13 @@ module IAmICan
 
   def act_as_i_am_i_can role_model: "#{name}Role".constantize,
                         role_group_model: "#{name}RoleGroup".constantize,
-                        permission_model: "#{name}Permission".constantize,
-                        auto_define_before: false, strict_mode: false, **options
+                        permission_model: "#{name}Permission".constantize, **options
     cattr_accessor :ii_config do
       IAmICan::Config.new(
-          role_model: role_model, role_group_model: role_group_model, permission_model: permission_model,
-          auto_define_before: auto_define_before, strict_mode: strict_mode, subject_model: self
+          role_model: role_model,
+          role_group_model: role_group_model,
+          permission_model: permission_model,
+          subject_model: self, **options
       )
     end
     role_model.cattr_accessor(:config) { ii_config }
@@ -46,8 +47,8 @@ module IAmICan
         prefix: :stored,
         cache_expires_in: options[:cache_expires_in] || 15.minutes
     }
-                self.has_an_array_of :roles, model: role_model.name, for_related_name: 'user', **opts
-    role_group_model.has_an_array_of :members, model: role_model.name, for_related_name: 'user', **opts.except(:prefix)
+                self.has_an_array_of :roles, model: role_model.name, for_related_name: name.underscore, **opts
+    role_group_model.has_an_array_of :members, model: role_model.name, for_related_name: 'role_group', **opts.except(:prefix)
           role_model.has_an_array_of :permissions, model: permission_model.name, for_related_name: 'role', **opts.except(:attrs, :located_by)
     role_group_model.has_an_array_of :permissions, model: permission_model.name, for_related_name: 'role_group', **opts.except(:attrs, :located_by)
   end

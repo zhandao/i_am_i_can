@@ -1,5 +1,4 @@
 require 'i_am_i_can/permission/helpers'
-require 'i_am_i_can/permission/p_array'
 
 module IAmICan
   module Permission
@@ -13,7 +12,7 @@ module IAmICan
 
         preds.each do |pred|
           pms_name = pms_naming(pred, obj)
-          covered_items << pms_name if PArray.new(stored_permission_names).matched?(pms_name)
+          covered_items << pms_name if pms_matched?(pms_name, in: stored_permission_names)
           not_defined_items << pms_name unless stored_permissions_add(pred: pred, **deconstruct_obj(obj))
         end
 
@@ -30,7 +29,7 @@ module IAmICan
         preds.each do |pred|
           pms_name = pms_naming(pred, obj)
           next not_defined_items << pms_name unless pms_name.in?(defined_permissions.keys)
-          covered_items << pms_name if PArray.new(pms_of_defined_local_role(self.name)).matched?(pms_name)
+          covered_items << pms_name if pms_matched?(pms_name, in: pms_of_defined_local_role(self.name))
           pms_of_defined_local_role(self.name) << pms_name
         end
 
@@ -43,12 +42,12 @@ module IAmICan
       def can? pred, obj0 = nil, obj: nil
         obj = obj0 || obj
         pms_name = pms_naming(pred, obj)
-        temporarily_can?(pred, obj) || PArray.new(stored_permission_names).matched?(pms_name)
+        temporarily_can?(pred, obj) || pms_matched?(pms_name, in: stored_permission_names)
       end
 
       def temporarily_can? pred, obj
         pms_name = pms_naming(pred, obj)
-        PArray.new(pms_of_defined_local_role(self.name)).matched?(pms_name)
+        pms_matched?(pms_name, in: pms_of_defined_local_role(self.name))
       end
 
       alias locally_can? temporarily_can?

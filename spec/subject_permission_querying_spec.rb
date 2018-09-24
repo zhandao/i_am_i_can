@@ -8,10 +8,15 @@ RSpec.describe IAmICan::Subject::PermissionQuerying do
     he.becomes_a :coder, which_can: :fly
     he.becomes_a :admin, which_can: :manage, obj: User
     UserRole.have_permissions :sing
+    # pp '====================='
   end
 
   describe '#can? & #can!' do
-    context 'stored case' do
+    context 'temporarily_can?' do
+      #
+    end
+
+    context 'stored_can?' do
       it { expect(he.can? :sing).to be_falsey }
       it { expect(he.can? :fly).to be_truthy }
       it { expect(he.can? :fly, :everywhere).to be_truthy }
@@ -19,6 +24,10 @@ RSpec.describe IAmICan::Subject::PermissionQuerying do
       it { expect(he.can? :manage, he).to be_truthy }
       it { expect(he.can? :manage).to be_falsey }
       it { expect(he.can? :manage, :everyone).to be_falsey }
+    end
+
+    context 'group_can?' do
+      #
     end
   end
 

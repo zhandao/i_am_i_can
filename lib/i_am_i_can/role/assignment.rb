@@ -15,7 +15,7 @@ module IAmICan
             failed_items << role unless stored_roles_add(role)
           else
             next failed_items << role unless role.in?(defined_roles.keys)
-            local_roles << role unless role.in?(local_roles)
+            local_role_names << role unless role.in?(local_role_names)
           end
         end
 
@@ -36,14 +36,16 @@ module IAmICan
 
       alias locally_is temporarily_is
 
-      def local_roles
-        @local_roles ||= [ ]
+      def local_role_names
+        @local_role_names ||= [ ]
       end
 
-      alias local_role_names local_roles
+      def local_roles
+        defined_local_roles.slice(*local_role_names)
+      end
 
       def roles
-        local_roles + stored_role_names
+        local_role_names + stored_role_names
       end
 
       alias role_names roles

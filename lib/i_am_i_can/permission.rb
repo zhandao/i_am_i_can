@@ -1,7 +1,20 @@
+require 'i_am_i_can/permission/p_array'
+
 module IAmICan
   module Permission
+    def matched?(pms_name = nil, pred: nil, obj: nil, **options)
+      PArray.new(options[:in]).matched?(pms_name || naming(pred, obj))
+    end
+
     def which(pred:, obj: nil)
       find_by!(pred: pred, **deconstruct_obj(obj))
+    end
+
+    def naming(pred, obj)
+      obj_type, obj_id = deconstruct_obj(obj).values
+      otp = "_#{obj_type}" if obj_type.present?
+      oid = "_#{obj_id}" if obj_id.present?
+      [pred, otp, oid].join.to_sym
     end
 
     def deconstruct_obj(obj)

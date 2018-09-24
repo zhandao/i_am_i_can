@@ -56,11 +56,16 @@ module IAmICan
         end
       end
 
-      # === actions for obj_model ===
-      obj_model.class_exec(for_related_name, self, field) do |related_name, related_model, related_field|
+      # === actions for object model ===
+      obj_model.class_exec(for_related_name, self, field) do |subject_name, subject_model, related_field|
+        # roles.related_users
+        define_singleton_method "related_#{(subject_name || subject_model.name).underscore.pluralize}" do
+          subject_model.where("#{related_field} @> ARRAY[?]::integer[]", ids)
+        end
+
         # role.related_users
-        define_method "related_#{(related_name || related_model.name).underscore.pluralize}" do
-          related_model.where("? = ANY (#{related_field})", self.id)
+        define_method "related_#{(subject_name || subject_model.name).underscore.pluralize}" do
+          subject_model.where("? = ANY (#{related_field})", self.id)
         end
       end
     end

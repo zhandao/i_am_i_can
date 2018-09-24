@@ -12,11 +12,11 @@ module IAmICan
           description = desc || name.to_s.humanize
           if save
             next failed_items << name unless _to_store_role(name, desc: description)
-            ii_config.role_model.which(name: name).can *which_can, obj: obj, auto_define_before: true, strict_mode: true if which_can.present?
+            ii_config.role_model.which(name: name).can *preds, obj: obj, auto_define_before: true, strict_mode: true if which_can.present?
           else
             next failed_items << name if defined_local_roles.key?(name)
             defined_local_roles[name] ||= { desc: description, permissions: [ ] }
-            local_role_which(name: name, can: which_can, obj: obj, auto_define_before: true, strict_mode: true) if which_can.present?
+            local_role_which(name: name, can: preds, obj: obj, auto_define_before: true, strict_mode: true) if which_can.present?
           end
         end
 
@@ -81,11 +81,12 @@ module IAmICan
         defined_local_roles.deep_merge(defined_stored_roles)
       end
 
-      def role_group_names
+      def defined_role_group_names
         ii_config.role_group_model.pluck(:name).map(&:to_sym)
 
       end
-      def role_groups
+
+      def defined_role_groups
         ii_config.role_group_model.all.map { |group| [ group.name.to_sym, group.member_names.map(&:to_sym) ] }.to_h
       end
 

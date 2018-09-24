@@ -15,10 +15,7 @@ module IAmICan
         end
 
         def pms_naming(pred, obj)
-          obj_type, obj_id = deconstruct_obj(obj).values
-          otp = "_#{obj_type}" if obj_type.present?
-          oid = "_#{obj_id}" if obj_id.present?
-          [pred, otp, oid].join.to_sym
+          config.permission_model.naming(pred, obj)
         end
 
         def deconstruct_obj(obj)
@@ -38,6 +35,10 @@ module IAmICan
           fail_msg = prefix + ', but ' + [msg1, msg2].compact.join(', ') if msg1 || msg2
           raise Error, fail_msg if (strict_mode || config.strict_mode) && fail_msg
           fail_msg ? fail_msg : prefix
+        end
+
+        def pms_matched?(pms_name, plist)
+          config.permission_model.matched?(pms_name, in: plist[:in])
         end
       end
     end

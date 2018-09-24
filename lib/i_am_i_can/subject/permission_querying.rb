@@ -1,15 +1,11 @@
 module IAmICan
   module Subject
     module PermissionQuerying
-      def can? pred, obj0 = nil, obj: nil
+      def can? pred, obj0 = nil, obj: nil, without_group: false
         obj = obj0 || obj
         return true if temporarily_can?(pred, obj)
-        # permission = ii_config.permission_model.which(pred: pred, obj: obj)
-        # return true if is_one_of? *permission.related_roles.map(&:name)
-        stored_roles.each { |role| return true if role.can? pred, obj }
-        # stored_roles.stored_permissions
-        # is_in_one_of? *permission.related_role_groups.map(&:name)
-        false
+        return true if stored_can?(pred, obj)
+        group_can?(pred, obj, without_group)
       end
 
       def cannot? pred, obj0 = nil, obj: nil
@@ -37,11 +33,31 @@ module IAmICan
       end
 
       def temporarily_can? pred, obj
-        # TODO: local_stores
-        stored_roles.each { |role| return true if role.temporarily_can? pred, obj } && false
+        ii_config.permission_model.matched?(pred: pred, obj: obj, in: permissions_of_local_roles)
       end
 
       alias locally_can? temporarily_can?
+
+      def stored_can? pred, obj
+        ii_config.permission_model.matched?(pred: pred, obj: obj, in: permissions_of_stored_roles)
+      end
+
+      def group_can? pred, obj, without_group = false
+        return false if without_group || ii_config.without_group
+        ii_config.permission_model.matched?(pred: pred, obj: obj, in: permissions_of_role_groups)
+      end
+
+      def permissions_of_stored_roles
+        stored_roles.stored_permissions.map(&:name)
+      end
+
+      def permissions_of_role_groups
+        stored_roles.related_role_groups.stored_permissions.map(&:name)
+      end
+
+      def permissions_of_local_roles
+        local_roles.map { |local_role| local_role[:permissions] }.flatten.uniq
+      end
     end
   end
 end

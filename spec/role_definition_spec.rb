@@ -36,13 +36,13 @@ RSpec.describe IAmICan::Role::Definition do
 
   describe '.group_roles' do
     before { people.have_and_group_roles :vip1, :vip2, :vip3, by_name: :vip }
-    it { expect(people.role_groups).to include(vip: %i[vip1 vip2 vip3]) }
+    it { expect(people.defined_role_groups).to include(vip: %i[vip1 vip2 vip3]) }
     it { expect(role_group_records.last.name).to eq 'vip' }
     it { expect(role_group_records.last.member_ids).to have_size 3 }
 
     context 'when multi-calling by the same group name' do
       before { people.have_and_group_roles :vip4, by_name: :vip }
-      it { expect(people.role_groups).to include(vip: %i[vip1 vip2 vip3 vip4]) }
+      it { expect(people.defined_role_groups).to include(vip: %i[vip1 vip2 vip3 vip4]) }
       it 'pushes the NEW members into the list' do
         expect(role_group_records.last.member_ids).to have_size(4)
       end
