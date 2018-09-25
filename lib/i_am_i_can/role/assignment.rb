@@ -5,8 +5,8 @@ module IAmICan
     module Assignment
       include Helpers::Ins
 
-      def becomes_a *roles, which_can: [ ], obj: nil, auto_define_before: false, save: true
-        should_define_role = which_can.present? || auto_define_before || ii_config.auto_define_before
+      def becomes_a *roles, which_can: [ ], obj: nil, auto_define_before: ii_config.auto_define_before, save: ii_config.default_save
+        should_define_role = which_can.present? || auto_define_before
         self.class.have_roles *roles, which_can: which_can, obj: obj, save: save if should_define_role
         failed_items = [ ]
 
@@ -33,6 +33,13 @@ module IAmICan
       def temporarily_is *roles, **options
         becomes_a *roles, save: false, **options
       end
+
+      def is_not_a *roles, save: ii_config.default_save
+        #
+      end
+
+      alias has_not_role  is_not_a
+      alias has_not_roles is_not_a
 
       alias locally_is temporarily_is
 

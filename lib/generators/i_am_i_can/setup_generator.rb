@@ -7,8 +7,11 @@ module IAmICan
 
       def questions
         @options = { }
-        if yes?('Do you want to use role group?')
-          @options[:without_group] = false
+        unless yes?('Do you want to use role group?')
+          @options[:without_group] = true
+        end
+        unless yes?('Do yo want it to save role and permission to database?')
+          @options[:default_save] = false
         end
         if yes?('Do you want it to raise error when yu are doing wrong definition or assignment?')
           @options[:strict_mode] = true

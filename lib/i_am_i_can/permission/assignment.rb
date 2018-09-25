@@ -6,8 +6,8 @@ module IAmICan
       include Helpers::Ins
 
       # permission assignment for stored role
-      def can *preds, obj: nil, strict_mode: false, auto_define_before: false
-        self.class.have_permissions *preds, obj: obj if auto_define_before || config.auto_define_before
+      def can *preds, obj: nil, strict_mode: false, auto_define_before: config.auto_define_before
+        self.class.have_permissions *preds, obj: obj if auto_define_before
         not_defined_items, covered_items = [ ], [ ]
 
         preds.each do |pred|
@@ -21,9 +21,9 @@ module IAmICan
 
       alias has_permission can
 
-      def temporarily_can *preds, obj: nil, strict_mode: false, auto_define_before: false
+      def temporarily_can *preds, obj: nil, strict_mode: false, auto_define_before: config.auto_define_before
         raise Error, 'Permission Assignment: local role was not defined' unless config.subject_model.defined_local_roles.key?(self.name.to_sym)
-        self.class.have_permissions *preds, obj: obj, save: false if auto_define_before || config.auto_define_before
+        self.class.have_permissions *preds, obj: obj, save: false if auto_define_before
         not_defined_items, covered_items = [ ], [ ]
 
         preds.each do |pred|

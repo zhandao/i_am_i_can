@@ -5,7 +5,7 @@ module IAmICan
     module Definition
       include Helpers::Cls
 
-      def have_role *names, desc: nil, save: true, which_can: [ ], obj: nil
+      def have_role *names, desc: nil, save: ii_config.default_save, which_can: [ ], obj: nil
         failed_items, preds = [ ], which_can
 
         names.each do |name|

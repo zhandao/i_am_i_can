@@ -10,7 +10,7 @@ module IAmICan
         find_by!(name: name)
       end
 
-      def have_permission *preds, obj: nil, desc: nil, save: true
+      def have_permission *preds, obj: nil, desc: nil, save: config.default_save
         failed_items = [ ]
 
         preds.each do |pred|
