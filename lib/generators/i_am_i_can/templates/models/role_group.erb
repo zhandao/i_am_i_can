@@ -3,9 +3,9 @@ end
 
 __END__
 
-  string :name,           null: false
-  string :member_ids,     array: true, default: [ ]
-  string :permission_ids, array: true, default: [ ]
-  string :desc
+  string  :name,           null: false
+  integer :member_ids,     array: true, default: [ ]
+  integer :permission_ids, array: true, default: [ ]
+  string  :desc
 
   index :name, unique: true, name: 'role_group_unique_index'

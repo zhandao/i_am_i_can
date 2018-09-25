@@ -4,6 +4,7 @@ PATH
     i_am_i_can (2.0.0)
       activerecord
       activesupport
+      railties
 
 GEM
   remote: https://rubygems.org/

@@ -65,7 +65,9 @@ he.can? :perform, :magic # => true
     For example, if your subject name is `user`, it will generate
     model `UserRole`, `UserRoleGroup` and `UserPermission`
     
-3. enable it in your subject model, like:
+3. run `rails db:migrate`
+
+4. enable it in your subject model, like:
 
     ```ruby
     class User
@@ -74,8 +76,6 @@ he.can? :perform, :magic # => true
     ```
     
     [here]() is some options you can pass to `i_am_i_can` declaration.
-    
-4. run `rails db:migrate`
     
 That's all!
 
