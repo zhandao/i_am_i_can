@@ -59,7 +59,7 @@ he.can? :perform, :magic # => true
 2. Generate migrations and models by your subject name:
     
     ```bash
-    rails g i_am_i_can:setup --subject <name>
+    rails g i_am_i_can:setup <subject_name>
     ```
     
     For example, if your subject name is `user`, it will generate
@@ -69,7 +69,7 @@ he.can? :perform, :magic # => true
 
     ```ruby
     class User
-      i_am_i_can
+      act_as_i_am_i_can
     end
     ```
     

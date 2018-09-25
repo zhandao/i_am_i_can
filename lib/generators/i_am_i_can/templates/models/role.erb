@@ -1,0 +1,10 @@
+class <%= name.camelize %>Role < ActiveRecord::Base
+end
+
+__END__
+
+  string :name,           null: false
+  string :permission_ids, array: true, default: [ ]
+  string :desc
+
+  index :name, unique: true, name: 'role_unique_index'

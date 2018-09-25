@@ -30,7 +30,7 @@ ActiveRecord::Schema.define do
   create_table "user_permissions", force: :cascade do |t|
     t.string "pred", null: false
     t.string "obj_type"
-    t.bigint "obj_id"
+    t.integer "obj_id"
     t.string "desc"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

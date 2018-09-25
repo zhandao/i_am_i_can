@@ -1,0 +1,15 @@
+class IAmICanCreate<%= "#{name.underscore}_permissions".camelize %> < ActiveRecord::Migration::Current
+  def change
+    create_table :"#{name.underscore}_permissions", force: :cascade do |t|
+      t.string  :pred,     null: false
+      t.string  :obj_type
+      t.integer :obj_id
+      t.string  :desc
+
+      t.timestamps
+    end
+
+    add_index :"#{name.underscore}_permissions", %i[pred obj_type obj_id],
+                unique: true, name: 'permission_unique_index', using: :btree
+  end
+end

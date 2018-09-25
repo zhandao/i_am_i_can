@@ -1,0 +1,11 @@
+class <%= name.camelize %>Permission < ActiveRecord::Base
+end
+
+__END__
+
+  string  :pred,     null: false
+  string  :obj_type
+  integer :obj_id
+  string  :desc
+
+  index %i[pred obj_type obj_id], unique: true, name: 'permission_unique_index'

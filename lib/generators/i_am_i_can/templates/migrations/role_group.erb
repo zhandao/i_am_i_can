@@ -1,0 +1,14 @@
+class IAmICanCreate<%= "#{name.underscore}_role_groups".camelize %> < ActiveRecord::Migration::Current
+  def change
+    create_table :"#{name.underscore}_role_groups", force: :cascade do |t|
+      t.string :name,           null: false
+      t.string :member_ids,     array: true, default: [ ]
+      t.string :permission_ids, array: true, default: [ ]
+      t.string :desc
+
+      t.timestamps
+    end
+
+    add_index :"#{name.underscore}_role_groups", :name, unique: true, name: 'role_group_unique_index', using: :btree
+  end
+end
