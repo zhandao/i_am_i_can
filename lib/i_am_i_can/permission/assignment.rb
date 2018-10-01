@@ -22,7 +22,7 @@ module IAmICan
       alias has_permission can
 
       def temporarily_can *preds, obj: nil, strict_mode: false, auto_define_before: config.auto_define_before
-        raise Error, 'Permission Assignment: local role was not defined' unless config.subject_model.defined_local_roles.key?(self.name.to_sym)
+        raise Error, "Permission Assignment: local role `#{name}` was not defined" unless config.subject_model.defined_local_roles.key?(self.name.to_sym)
         self.class.have_permissions *preds, obj: obj, save: false if auto_define_before
         not_defined_items, covered_items = [ ], [ ]
 
@@ -37,6 +37,25 @@ module IAmICan
       end
 
       alias locally_can temporarily_can
+
+      def cannot *preds, obj: nil, saved: true
+        not_defined_items = [ ]
+
+        preds.each do |pred|
+          pms_name = pms_naming(pred, obj)
+          if saved
+            next if stored_permissions_rmv(pred: pred, **deconstruct_obj(obj))
+            not_defined_items << pms_name
+          else
+            next not_defined_items << pms_name unless pms_name.in?(defined_permissions.keys)
+            pms_of_defined_local_role(self.name).delete(pms_name)
+          end
+        end
+
+        _pms_assignment_result(preds, obj, not_defined_items)
+      end
+
+      alias is_not_allowed_to cannot
 
       # `can? :manage, User` / `can? :manage, obj: User`
       def can? pred, obj0 = nil, obj: nil

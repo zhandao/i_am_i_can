@@ -64,4 +64,30 @@ RSpec.describe IAmICan::Role::Assignment do
       end
     end
   end
+
+  describe '#falls_from' do
+    context 'when saving' do
+      before { he.becomes_a :admin }
+      it do
+        expect(he.is? :admin).to be_truthy
+        expect{ he.falls_from :admin }.not_to raise_error
+        expect(he.is? :admin).to be_falsey
+      end
+
+      it { expect{ he.falls_from :someone_else }
+               .to raise_error(IAmICan::Error).with_message(/have not been defined/)  }
+    end
+
+    context 'when local' do
+      before { he.temporarily_is :admin }
+      it do
+        expect(he.is? :admin).to be_truthy
+        expect{ he.falls_from :admin, saved: false }.not_to raise_error
+        expect(he.is? :admin).to be_falsey
+      end
+
+      it { expect{ he.falls_from :someone_else, saved: false }
+               .to raise_error(IAmICan::Error).with_message(/have not been defined/)  }
+    end
+  end
 end

@@ -28,7 +28,7 @@ module IAmICan
       end
 
       module Ins
-        def _pms_assignment_result(preds, obj, not_defined_items, covered_items, strict_mode)
+        def _pms_assignment_result(preds, obj, not_defined_items, covered_items = nil, strict_mode = false)
           prefix = 'Permission Assignment Done'
           msg1 = "#{not_defined_items} have not been defined" if not_defined_items.present?
           msg2 = "#{covered_items} have been covered" if covered_items.present?

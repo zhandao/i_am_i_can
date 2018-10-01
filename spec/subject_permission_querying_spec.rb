@@ -44,8 +44,31 @@ RSpec.describe IAmICan::Subject::PermissionQuerying do
       it { expect(he.can? :manage).to be_falsey }
       it { expect(he.can? :manage, :something_else).to be_falsey }
     end
+
+    describe '#can!' do
+      before { he.becomes_a :coder, which_can: :fly }
+
+      it { expect(he.can! :fly).to be_truthy }
+      it { expect{ he.can! :jump }.to raise_error(IAmICan::InsufficientPermission) }
+    end
   end
 
   describe '#can_each? & #can_each!' do
+    before { he.becomes_a :coder, which_can: %i[read write], obj: :code }
+
+    it { expect(he.can_each? [:read, :write], :code).to be_truthy }
+    it { expect(he.can_each? [:read, :delete], :code).to be_falsey }
+    it { expect(he.can_each! [:read, :write], :code).to be_truthy }
+    it { expect{ he.can_each! [:read, :delete], :code }.to raise_error(IAmICan::InsufficientPermission) }
+  end
+
+  describe '#can_one_of? & #can_one_of!' do
+    before { he.becomes_a :coder, which_can: %i[read write], obj: :code }
+
+    it { expect(he.can_one_of? [:read, :write], :code).to be_truthy }
+    it { expect(he.can_one_of? [:read, :delete], :code).to be_truthy }
+    it { expect(he.can_one_of? [:clear, :delete], :code).to be_falsey }
+    it { expect(he.can_one_of! [:read, :delete], :code).to be_truthy }
+    it { expect{ he.can_one_of! [:clear, :delete], :code }.to raise_error(IAmICan::InsufficientPermission) }
   end
 end
