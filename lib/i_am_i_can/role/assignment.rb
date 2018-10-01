@@ -23,16 +23,18 @@ module IAmICan
       end
 
       alias is        becomes_a
-      alias is_roles  becomes_a
       alias is_a_role becomes_a
+      alias is_roles  becomes_a
+      alias has_role  becomes_a
+      alias has_roles becomes_a
       alias role_is   becomes_a
       alias roles_are becomes_a
-      alias has_roles becomes_a
-      alias has_role  becomes_a
 
       def temporarily_is *roles, **options
         becomes_a *roles, save: false, **options
       end
+
+      alias locally_is temporarily_is
 
       def falls_from *roles, saved: ii_config.default_save
         failed_items = [ ]
@@ -55,8 +57,6 @@ module IAmICan
       alias leaves        falls_from
       alias has_not_role  falls_from
       alias has_not_roles falls_from
-
-      alias locally_is temporarily_is
 
       def local_role_names
         @local_role_names ||= [ ]

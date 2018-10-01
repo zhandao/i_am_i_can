@@ -1,19 +1,15 @@
 module IAmICan
   module Subject
     module RoleQuerying
-      def is? role
+
+      # === Role Querying ===
+
+    def is? role
         role.to_sym.in?(local_role_names) || role.to_sym.in?(stored_role_names)
       end
 
       alias is_role?  is?
       alias has_role? is?
-
-      def is_in_role_group? name
-        group_members = self.class.members_of_role_group(name)
-        (roles & group_members).present?
-      end
-
-      alias in_role_group? is_in_role_group?
 
       def isnt? role
         !is? role
@@ -24,13 +20,20 @@ module IAmICan
         true
       end
 
-      alias is_role! is!
+      alias is_role!  is!
+      alias has_role! is!
 
       def is_one_of? *roles
         roles.each { |role| return true if is? role } && false
       end
 
       alias is_one_of_roles? is_one_of?
+
+      def is_one_of! *roles
+        raise VerificationFailed unless is_one_of? *roles
+      end
+
+      alias is_one_of_roles! is_one_of!
 
       def is_every? *roles
         roles.each { |role| return false if isnt? role } && true
@@ -43,6 +46,15 @@ module IAmICan
       end
 
       alias is_every_role_in! is_every!
+
+      # === Group Querying ===
+
+      def is_in_role_group? name
+        group_members = self.class.members_of_role_group(name)
+        (roles & group_members).present?
+      end
+
+      alias in_role_group? is_in_role_group?
 
       def is_in_one_of? *group_names
         group_names.each { |name| return true if is_in_role_group? name } && false

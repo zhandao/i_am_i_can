@@ -24,8 +24,7 @@ module IAmICan
       alias can_every? can_each?
 
       def can_each! preds, obj0 = nil, obj: nil
-        raise InsufficientPermission unless can_each? preds, obj0, obj: obj
-        true
+        preds.each { |pred| can! pred, obj0, obj: obj } && true
       end
 
       alias can_every! can_each!

@@ -28,7 +28,7 @@ module IAmICan
       alias has_roles  have_role
 
       def declare_role *names, **options
-        has_role *names, save: false, **options
+        have_role *names, save: false, **options
       end
 
       alias declare_roles has_role
