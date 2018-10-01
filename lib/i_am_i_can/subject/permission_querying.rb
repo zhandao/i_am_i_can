@@ -12,24 +12,31 @@ module IAmICan
         !can? pred, obj0, obj: obj
       end
 
-      def can!
-        #
+      def can! pred, obj0 = nil, obj: nil
+        raise InsufficientPermission if cannot? pred, obj0, obj: obj
+        true
       end
 
-      def can_each?
-        #
+      def can_each? preds, obj0 = nil, obj: nil
+        preds.each { |pred| return false if cannot? pred, obj0, obj: obj } && true
       end
 
       alias can_every? can_each?
 
-      def can_each!
-        #
+      def can_each! preds, obj0 = nil, obj: nil
+        raise InsufficientPermission unless can_each? preds, obj0, obj: obj
+        true
       end
 
       alias can_every! can_each!
 
-      def can_one_of?
-        #
+      def can_one_of? preds, obj0 = nil, obj: nil
+        preds.each { |pred| return true if can? pred, obj0, obj: obj } && false
+      end
+
+      def can_one_of! preds, obj0 = nil, obj: nil
+        raise InsufficientPermission unless can_one_of? preds, obj0, obj: obj
+        true
       end
 
       def temporarily_can? pred, obj
