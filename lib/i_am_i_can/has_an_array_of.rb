@@ -35,10 +35,12 @@ module IAmICan
       end
 
       # stored_roles_rmv
-      define_method "#{prefix}#{obj}_rmv" do |locate_vals = nil, **condition|
+      define_method "#{prefix}#{obj}_rmv" do |locate_vals = nil, check_size: nil, **condition|
         condition = { located_by => locate_vals } if locate_vals
         obj_ids = obj_model.where(condition)&.pluck(:id)
-        send("#{field}-=", obj_ids)# -= obj_ids
+        # will return false if it does nothing
+        return false if obj_ids.blank? || (check_size && obj_ids != check_size)
+        send("#{field}=", send(field) - obj_ids)
         save!
       end
 

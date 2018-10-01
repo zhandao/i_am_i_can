@@ -57,6 +57,8 @@ module IAmICan
       obj.have_permission self.pred, obj: self.obj
     end
 
+    alias is_assigned_to assign_to
+
     # :user, User, user
     def obj
       return obj_type.constantize.find(obj_id) if obj_id.present?

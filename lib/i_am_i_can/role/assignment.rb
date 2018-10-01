@@ -34,12 +34,27 @@ module IAmICan
         becomes_a *roles, save: false, **options
       end
 
-      def is_not_a *roles, save: ii_config.default_save
-        #
+      def falls_from *roles, saved: ii_config.default_save
+        failed_items = [ ]
+
+        roles.each do |role|
+          if saved
+            failed_items << role unless stored_roles_rmv(role)
+          else
+            next failed_items << role unless role.in?(defined_roles.keys)
+            local_role_names.delete(role)
+          end
+        end
+
+        _role_assignment_result(roles, failed_items)
       end
 
-      alias has_not_role  is_not_a
-      alias has_not_roles is_not_a
+      alias is_not_a      falls_from
+      alias will_not_be   falls_from
+      alias removes_role  falls_from
+      alias leaves        falls_from
+      alias has_not_role  falls_from
+      alias has_not_roles falls_from
 
       alias locally_is temporarily_is
 
