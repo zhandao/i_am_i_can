@@ -1,4 +1,4 @@
-# IAmICan
+# IAmICan [PostgreSQL only currently]
 
 [![Build Status](https://travis-ci.org/zhandao/i_am_i_can.svg?branch=master)](https://travis-ci.org/zhandao/i_am_i_can)
 [![Maintainability](https://api.codeclimate.com/v1/badges/27b664da01b6cc7180e3/maintainability)](https://codeclimate.com/github/zhandao/i_am_i_can/maintainability)
@@ -12,7 +12,7 @@ he = People.take
 # let: Roles means PeopleRole, Groups means PeopleRoleGroup
 
 # Role
-People.have_role :admin # role definition (this step can be skipped)
+People.have_role :admin # role definition
 he.becomes_a :admin     # role assignment
 he.is? :admin           # role querying => true
 he.is? :someone_else    # role querying => false
@@ -25,13 +25,13 @@ he.in_role_group? :team # role group querying => true
 
 # Role - Permission
 People.have_role :coder            # role definition
-Roles.have_permission :fly         # permission definition (this step can also be skipped)
+Roles.have_permission :fly         # permission definition
 Roles.which(name: :coder).can :fly # permission assignment (by predicate)
 he.becomes_a :coder                # role assignment
 he.can? :fly                       # permission querying
 
 # Role Group - Permission
-Groups.have_permission :manage, obj: User        # permission definition (this step can be skipped)
+Groups.have_permission :manage, obj: User        # permission definition
 Groups.which(name: :team).can :manage, obj: User # permission assignment (by predicate and object)
 he.is? :master                                   # yes
 he.can? :manage, User                            # permission querying
@@ -47,6 +47,42 @@ he.can? :perform, :magic # => true
 # Cancel Assignment
 # TODO
 ```
+
+## Concepts and Overview
+
+In one word:
+```
+- role has permissions
+- subject has the roles
+> subject has the permissions through the roles.
+```
+
+About role group?
+```
+- role group has permissions
+- roles are in the group
+- subject has one or more of the roles
+> subject has the permissions through the role which is in the group
+```
+
+Three steps of this gem:
+3. Querying
+    - Find if the given role is assigned to the subject
+    - Find if the given permission is assigned to the subject's roles / group
+    - instance methods, like: `user.can? :fly`
+2. Assignment
+    - assign role to subject, or assign permission to role / group
+    - instance methods, like: `user.has_role :admin`
+1. Definition
+    - the role or permission you want to assign MUST be defined before
+    - option :auto_define_before (before assignment) what you need in some cases
+    - class methods, like: `UserRoleGroup.have_permission :fly`
+    
+Two Concepts of this gem:
+1. Stored (save in database)
+2. Local (variable value)
+
+[Feature List: needs you](https://github.com/zhandao/i_am_i_can/issues/2)
 
 ## Installation And Setup
 
@@ -75,13 +111,29 @@ he.can? :perform, :magic # => true
     end
     ```
     
-    [here]() is some options you can pass to `i_am_i_can` declaration.
+    [here](#options) is some options you can pass to the declaration.
     
 That's all!
 
 ## Usage
 
-TODO
+### Options
+
+### Methods and their Aliases
+
+#### Role Definition
+
+#### Grouping Roles
+
+#### Role Assignment
+
+#### Permission Definition
+
+#### Permission Assignment
+
+#### Role / Group Querying
+
+#### Permission Querying
 
 ## Development
 
