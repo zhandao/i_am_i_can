@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    i_am_i_can (2.0.0)
+    i_am_i_can (2.1.0)
       activerecord
       activesupport
       railties

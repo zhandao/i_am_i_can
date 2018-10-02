@@ -36,9 +36,7 @@ Groups.which(name: :team).can :manage, obj: User # permission assignment (by pre
 he.is? :master                                   # yes
 he.can? :manage, User                            # permission querying
 
-# more concise way, it does:
-#   1. define & assign the role to subject
-#   2. define & assign the permission to role
+# more concise and faster way
 he.becomes_a :magician, which_can: [:perform], obj: :magic
 he.is? :magician # => true
 Roles.which(name: :magician).can? :perform, :magic # => true
@@ -61,7 +59,7 @@ Roles.which(name: :coder).cannot :fly
     - uniqueness: by `name`
 1. Permission
     - definition: TODO
-    - uniqueness: by `predicate + object`
+    - uniqueness: by `predicate + object` (name)
 
 
 ### In one word:
@@ -81,17 +79,19 @@ Roles.which(name: :coder).cannot :fly
 
 ### Three steps of this gem
 
-3. Querying
+1. Querying
     - Find if the given role is assigned to the subject
     - Find if the given permission is assigned to the subject's roles / group
     - instance methods, like: `user.can? :fly`
 2. Assignment
     - assign role to subject, or assign permission to role / group
     - instance methods, like: `user.has_role :admin`
-1. Definition
-    - the role or permission you want to assign MUST be defined before
-    - option :auto_define_before (before assignment) what you need in some cases
+3. Definition
+    - the role or permission you want to assign **MUST** be defined before
+    - option :auto_define_before (before assignment) you may need in some cases
     - class methods, like: `UserRoleGroup.have_permission :fly`
+    
+**Definition => Assignment => Querying**
     
 ### Two Concepts of this gem
 
@@ -139,16 +139,14 @@ TODO
 
 ### Methods and their Aliases
 
-#### [Role Definition](https://github.com/zhandao/i_am_i_can/blob/master/lib/i_am_i_can/role/definition.rb)
+#### A. [Role Definition](https://github.com/zhandao/i_am_i_can/blob/master/lib/i_am_i_can/role/definition.rb)
 
-Overview:  
 1. Caller: Subject Model, like `User`
 2. methods:
     1. save to database: `have_role`. aliases:
         1. `have_roles`
         2. `has_role` & `has_roles`
-    2. save to local variable: `declare_role`. aliases:
-        1. `declare_roles`
+    2. save to local variable: `declare_role`. alias `declare_roles`
 3. helpers:
     1. `defined_local_roles`
     2. `defined_stored_roles` & `defined_stored_role_names`
@@ -163,7 +161,7 @@ have_role *names, desc: nil, save: default_save#, which_can: [ ], obj: nil
 User.have_roles :admin, :master # => 'Role Definition Done' or error message
 User.defined_stored_roles.keys.count # => 2
 
-# === Save in Local
+# === Save in Local ===
 # signature as `have_role`
 # examples
 User.declare_role :coder # => 'Role Definition Done' or error message
@@ -172,7 +170,7 @@ User.defined_local_roles.keys.count # => 1
 User.defined_roles.keys.count # => 3
 ```
 
-#### [Grouping Roles](https://github.com/zhandao/i_am_i_can/blob/master/lib/i_am_i_can/role/definition.rb)
+#### B. [Grouping Roles](https://github.com/zhandao/i_am_i_can/blob/master/lib/i_am_i_can/role/definition.rb)
 
 **Tips:**  
 1. Role Group must be saved in database currently
@@ -199,17 +197,15 @@ User.defined_role_group_names # => [:vip]
 User.members_of_role_group(:vip) # => %i[vip1 vip2 vip3]
 ```
 
-#### [Role Assignment](https://github.com/zhandao/i_am_i_can/blob/master/lib/i_am_i_can/role/definition.rb)
+#### C. [Role Assignment](https://github.com/zhandao/i_am_i_can/blob/master/lib/i_am_i_can/role/definition.rb)
 
-Overview:  
 1. Caller: subject instance, like `User.find(1)`
 2. assign methods:
     1. save to database: `becomes_a`. aliases:
         1. `is` & `is_a_role` & `is_roles`
         2. `has_role` & `has_roles`
         3. `role_is` & `role_are`
-    2. save to local variable: `temporarily_is`. aliases:
-        1. `locally_is`
+    2. save to local variable: `temporarily_is`. alias `locally_is`
 3. cancel assign method: `falls_from`. aliases:
     1. `removes_role`
     2. `leaves`
@@ -219,7 +215,7 @@ Overview:
     1. `local_roles` & `local_role_names`
     2. `stored_roles` & `stored_role_names`
     3. `roles`
-    
+
 Methods Explanation:
 ```ruby
 he = User.take
@@ -230,11 +226,11 @@ becomes_a *roles, auto_define_before: auto_define_before, save:  default_save#, 
 he.becomes_a :admin # => 'Role Definition Done' or error message
 he.stored_roles   # => [<#UserRole id: 1>]
 
-# === Save in Local
+# === Save in Local ===
 # signature as `becomes_a`
 # examples
 he.temporarily_is :coder # => 'Role Assignment Done' or error message
-he.local_roles.keys.count # => 1
+he.local_roles # => [{ coder: { .. } }]
 
 he.roles # => [:admin, :coder]
 
@@ -247,9 +243,8 @@ he.removes_roles :coder, saved: false # => 'Role Assignment Done' or error messa
 he.roles # => []
 ```
 
-#### [Role / Group Querying](https://github.com/zhandao/i_am_i_can/blob/master/lib/i_am_i_can/subject/role_querying.rb)
+#### D. [Role / Group Querying](https://github.com/zhandao/i_am_i_can/blob/master/lib/i_am_i_can/subject/role_querying.rb)
 
-Overview:  
 1. Caller: subject instance, like `User.find(1)`
 2. role querying methods:
     1. `is?` / `is_role?` / `has_role?`
@@ -266,7 +261,7 @@ Overview:
 all the `?` methods will return `true` or `false`  
 all the `!` bang methods will return `true` or raise `IAmICan::VerificationFailed`
     
-Methods Explanation:
+Methods Examples:
 ```ruby
 he = User.take
 
@@ -280,13 +275,153 @@ he.is_one_of! :admin, :master # return true if he is a master or admin
 he.is_in_role_group? :vip # return true if he has a role which is in the group :vip
 ```
 
-#### Permission Definition
+#### E. [Permission Definition](https://github.com/zhandao/i_am_i_can/blob/master/lib/i_am_i_can/permission/definition.rb)
 
-#### Permission Assignment
+1. Caller: Role / Role Group Model, like `UserRole` / `UserRoleGroup`
+2. methods:
+    1. save to database: `have_permission`. aliases:
+        1. `have_permissions`
+        2. `has_permission` & `has_permissions`
+    2. save to local variable: `declare_permission`. alias `declare_permissions`
+3. helpers:
+    1. `defined_local_permissions`
+    2. `defined_stored_permissions`
+    3. `defined_permissions`
+4. class method: `which(name:)`
+5. Permission
+    1. class method: `which(pred:, obj:)`
+    2. instance methods: `#pred`, `#obj`, `#name`
+    
+Methods Explanation:
+```ruby
+# === Save to DB ===
+# method signature
+have_permission *preds, obj: nil, desc: nil, save: default_save
+# examples
+UserRole.have_permission :fly # => 'Permission Definition Done' or error message
+UserRole.defined_stored_permissions.keys.count # => 1
+UserRoleGroup.have_permissions *%i[read write], obj: Book.find(1) # => 'Permission Definition Done' or error message
+UserRoleGroup.defined_stored_permissions.keys.count # => 1
 
-#### Shortcut Combinations - which_can
+# === Save in Local ===
+# signature as `have_permission`
+# examples
+UserRole.declare_permission :perform, obj: :magic # => 'Permission Definition Done' or error message
+UserRole.defined_local_permissions.keys.count # => 1
 
-#### Permission Querying
+UserRole.defined_permissions.keys.count # => 2
+
+# === class methods ===
+UserRole.which(name: :admin)
+# as same as
+UserRole.find_by_name!(:admin)
+
+# === Permission ===
+p = UserPermission.which(pred: :read, obj: Book.find(1))
+p.pred == 'read'
+p.obj == Book.find(1)
+p.name == :read_Book_1
+```
+
+#### F. [Permission Assignment](https://github.com/zhandao/i_am_i_can/blob/master/lib/i_am_i_can/permission/assignment.rb)
+
+**What is Wrong Assignment - Covered?**
+> Before: he can manage User  
+> When you do: he can manage User.find(1)  
+> will get an Error, tell you that User is cover User.find(1), no need to assign
+
+Overview:  
+1. Caller: role / role group instance, like `UserRole.which(name: :admin)`
+2. methods:
+    1. save to database: `can`. aliases: `has_permission`
+    2. save to local variable: `temporarily_can`. alias `locally_can`
+3. cancel assign method: `cannot`. alias `is_not_allowed_to`
+3. helpers:
+    1. `local_permissions`
+    2. `stored_permissions`
+    3. `permissions`
+    
+Methods Explanation:
+```ruby
+role = UserRole.which(name: :admin)
+
+# === Save to DB ===
+# method signature
+can *preds, obj: nil, strict_mode: false, auto_define_before: auto_define_before
+# examples
+role.can :fly # => 'Permission Assignment Done' or error message
+role.stored_permissions # => [<#UserPermission id: ..>]
+
+# === Save in Local
+# signature as `can`
+# examples
+role.temporarily_can :perform, obj: :magic # => 'Permission Assignment Done' or error message
+role.local_permissions # => [:perform_magic]
+
+role.permissions.keys.count # => 3
+```
+
+#### G. [Permission Querying](https://github.com/zhandao/i_am_i_can/blob/master/lib/i_am_i_can/subject/role_querying.rb)
+
+1. Caller: 
+    1. subject instance, like `User.find(1)`
+    2. role / role group instance, like `Role.which(name: :master)`  
+        notice that this caller have only `can?` and `temporarily_can?` methods.
+2. methods:
+    1. `can?`
+    2. `cannot?`
+    3. `can!`
+    4. `can_each?` & `can_each!`
+    4. `can_one_of!` & `can_one_of!`
+    5. `temporarily_can?` / `locally_can?`
+    6. `stored_can?`
+    7. `group_can?`
+3. helpers:
+    1. `permissions_of_stored_roles`
+    2. `permissions_of_local_roles`
+    3. `permissions_of_role_groups`
+    
+all the `?` methods will return `true` or `false`  
+all the `!` bang methods will return `true` or raise `IAmICan::InsufficientPermission`
+    
+Methods Examples:
+```ruby
+he = User.take
+
+he.can?    :perform, :magic
+he.cannot? :perform, :magic
+he.can!    :perform, :magic
+
+he.can_each?   :fly, :jump # return false if he can not fly or jump
+he.can_one_of! :fly, :jump # return true if he can fly or jump
+```
+
+#### H. Shortcut Combinations - which_can
+
+Faster way to assign, define roles and thier permissions.  
+You can use it when defining role even assigning role.
+
+```ruby
+# === use when defining role ===
+# it does:
+#   1. define the role to Subject Model
+#   2. define & assign the permission to the role
+User.have_role :coder, which_can: [:perform], obj: :magic
+UserRole.which(name: :coder).can? :perform, :magic # => true
+# save in local
+User.local_role_which(name: :local_role, can: [:perform], obj: :magic)
+UserRole.new(name: :local_role).temporarily_can? :perform, :magic # => true
+
+# === use when assigning role ===
+# it does:
+#   1. define the role to Subject Model
+#   2. assign the role to subject instance
+#   2. define & assign the permission to the role
+user = User.take
+user.becomes_a :master, which_can: [:read], obj: :book
+user.is? :master # => true
+user.can? :read, :book # => true
+```
 
 ## Development
 

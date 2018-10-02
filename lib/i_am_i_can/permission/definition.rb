@@ -32,7 +32,7 @@ module IAmICan
       alias has_permissions  have_permission
 
       def declare_permission *preds, **options
-        has_permission *preds, **options, save: false
+        have_permission *preds, **options, save: false
       end
 
       alias declare_permissions declare_permission
