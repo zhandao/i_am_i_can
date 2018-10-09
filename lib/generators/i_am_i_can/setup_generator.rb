@@ -44,8 +44,8 @@ module IAmICan
 
       def tip
         options = ' ' + @ii_opts.to_s[2..-2].gsub('=>', ': ').gsub(', :', ', ') if @ii_opts.keys.present?
-        puts 'Please add this line to your subject model:'.red
-        puts "    act_as_i_am_i_can#{options}".red
+        puts 'Please add this line to your subject model:'.green
+        puts "    act_as_i_am_i_can#{options}".green
       end
 
       def self.next_migration_number(dirname)

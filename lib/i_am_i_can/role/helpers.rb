@@ -3,7 +3,7 @@ module IAmICan
     module Helpers
       module Cls
         def _to_store_role name, **options
-          return false if ii_config.role_model.exists?(name: name) || ii_config.role_group_model.exists?(name: name)
+          return false if ii_config.role_model.exists?(name: name) || ii_config.role_group_model&.exists?(name: name)
           ii_config.role_model.create!(name: name, **options)
         end
 
