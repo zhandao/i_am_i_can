@@ -12,7 +12,7 @@ class <%= role_c %> < ActiveRecord::Base
                           foreign_key: :<%= group_u %>_id,
                           class_name: ':<%= group_c %>',
                           association_foreign_key: :<%= role_u %>_id
-<%=	end %>
+<% end %>
   has_and_belongs_to_many :stored_permissions,
                           join_table: '<%= role_pms_tb %>',
                           foreign_key: :<%= permission_u %>_id,

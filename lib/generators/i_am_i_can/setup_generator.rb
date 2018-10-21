@@ -15,24 +15,27 @@ module IAmICan
       # TODO: more readable tips
       def questions
         @ii_opts = { }
-        @ii_opts[:role_class] = ask("Do you want to change the class name of the role model? [#{name_c}Role]") || "#{name_c}Role"
-        @ii_opts[:permission_class] = ask("Do you want to change the class name of the permission model? [#{name_c}Permission]") || "#{name_c}Permission"
-        if yes?('Do you want to use role group?')
-          @ii_opts[:role_group_class] = ask("Do you want to change the class name of the role_group model? [#{name_c}RoleGroup]") || "#{name_c}RoleGroup"
+        role_class = ask("Do you want to change the class name of the role model (defaults to [#{name_c}Role])? Press Enter or input your name:")
+        @ii_opts[:role_class] = role_class.blank? ? "#{name_c}Role" : role_class
+        pms_class = ask("Do you want to change the class name of the permission model (defaults to [#{name_c}Permission])? Press Enter or input your name:")
+        @ii_opts[:permission_class] = pms_class.blank? ? "#{name_c}Permission" : pms_class
+        if yes?('Do you want to use role group? y (default) / n')
+           group_class = ask("Do you want to change the class name of the role_group model (defaults to [#{name_c}RoleGroup])? Press Enter or input your name:")
+           @ii_opts[:role_group_class] = group_class.blank? ? "#{name_c}RoleGroup" : group_class
         else
           @ii_opts[:without_group] = true
         end
 
-        unless yes?('Do yo want it to save role and permission to database by default?')
+        unless yes?('Do yo want it to save role and permission to database by default? y (default) / n')
           @ii_opts[:default_save] = false
         end
-        if @ii_opts[:default_save] && yes?('Don\'t you need **local** definition and assignment feature?')
-          # TODO
-        end
-        if yes?('Do you want it to raise error when you are doing wrong definition or assignment?')
+        # if @ii_opts[:default_save] != false && yes?('Don\'t you need **local** definition and assignment feature? y / n (default)')
+        #   TODO
+        # end
+        if yes?('Do you want it to raise error when you are doing wrong definition or assignment? y / n (default)')
           @ii_opts[:strict_mode] = true
         end
-        if yes?('Do you want it to define the role/permission which is not defined when assigning to subject?')
+        if yes?('Do you want it to auto define the role/permission which is not defined when assigning to subject? y / n (default)')
           @ii_opts[:auto_define_before] = true
         end
       end
@@ -51,6 +54,10 @@ module IAmICan
         template 'models/permission.erb', "app/models/#{permission_u}.rb"
       end
 
+      def tips
+        # TODO
+      end
+
       def self.next_migration_number(dirname)
         ActiveRecord::Generators::Base.next_migration_number(dirname)
       end
@@ -64,8 +71,8 @@ module IAmICan
       def role_up; @ii_opts[:role_class].underscore.pluralize end
 
       def group_c; @ii_opts[:role_group_class] end
-      def group_u; @ii_opts[:role_group_class].underscore end
-      def group_up; @ii_opts[:role_group_class].underscore.pluralize end
+      def group_u; @ii_opts[:role_group_class]&.underscore end
+      def group_up; @ii_opts[:role_group_class]&.underscore&.pluralize end
 
       def permission_c; @ii_opts[:permission_class] end
       def permission_u; @ii_opts[:permission_class].underscore end

@@ -1,5 +1,6 @@
 # IAmICan
 
+[![Gem Version](https://badge.fury.io/rb/i_am_i_can.svg)](https://badge.fury.io/rb/i_am_i_can)
 [![Build Status](https://travis-ci.org/zhandao/i_am_i_can.svg?branch=master)](https://travis-ci.org/zhandao/i_am_i_can)
 [![Maintainability](https://api.codeclimate.com/v1/badges/27b664da01b6cc7180e3/maintainability)](https://codeclimate.com/github/zhandao/i_am_i_can/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/27b664da01b6cc7180e3/test_coverage)](https://codeclimate.com/github/zhandao/i_am_i_can/test_coverage)
@@ -117,23 +118,25 @@ Roles.which(name: :coder).cannot :fly
     For example, if your subject name is `user`, it will generate
     model `UserRole`, `UserRoleGroup` and `UserPermission`
     
-3. run `rails db:migrate`
-
-4. enable it in your subject model, like:
+3. Add the code returned by the generator to your subject model, like:
 
     ```ruby
     class User
-      act_as_i_am_i_can
+      act_as_subject
+   
+       # TODO
     end
     ```
     
-    [here](#options) is some options you can pass to the declaration.
+    [here](#config-options) is some options you can pass to the declaration.
     
+4. Run `rails db:migrate`
+
 That's all!
 
 ## Usage
 
-### Options
+### Config Options
 
 TODO
 

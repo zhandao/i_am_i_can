@@ -13,11 +13,8 @@ class <%= permission_c %> < ActiveRecord::Base
                           class_name: '<%= group_c %>',
                           association_foreign_key: :<%= permission_u %>_id
 <% end %>
-
   scope :with_roles, -> { includes(:related_roles) }
-<% unless @ii_opts[:without_group] %>
-  scope :with_role_groups, -> { includes(:related_role_groups) }
-<% end %>
+  <% unless @ii_opts[:without_group] %>scope :with_role_groups, -> { includes(:related_role_groups) }<% end %>
 end
 
 __END__
