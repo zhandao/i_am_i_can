@@ -12,13 +12,22 @@ module IAmICan
 
       source_root File.expand_path('../templates', __FILE__)
 
+      # TODO: more readable tips
       def questions
         @ii_opts = { }
-        unless yes?('Do you want to use role group?')
+        @ii_opts[:role_class] = ask("Do you want to change the class name of the role model? [#{name_c}Role]") || "#{name_c}Role"
+        @ii_opts[:permission_class] = ask("Do you want to change the class name of the permission model? [#{name_c}Permission]") || "#{name_c}Permission"
+        if yes?('Do you want to use role group?')
+          @ii_opts[:role_group_class] = ask("Do you want to change the class name of the role_group model? [#{name_c}RoleGroup]") || "#{name_c}RoleGroup"
+        else
           @ii_opts[:without_group] = true
         end
+
         unless yes?('Do yo want it to save role and permission to database by default?')
           @ii_opts[:default_save] = false
+        end
+        if @ii_opts[:default_save] && yes?('Don\'t you need **local** definition and assignment feature?')
+          # TODO
         end
         if yes?('Do you want it to raise error when you are doing wrong definition or assignment?')
           @ii_opts[:strict_mode] = true
@@ -29,28 +38,43 @@ module IAmICan
       end
 
       def setup_migrations
-        dest_prefix = 'db/migrate/i_am_i_can_'
-        migration_template 'migrations/add_to_subject.erb', "#{dest_prefix}add_role_ids_to_#{name.underscore}.rb"
-        migration_template 'migrations/role.erb', "#{dest_prefix}create_#{name.underscore}_roles.rb"
-        migration_template 'migrations/role_group.erb', "#{dest_prefix}create_#{name.underscore}_role_groups.rb" unless @ii_opts[:without_group]
-        migration_template 'migrations/permission.erb', "#{dest_prefix}create_#{name.underscore}_permissions.rb"
+        migration_template 'migrations/i_am_i_can.erb', "db/migrate/#{name_u}_am_#{name_u}_can.rb"
+      end
+
+      def setup_initializer
+        template 'initializers/i_am_i_can.erb', "config/initializers/#{name_u}_am_#{name_u}_can.rb"
       end
 
       def setup_models
-        template 'models/role.erb', "app/models/#{name.underscore}_role.rb"
-        template 'models/role_group.erb', "app/models/#{name.underscore}_role_group.rb" unless @ii_opts[:without_group]
-        template 'models/permission.erb', "app/models/#{name.underscore}_permission.rb"
-      end
-
-      def tip
-        options = ' ' + @ii_opts.to_s[2..-2].gsub('=>', ': ').gsub(', :', ', ') if @ii_opts.keys.present?
-        puts 'Please add this line to your subject model:'.green
-        puts "    act_as_i_am_i_can#{options}".green
+        template 'models/role.erb', "app/models/#{role_u}.rb"
+        template 'models/role_group.erb', "app/models/#{group_u}.rb" unless @ii_opts[:without_group]
+        template 'models/permission.erb', "app/models/#{permission_u}.rb"
       end
 
       def self.next_migration_number(dirname)
         ActiveRecord::Generators::Base.next_migration_number(dirname)
       end
+
+      def name_c; name.camelize end
+      def name_u; name.underscore end
+      def name_up; name_u.pluralize end
+
+      def role_c; @ii_opts[:role_class] end
+      def role_u; @ii_opts[:role_class].underscore end
+      def role_up; @ii_opts[:role_class].underscore.pluralize end
+
+      def group_c; @ii_opts[:role_group_class] end
+      def group_u; @ii_opts[:role_group_class].underscore end
+      def group_up; @ii_opts[:role_group_class].underscore.pluralize end
+
+      def permission_c; @ii_opts[:permission_class] end
+      def permission_u; @ii_opts[:permission_class].underscore end
+      def permission_up; @ii_opts[:permission_class].underscore.pluralize end
+
+      def subj_role_tb; name_up + '_and_' + role_up end
+      def group_role_tb; group_up + '_and_' + role_up end
+      def role_pms_tb; role_up + '_and_' + permission_up end
+      def group_pms_tb; group_up + '_and_' + permission_up end
     end
   end
 end

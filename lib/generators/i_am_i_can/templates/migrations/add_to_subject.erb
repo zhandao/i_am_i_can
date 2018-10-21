@@ -1,5 +1,0 @@
-class IAmICanAddRoleIdsTo<%= name.camelize %> < ActiveRecord::Migration::Current
-  def change
-    add_column :<%= "#{name.underscore.pluralize}" %>, :role_ids, :integer, array: true, default: [ ]
-  end
-end

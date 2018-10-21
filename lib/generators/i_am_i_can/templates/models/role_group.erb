@@ -1,11 +1,23 @@
-class <%= name.camelize %>RoleGroup < ActiveRecord::Base
+class RoleGroup < ActiveRecord::Base
+  act_as_role_group
+
+  has_and_belongs_to_many :stored_permissions,
+                          join_table: '<%= group_pms_tb %>',
+                          foreign_key: :<%= permission_u %>_id,
+                          class_name: ':<%= permission_c %>',
+                          association_foreign_key: :<%= group_u %>_id
+  has_and_belongs_to_many :members,
+                          join_table: '<%= group_role_tb %>',
+                          foreign_key: :<%= role_u %>_id,
+                          class_name: ':<%= role_c %>',
+                          association_foreign_key: :<%= group_u %>_id
+
+  default_scope { includes(:members, :stored_permissions) }
 end
 
 __END__
 
-  string  :name,           null: false
-  integer :member_ids,     array: true, default: [ ]
-  integer :permission_ids, array: true, default: [ ]
+  string  :name, null: false
   string  :desc
 
-  index :name, unique: true, name: 'role_group_unique_index'
+  index :name, unique: true

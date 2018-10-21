@@ -1,0 +1,81 @@
+class <%= name_c %>Am<%= name_c %>Can < ActiveRecord::Migration::Current
+  def change
+    create_table :<%= role_up %>, force: :cascade do |t|
+      t.string  :name, null: false
+      t.string  :desc
+
+      t.timestamps
+    end
+
+    add_index :<%= role_up %>, :name,
+              unique: true, name: '<%= role_up %>_unique_index', using: :btree
+
+<% unless @ii_opts[:without_group] %>
+    create_table :<%= group_up %>, force: :cascade do |t|
+      t.string  :name, null: false
+      t.string  :desc
+
+      t.timestamps
+    end
+
+    add_index :<%= group_up %>, :name,
+              unique: true, name: '<%= group_up %>_unique_index', using: :btree
+
+<% end %>
+    create_table :<%= permission_up %>, force: :cascade do |t|
+      t.string  :pred,     null: false
+      t.string  :obj_type
+      t.integer :obj_id
+      t.string  :desc
+
+      t.timestamps
+    end
+
+    add_index :<%= permission_up %>, %i[ pred obj_type obj_id ],
+              unique: true, name: '<%= permission_up %>_unique_index', using: :btree
+
+    create_table :<%= subj_role_tb %>, id: false, force: :cascade do |t|
+      t.belongs_to :<%= name_u %>_id, null: false
+      t.belongs_to :<%= role_u %>_id, null: false
+    end
+
+    add_index :<%= subj_role_tb %>, :<%= name_u %>_id, name: ':<%= subj_role_tb %>_index1'
+    add_index :<%= subj_role_tb %>, :<%= role_u %>_id, name: ':<%= subj_role_tb %>_index2'
+    add_index :<%= subj_role_tb %>, [ :<%= name_u %>_id, :<%= role_u %>_id ],
+              unique: true, name: '<%= subj_role_tb %>_uniq_index'
+
+<% unless @ii_opts[:without_group] %>
+    create_table :<%= group_role_tb %>, id: false, force: :cascade do |t|
+      t.belongs_to :<%= group_u %>_id, null: false
+      t.belongs_to :<%= role_u %>_id, null: false
+    end
+
+    add_index :<%= group_role_tb %>, :<%= group_u %>_id, name: '<%= group_role_tb %>_index1'
+    add_index :<%= group_role_tb %>, :<%= role_u %>_id, name: '<%= group_role_tb %>_index2'
+    add_index :<%= group_role_tb %>, [ :<%= group_u %>_id, :<%= role_u %>_id ],
+              unique: true, name: '<%= group_role_tb %>_uniq_index'
+
+<% end %>
+
+    create_table :<%= role_pms_tb %>, id: false, force: :cascade do |t|
+      t.belongs_to :<%= role_u %>_id, null: false
+      t.belongs_to :<%= permission_u %>_id, null: false
+    end
+
+    add_index :<%= role_u %>_id, name: '<%= role_pms_tb %>_index1'
+    add_index :<%= permission_u %>_id, name: '<%= role_pms_tb %>_index2'
+    add_index [ :<%= role_u %>_id, :<%= permission_u %>_id ],
+              unique: true, name: '<%= role_pms_tb %>_uniq_index'
+
+<% unless @ii_opts[:without_group] %>
+    create_table :<%= group_pms_tb %>, id: false, force: :cascade do |t|
+      t.belongs_to :<%= group_u %>_id, null: false
+      t.belongs_to :<%= permission_u %>_id, null: false
+    end
+
+    add_index :<%= group_u %>_id, name: '<%= group_pms_tb %>_index1'
+    add_index :<%= permission_u %>_id, name: '<%= group_pms_tb %>_index2'
+    add_index [ :<%= group_u %>_id, :<%= permission_u %>_id ],
+              unique: true, name: '<%= group_pms_tb %>_uniq_index'
+
+<% end %>

@@ -36,6 +36,11 @@ ActiveRecord::Schema.define do
     # t.index ["obj_type", "obj_id"], name: "index_permissions_on_source_type_and_source_id"
   end
 
+  create_table "sources", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "users_and_user_roles", id: false, force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "user_role_id", null: false

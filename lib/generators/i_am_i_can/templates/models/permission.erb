@@ -1,4 +1,23 @@
-class <%= name.camelize %>Permission < ActiveRecord::Base
+class <%= permission_c %> < ActiveRecord::Base
+  act_as_permission
+
+  has_and_belongs_to_many :related_roles,
+                          join_table: '<%= role_pms_tb %>',
+                          foreign_key: :<%= role_u %>_id,
+                          class_name: <%= role_c %>,
+                          association_foreign_key: :<%= permission_u %>_id
+<% unless @ii_opts[:without_group] %>
+  has_and_belongs_to_many :related_role_groups,
+                          join_table: '<%= group_pms_tb %>',
+                          foreign_key: :<%= group_u %>_id,
+                          class_name: '<%= group_c %>',
+                          association_foreign_key: :<%= permission_u %>_id
+<% end %>
+
+  scope :with_roles, -> { includes(:related_roles) }
+<% unless @ii_opts[:without_group] %>
+  scope :with_role_groups, -> { includes(:related_role_groups) }
+<% end %>
 end
 
 __END__
@@ -8,4 +27,4 @@ __END__
   integer :obj_id
   string  :desc
 
-  index %i[pred obj_type obj_id], unique: true, name: 'permission_unique_index'
+  index %i[ pred obj_type obj_id ], unique: true

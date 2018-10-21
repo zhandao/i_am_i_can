@@ -15,30 +15,27 @@ require 'i_am_i_can/subject/permission_querying'
 module IAmICan
   def act_as_subject
     extend  IAmICan::Role::Definition
+
     include IAmICan::Role::Assignment
     include IAmICan::Subject::RoleQuerying
-
-     i_am_i_can.permission_model.extend  IAmICan::Permission
-           i_am_i_can.role_model.extend  IAmICan::Permission::Definition
-           i_am_i_can.role_model.include IAmICan::Permission::Assignment
-    i_am_i_can.role_group_model&.extend  IAmICan::Permission::Definition
-    i_am_i_can.role_group_model&.include IAmICan::Permission::Assignment
-                 self.include IAmICan::Subject::PermissionQuerying
+    include IAmICan::Subject::PermissionQuerying
   end
 
   def act_as_role
-    #
+    extend  IAmICan::Permission::Definition
+    include IAmICan::Permission::Assignment
   end
 
   def act_as_role_group
-    #
+    extend  IAmICan::Permission::Definition
+    include IAmICan::Permission::Assignment
   end
 
   def act_as_permission
-    #
+    extend IAmICan::Permission
   end
 
-  def act_as_permission_source
+  def act_as_allowed_source
     #
   end
 

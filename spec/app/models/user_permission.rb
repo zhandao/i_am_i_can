@@ -1,4 +1,6 @@
 class UserPermission < ActiveRecord::Base
+  act_as_permission
+
   has_and_belongs_to_many :related_roles,
                           join_table: 'user_roles_and_user_permissions',
                           foreign_key: 'user_role_id',

@@ -1,4 +1,6 @@
 class UserRoleGroup < ActiveRecord::Base
+  act_as_role_group
+
   has_and_belongs_to_many :stored_permissions,
                           join_table: 'user_role_groups_and_user_permissions',
                           foreign_key: 'user_permission_id',
