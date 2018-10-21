@@ -12,16 +12,16 @@ class UserRole < ActiveRecord::Base
   default_scope { includes(:stored_permissions) }
 
   def self.related_users
-    config.subject_model.with_roles.where(user_roles: { id: self.ids })
+    i_am_i_can.subject_model.with_roles.where(user_roles: { id: self.ids })
   end
 
   def self.related_role_groups
-    config.role_group_model.where(user_roles: { id: self.ids })
+    i_am_i_can.role_group_model.where(user_roles: { id: self.ids })
   end
 
   # TODO
   def self.stored_permissions
-    config.permission_model.with_roles.where(user_roles: { id: self.ids })
+    i_am_i_can.permission_model.with_roles.where(user_roles: { id: self.ids })
   end
 
   def self.stored_permission_names
@@ -33,7 +33,7 @@ class UserRole < ActiveRecord::Base
   end
 
   def stored_permissions_add(check_size: nil, **condition)
-    permissions = config.permission_model.where(condition)
+    permissions = i_am_i_can.permission_model.where(condition)
     ids = permissions.pluck(:id)
     # will return false if it does nothing
     return false if ids.blank? || (check_size && ids != check_size)
@@ -41,7 +41,7 @@ class UserRole < ActiveRecord::Base
   end
 
   def stored_permissions_rmv(check_size: nil, **condition)
-    permissions = config.permission_model.where(condition)
+    permissions = i_am_i_can.permission_model.where(condition)
     ids = permissions.pluck(:id)
     # will return false if it does nothing
     return false if ids.blank? || (check_size && ids != check_size)

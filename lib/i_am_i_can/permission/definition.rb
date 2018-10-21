@@ -10,7 +10,7 @@ module IAmICan
         find_by!(name: name, **conditions)
       end
 
-      def have_permission *preds, obj: nil, desc: nil, save: config.default_save
+      def have_permission *preds, obj: nil, desc: nil, save: i_am_i_can.default_save
         failed_items = [ ]
 
         preds.each do |pred|
@@ -42,11 +42,11 @@ module IAmICan
       end
 
       def defined_stored_pms_names
-        config.permission_model.all.map(&:name)
+        i_am_i_can.permission_model.all.map(&:name)
       end
 
       def defined_stored_permissions
-        config.permission_model.all.map { |pms| [ pms.name, pms.desc ] }.to_h
+        i_am_i_can.permission_model.all.map { |pms| [ pms.name, pms.desc ] }.to_h
       end
 
       def defined_permissions

@@ -5,14 +5,14 @@ module IAmICan
     module Definition
       include Helpers::Cls
 
-      def have_role *names, desc: nil, save: ii_config.default_save, which_can: [ ], obj: nil
+      def have_role *names, desc: nil, save: i_am_i_can.default_save, which_can: [ ], obj: nil
         failed_items, preds = [ ], which_can
 
         names.each do |name|
           description = desc || name.to_s.humanize
           if save
             next failed_items << name unless _to_store_role(name, desc: description)
-            ii_config.role_model.which(name: name).can *preds, obj: obj, auto_define_before: true, strict_mode: true if which_can.present?
+            i_am_i_can.role_model.which(name: name).can *preds, obj: obj, auto_define_before: true, strict_mode: true if which_can.present?
           else
             next failed_items << name if defined_local_roles.key?(name)
             defined_local_roles[name] ||= { desc: description, permissions: [ ] }
@@ -35,8 +35,8 @@ module IAmICan
 
       def group_roles *members, by_name:, which_can: [ ], obj: nil
         raise Error, 'Some of members have not been defined' unless (members - defined_stored_role_names).empty?
-        raise Error, "Given name #{by_name} has been used by a role" if ii_config.role_model.exists?(name: by_name)
-        ii_config.role_group_model.find_or_create_by!(name: by_name).members_add(members)
+        raise Error, "Given name #{by_name} has been used by a role" if i_am_i_can.role_model.exists?(name: by_name)
+        i_am_i_can.role_group_model.find_or_create_by!(name: by_name).members_add(members)
       end
 
       alias group_role   group_roles
@@ -54,7 +54,7 @@ module IAmICan
       # User.local_role_which(name: :admin, can: :fly)
       #   same effect to: UserRole.new(name: :admin).temporarily_can :fly
       def local_role_which(name:, can:, obj: nil, **options)
-        ii_config.role_model.new(name: name).temporarily_can *Array(can), obj: obj, **options
+        i_am_i_can.role_model.new(name: name).temporarily_can *Array(can), obj: obj, **options
       end
 
       def self.extended(kls)
@@ -70,11 +70,11 @@ module IAmICan
       end
 
       def defined_stored_role_names
-        ii_config.role_model.pluck(:name).map(&:to_sym)
+        i_am_i_can.role_model.pluck(:name).map(&:to_sym)
       end
 
       def defined_stored_roles
-        ii_config.role_model.all.map { |role| [ role.name.to_sym, role.desc ] }.to_h
+        i_am_i_can.role_model.all.map { |role| [ role.name.to_sym, role.desc ] }.to_h
       end
 
       def defined_roles
@@ -82,16 +82,16 @@ module IAmICan
       end
 
       def defined_role_group_names
-        ii_config.role_group_model.pluck(:name).map(&:to_sym)
+        i_am_i_can.role_group_model.pluck(:name).map(&:to_sym)
 
       end
 
       def defined_role_groups
-        ii_config.role_group_model.all.map { |group| [ group.name.to_sym, group.member_names.map(&:to_sym) ] }.to_h
+        i_am_i_can.role_group_model.all.map { |group| [ group.name.to_sym, group.member_names.map(&:to_sym) ] }.to_h
       end
 
       def members_of_role_group name
-        ii_config.role_group_model.find_by!(name: name).member_names
+        i_am_i_can.role_group_model.find_by!(name: name).member_names
       end
 
       Definition.include self

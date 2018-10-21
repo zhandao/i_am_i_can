@@ -14,6 +14,6 @@ class UserPermission < ActiveRecord::Base
   scope :with_role_groups, -> { includes(:related_role_groups) }
 
   def self.related_roles
-    config.role_model.where(user_permissions: { id: self.ids })
+    i_am_i_can.role_model.where(user_permissions: { id: self.ids })
   end
 end

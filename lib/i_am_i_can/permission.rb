@@ -50,9 +50,9 @@ module IAmICan
 
     def assign_to role: nil, group: nil
       obj = if role
-              role.is_a?(Symbol) ? ii_config.role_model.find(name: role) : role
+              role.is_a?(Symbol) ? i_am_i_can.role_model.find(name: role) : role
             else
-              group.is_a?(Symbol) ? ii_config.role_group_model.find(name: role) : group
+              group.is_a?(Symbol) ? i_am_i_can.role_group_model.find(name: role) : group
             end
       obj.have_permission self.pred, obj: self.obj
     end

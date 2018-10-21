@@ -8,6 +8,7 @@ require 'pp'
 require 'pry'
 
 require 'support/database'
+require 'app/config/user_am_user_can'
 require 'app/models/user_role'
 require 'app/models/user_role_group'
 require 'app/models/user_permission'

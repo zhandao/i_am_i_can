@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  act_as_i_am_i_can strict_mode: true
+  act_as_subject
 
   has_and_belongs_to_many :stored_roles,
                           join_table: 'users_and_user_roles',
@@ -19,7 +19,7 @@ class User < ActiveRecord::Base
 
   def stored_roles_add(locate_vals = nil, check_size: nil, **condition)
     condition = { name: locate_vals } if locate_vals
-    records = ii_config.role_model.where(condition).where.not(id: stored_roles.ids)
+    records = i_am_i_can.role_model.where(condition).where.not(id: stored_roles.ids)
     # will return false if it does nothing
     return false if records.blank? || (check_size && records.count != check_size)
     stored_roles << records
@@ -27,7 +27,7 @@ class User < ActiveRecord::Base
 
   def stored_roles_rmv(locate_vals = nil, check_size: nil, **condition)
     condition = { name: locate_vals } if locate_vals
-    roles = ii_config.role_model.where(id: stored_roles.ids, **condition)
+    roles = i_am_i_can.role_model.where(id: stored_roles.ids, **condition)
     # will return false if it does nothing
     return false if roles.blank? || (check_size && roles.count != check_size)
     stored_roles.destroy(roles)

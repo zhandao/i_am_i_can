@@ -17,7 +17,7 @@ class UserRoleGroup < ActiveRecord::Base
   end
 
   def self.stored_permissions
-    config.permission_model.with_role_groups.where(user_role_groups: { id: self.ids })
+    i_am_i_can.permission_model.with_role_groups.where(user_role_groups: { id: self.ids })
   end
 
   def permission_names
@@ -25,14 +25,14 @@ class UserRoleGroup < ActiveRecord::Base
   end
 
   def stored_permissions_add(check_size: nil, **condition)
-    records = config.permission_model.where(condition).where.not(id: stored_permissions.ids)
+    records = i_am_i_can.permission_model.where(condition).where.not(id: stored_permissions.ids)
     # will return false if it does nothing
     return false if records.blank? || (check_size && records.count != check_size)
     stored_permissions << records
   end
 
   def stored_permissions_rmv(check_size: nil, **condition)
-    records = config.permission_model.where(id: stored_permissions.ids, **condition)
+    records = i_am_i_can.permission_model.where(id: stored_permissions.ids, **condition)
     # will return false if it does nothing
     return false if records.blank? || (check_size && records.count != check_size)
     stored_permissions.destroy(records)
@@ -43,14 +43,14 @@ class UserRoleGroup < ActiveRecord::Base
   end
 
   def members_add(names, check_size: nil)
-    records = config.role_model.where(name: names).where.not(id: member_ids)
+    records = i_am_i_can.role_model.where(name: names).where.not(id: member_ids)
     # will return false if it does nothing
     return false if records.blank? || (check_size && records.count != check_size)
     members << records
   end
 
   def members_rmv(names, check_size: nil)
-    records = config.role_model.where(id: member_ids, name: names)
+    records = i_am_i_can.role_model.where(id: member_ids, name: names)
     # will return false if it does nothing
     return false if records.blank? || (check_size && records.count != check_size)
     members.destroy(records)

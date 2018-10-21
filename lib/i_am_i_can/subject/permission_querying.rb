@@ -39,18 +39,18 @@ module IAmICan
       end
 
       def temporarily_can? pred, obj
-        ii_config.permission_model.matched?(pred: pred, obj: obj, in: permissions_of_local_roles)
+        i_am_i_can.permission_model.matched?(pred: pred, obj: obj, in: permissions_of_local_roles)
       end
 
       alias locally_can? temporarily_can?
 
       def stored_can? pred, obj
-        ii_config.permission_model.matched?(pred: pred, obj: obj, in: permissions_of_stored_roles)
+        i_am_i_can.permission_model.matched?(pred: pred, obj: obj, in: permissions_of_stored_roles)
       end
 
       def group_can? pred, obj, without_group = false
-        return false if without_group || ii_config.without_group
-        ii_config.permission_model.matched?(pred: pred, obj: obj, in: permissions_of_role_groups)
+        return false if without_group || i_am_i_can.without_group
+        i_am_i_can.permission_model.matched?(pred: pred, obj: obj, in: permissions_of_role_groups)
       end
 
       def permissions_of_stored_roles
