@@ -5,12 +5,15 @@ require 'bundler/setup'
 require 'i_am_i_can'
 require 'database_cleaner'
 require 'pp'
+require 'pry'
 
 require 'support/database'
 require 'app/models/user_role'
 require 'app/models/user_role_group'
 require 'app/models/user_permission'
 require 'app/models/user'
+
+ENV['ITEST'] = "true"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

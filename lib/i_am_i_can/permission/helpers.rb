@@ -6,7 +6,8 @@ module IAmICan
           prefix = 'Permission Definition Done'
           fail_msg = prefix + ", but #{failed_items} have been defined" if failed_items.present?
           raise Error, fail_msg if  config.strict_mode && fail_msg
-          fail_msg ? fail_msg : prefix
+          puts fail_msg || prefix unless ENV['ITEST']
+          prefix.present?
         end
 
         def _to_store_permission(pred, obj, **options)
@@ -30,11 +31,12 @@ module IAmICan
       module Ins
         def _pms_assignment_result(preds, obj, not_defined_items, covered_items = nil, strict_mode = false)
           prefix = 'Permission Assignment Done'
-          msg1 = "#{not_defined_items} have not been defined" if not_defined_items.present?
+          msg1 = "#{not_defined_items} have not been defined or have been repeatedly assigned" if not_defined_items.present?
           msg2 = "#{covered_items} have been covered" if covered_items.present?
           fail_msg = prefix + ', but ' + [msg1, msg2].compact.join(', ') if msg1 || msg2
           raise Error, fail_msg if (strict_mode || config.strict_mode) && fail_msg
-          fail_msg ? fail_msg : prefix
+          puts fail_msg || prefix unless ENV['ITEST']
+          prefix.present?
         end
 
         def pms_matched?(pms_name, plist)

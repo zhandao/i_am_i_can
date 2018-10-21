@@ -49,8 +49,11 @@ RSpec.describe IAmICan::Role::Assignment do
     end
 
     context 'when assigning the role which is assigned before' do
-      before { he.becomes_a :admin, :admin }
-      it { expect(his.stored_role_names).to eq [:admin] }
+      it do
+        expect{ he.becomes_a :admin, :admin }
+               .to raise_error(IAmICan::Error).with_message(/have been repeatedly assigned/)
+        expect(his.stored_role_names).to eq [:admin]
+      end
     end
 
     describe 'which_can' do

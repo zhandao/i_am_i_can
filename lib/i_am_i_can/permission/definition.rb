@@ -6,8 +6,8 @@ module IAmICan
     module Definition
       include Helpers::Cls
 
-      def which(name:)
-        find_by!(name: name)
+      def which(name:, **conditions)
+        find_by!(name: name, **conditions)
       end
 
       def have_permission *preds, obj: nil, desc: nil, save: config.default_save

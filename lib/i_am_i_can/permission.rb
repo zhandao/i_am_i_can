@@ -6,8 +6,8 @@ module IAmICan
       PArray.new(options[:in]).matched?(pms_name || naming(pred, obj))
     end
 
-    def which(pred:, obj: nil)
-      find_by!(pred: pred, **deconstruct_obj(obj))
+    def which(pred:, obj: nil, **conditions)
+      find_by!(pred: pred, **deconstruct_obj(obj), **conditions)
     end
 
     def naming(pred, obj)
@@ -25,7 +25,7 @@ module IAmICan
       elsif obj.respond_to?(:attributes)
         { obj_type: obj.class.name, obj_id: obj.id }
       else
-        { obj_type: obj.to_s }
+        { obj_type: obj.to_s, obj_id: nil }
       end
     end
 

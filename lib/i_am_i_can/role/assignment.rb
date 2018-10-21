@@ -10,7 +10,7 @@ module IAmICan
         self.class.have_roles *roles, which_can: which_can, obj: obj, save: save if should_define_role
         failed_items = [ ]
 
-        roles.each do |role|
+        roles.map(&__role).each do |role|
           if save
             failed_items << role unless stored_roles_add(role)
           else

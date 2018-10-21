@@ -3,7 +3,6 @@ require 'active_support/core_ext/object/inclusion'
 require 'active_support/core_ext/hash/deep_merge'
 
 require 'i_am_i_can/version'
-require 'i_am_i_can/has_an_array_of'
 require 'i_am_i_can/config'
 require 'i_am_i_can/role/definition'
 require 'i_am_i_can/role/assignment'
@@ -14,8 +13,6 @@ require 'i_am_i_can/subject/role_querying'
 require 'i_am_i_can/subject/permission_querying'
 
 module IAmICan
-  include HasAnArrayOf
-
   def act_as_i_am_i_can role_model: "#{name}Role".constantize,
                         role_group_model: ("#{name}RoleGroup".constantize rescue nil),
                         permission_model: "#{name}Permission".constantize, **options
@@ -40,17 +37,18 @@ module IAmICan
     role_group_model&.extend  IAmICan::Permission::Definition
     role_group_model&.include IAmICan::Permission::Assignment
                  self.include IAmICan::Subject::PermissionQuerying
+  end
 
-    opts = {
-        attrs: { name: :to_sym },
-        located_by: :name,
-        prefix: :stored,
-        cache_expires_in: options[:cache_expires_in] || 15.minutes
-    }
-                 self.has_an_array_of :roles, model: role_model.name, for_related_name: name.underscore, **opts
-    role_group_model&.has_an_array_of :members, model: role_model.name, for_related_name: 'role_group', **opts.except(:prefix)
-           role_model.has_an_array_of :permissions, model: permission_model.name, for_related_name: 'role', **opts.except(:attrs, :located_by)
-    role_group_model&.has_an_array_of :permissions, model: permission_model.name, for_related_name: 'role_group', **opts.except(:attrs, :located_by)
+  def act_as_role
+    #
+  end
+
+  def act_as_role_group
+    #
+  end
+
+  def act_as_permission
+    #
   end
 
   class Error < StandardError;          end

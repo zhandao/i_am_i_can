@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    i_am_i_can (2.1.0)
+    i_am_i_can (3.0.0pre)
       activerecord
       activesupport
       railties
@@ -35,6 +35,7 @@ GEM
       tzinfo (~> 1.1)
     arel (9.0.0)
     builder (3.2.3)
+    coderay (1.1.2)
     concurrent-ruby (1.0.5)
     crass (1.0.4)
     database_cleaner (1.7.0)
@@ -52,7 +53,9 @@ GEM
     minitest (5.11.3)
     nokogiri (1.8.4)
       mini_portile2 (~> 2.3.0)
-    pg (1.0.0)
+    pry (0.11.3)
+      coderay (~> 1.1.0)
+      method_source (~> 0.9.0)
     rack (2.0.5)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
@@ -106,11 +109,11 @@ DEPENDENCIES
   bundler (~> 1.16)
   database_cleaner
   i_am_i_can!
-  pg
+  pry
   rake (~> 10.0)
   rspec (~> 3.0)
   rspec-rails
   simplecov
 
 BUNDLED WITH
-   1.16.1
+   1.16.6
