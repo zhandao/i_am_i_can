@@ -87,11 +87,11 @@ module IAmICan
       end
 
       def defined_role_groups
-        i_am_i_can.role_group_model.all.map { |group| [ group.name.to_sym, group.member_names.map(&:to_sym) ] }.to_h
+        i_am_i_can.role_group_model.all.map { |group| [ group.name.to_sym, group.member_names.map(&:to_sym).sort ] }.to_h
       end
 
       def members_of_role_group name
-        i_am_i_can.role_group_model.find_by!(name: name).member_names
+        i_am_i_can.role_group_model.find_by!(name: name).member_names.sort
       end
 
       Definition.include self

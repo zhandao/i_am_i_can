@@ -2,7 +2,7 @@ module IAmICan
   module Configs
     class Config
       attr_accessor :subject_class, :role_class, :role_group_class, :permission_class,
-                    :auto_define_before, :strict_mode, :without_group, :default_save
+                    :auto_define_before, :strict_mode, :without_group, :default_save, :act
 
       def initialize(*classes)
         self.subject_class, self.role_class, self.permission_class, self.role_group_class = classes

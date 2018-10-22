@@ -4,6 +4,8 @@ require 'active_support/core_ext/hash/deep_merge'
 
 require 'i_am_i_can/version'
 require 'i_am_i_can/configurable'
+require 'i_am_i_can/reflection'
+require 'i_am_i_can/dynamic_generate'
 require 'i_am_i_can/role/definition'
 require 'i_am_i_can/role/assignment'
 require 'i_am_i_can/permission'
@@ -11,32 +13,56 @@ require 'i_am_i_can/permission/definition'
 require 'i_am_i_can/permission/assignment'
 require 'i_am_i_can/subject/role_querying'
 require 'i_am_i_can/subject/permission_querying'
+require 'i_am_i_can/source'
 
 module IAmICan
   def act_as_subject
-    extend  IAmICan::Role::Definition
+    i_am_i_can.act = :subject
+    extend  Role::Definition
 
-    include IAmICan::Role::Assignment
-    include IAmICan::Subject::RoleQuerying
-    include IAmICan::Subject::PermissionQuerying
+    include Role::Assignment
+    include Subject::RoleQuerying
+    include Subject::PermissionQuerying
+
+    include Reflection
+    instance_exec(%i[ role ], &DynamicGenerate.scopes)
+    instance_exec(&DynamicGenerate.class_reflections)
+    instance_exec(%i[ role ], &DynamicGenerate.assignment_helpers)
   end
 
   def act_as_role
-    extend  IAmICan::Permission::Definition
-    include IAmICan::Permission::Assignment
+    i_am_i_can.act = :role
+    extend  Permission::Definition
+    include Permission::Assignment
+
+    include Reflection
+    instance_exec(%i[ permission ], &DynamicGenerate.scopes)
+    instance_exec(&DynamicGenerate.class_reflections)
+    instance_exec(%i[ permission ], &DynamicGenerate.assignment_helpers)
   end
 
   def act_as_role_group
-    extend  IAmICan::Permission::Definition
-    include IAmICan::Permission::Assignment
+    i_am_i_can.act = :role_group
+    extend  Permission::Definition
+    include Permission::Assignment
+
+    include Reflection
+    instance_exec(%i[ permission role ], &DynamicGenerate.scopes)
+    instance_exec(&DynamicGenerate.class_reflections)
+    instance_exec(%i[ role permission ], &DynamicGenerate.assignment_helpers)
   end
 
   def act_as_permission
-    extend IAmICan::Permission
+    i_am_i_can.act = :permission
+    extend Permission
+
+    include Reflection
+    instance_exec(%i[ role role_group ], &DynamicGenerate.scopes)
+    instance_exec(&DynamicGenerate.class_reflections)
   end
 
   def act_as_allowed_source
-    #
+    include Source
   end
 
   class Error < StandardError;          end

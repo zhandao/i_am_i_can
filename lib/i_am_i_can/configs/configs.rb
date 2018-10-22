@@ -10,11 +10,11 @@ module IAmICan
       config = Config.new(subject, role, permission, role_group)
       config.instance_eval(&block)
       configs.merge!(
-          subject => config,
-          role => config,
-          permission => config,
+          subject => config.dup,
+          role => config.dup,
+          permission => config.dup,
       )
-      configs.merge!(role_group => config) if role_group
+      configs.merge!(role_group => config.dup) if role_group
       config
     end
 
