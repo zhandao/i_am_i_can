@@ -9,7 +9,7 @@ module IAmICan
         Configs.get(self.name)
       end
 
-      def _reflect_of_ii(key)
+      def _reflect_of(key)
         _name = i_am_i_can.send("#{key}_class")
         reflections.each do |name, reflection|
           return name if reflection.class_name == _name
@@ -21,6 +21,8 @@ module IAmICan
       def i_am_i_can
         Configs.get(self.class.name)
       end
+
+      delegate :_reflect_of, to: self
     end
   end
 end

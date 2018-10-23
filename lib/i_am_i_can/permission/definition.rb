@@ -6,10 +6,6 @@ module IAmICan
     module Definition
       include Helpers::Cls
 
-      def which(name:, **conditions)
-        find_by!(name: name, **conditions)
-      end
-
       def have_permission *preds, obj: nil, desc: nil, save: i_am_i_can.default_save
         failed_items = [ ]
 
@@ -36,22 +32,6 @@ module IAmICan
       end
 
       alias declare_permissions declare_permission
-
-      def defined_local_permissions
-        @defined_local_permissions ||= { }
-      end
-
-      def defined_stored_pms_names
-        i_am_i_can.permission_model.all.map(&:name)
-      end
-
-      def defined_stored_permissions
-        i_am_i_can.permission_model.all.map { |pms| [ pms.name, pms.desc ] }.to_h
-      end
-
-      def defined_permissions
-        defined_local_permissions.deep_merge(defined_stored_permissions)
-      end
 
       def self.extended(kls)
         kls.delegate :defined_permissions, :pms_naming, :deconstruct_obj, :pms_of_defined_local_role, to: kls

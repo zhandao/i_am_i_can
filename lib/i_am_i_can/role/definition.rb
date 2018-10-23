@@ -50,51 +50,9 @@ module IAmICan
 
       alias has_and_groups_roles have_and_group_roles
 
-      # permission assignment locally for local role
-      # User.local_role_which(name: :admin, can: :fly)
-      #   same effect to: UserRole.new(name: :admin).temporarily_can :fly
-      def local_role_which(name:, can:, obj: nil, **options)
-        i_am_i_can.role_model.new(name: name).temporarily_can *Array(can), obj: obj, **options
-      end
-
       def self.extended(kls)
         kls.delegate :defined_local_roles, :defined_stored_roles, :defined_roles, to: kls
       end
-    end
-
-    # === End of MainMethods ===
-
-    module Definition::SecondaryMethods
-      def defined_local_roles
-        @local_roles ||= { }
-      end
-
-      def defined_stored_role_names
-        i_am_i_can.role_model.pluck(:name).map(&:to_sym)
-      end
-
-      def defined_stored_roles
-        i_am_i_can.role_model.all.map { |role| [ role.name.to_sym, role.desc ] }.to_h
-      end
-
-      def defined_roles
-        defined_local_roles.deep_merge(defined_stored_roles)
-      end
-
-      def defined_role_group_names
-        i_am_i_can.role_group_model.pluck(:name).map(&:to_sym)
-
-      end
-
-      def defined_role_groups
-        i_am_i_can.role_group_model.all.map { |group| [ group.name.to_sym, group.member_names.map(&:to_sym).sort ] }.to_h
-      end
-
-      def members_of_role_group name
-        i_am_i_can.role_group_model.find_by!(name: name).member_names.sort
-      end
-
-      Definition.include self
     end
   end
 end

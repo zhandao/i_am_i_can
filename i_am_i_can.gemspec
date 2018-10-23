@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["zhandao"]
   spec.email         = ["x@skippingcat.com"]
 
-  spec.summary       = 'Concise and Natural DSL for `Subject - Role(Role Group) - Permission` Management.'
-  spec.description   = 'Concise and Natural DSL for `Subject - Role(Role Group) - Permission` Management.'
+  spec.summary       = '(RBAC like) Concise and Natural DSL for `Subject - Role(Role Group) - Permission - Resource` Management.'
+  spec.description   = '(RBAC like) Concise and Natural DSL for `Subject - Role(Role Group) - Permission - Resource` Management.'
   spec.homepage      = 'https://github.com/zhandao/i_am_i_can'
   spec.license       = 'MIT'
 

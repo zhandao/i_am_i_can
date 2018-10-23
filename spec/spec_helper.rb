@@ -12,7 +12,7 @@ require 'app/config/user_am_user_can'
 require 'app/models/user_role'
 require 'app/models/user_role_group'
 require 'app/models/user_permission'
-require 'app/models/source'
+require 'app/models/resource'
 require 'app/models/user'
 
 ENV['ITEST'] = "true"

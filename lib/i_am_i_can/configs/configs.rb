@@ -21,5 +21,9 @@ module IAmICan
     def self.get(class_name)
       configs[class_name]
     end
+
+    def self.take
+      configs.values.first
+    end
   end
 end

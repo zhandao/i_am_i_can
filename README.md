@@ -5,7 +5,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/27b664da01b6cc7180e3/maintainability)](https://codeclimate.com/github/zhandao/i_am_i_can/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/27b664da01b6cc7180e3/test_coverage)](https://codeclimate.com/github/zhandao/i_am_i_can/test_coverage)
 
-Concise and Natural DSL for `Subject - Role(Role Group) - Permission` Management.
+Concise and Natural DSL for `Subject - Role(Role Group) - Permission - Resource` Management (RBAC like).
 
 ```ruby
 # our Subject is People, and subject is he:
@@ -46,21 +46,32 @@ he.can? :perform, :magic # => true
 # Cancel Assignment
 he.falls_from :admin
 Roles.which(name: :coder).cannot :fly
+
+# Get allowed resources:
+Resource.that_allow(user).to(:manage) # => Active::Relation
 ```
 
 ## Concepts and Overview
 
 ### Definition and uniqueness of nouns
 
+0. Subject
+    - Someone who can be assigned roles, and who has permissions through the assigned roles.
+    - See wiki [RBAC](https://en.wikipedia.org/wiki/Role-based_access_control)
 1. Role
-    - definition: TODO
-    - uniqueness: by `name`
-1. Role Group
-    - definition: TODO
-    - uniqueness: by `name`
-1. Permission
-    - definition: TODO
-    - uniqueness: by `predicate + object` (name)
+    - A job function that groups a series of permissions according to a certain dimension.
+    - Also see wiki [RBAC](https://en.wikipedia.org/wiki/Role-based_access_control)
+    - Uniquely identified by `name`
+2. Role Group
+    - A group of roles that may have the same permissions.
+    - Uniquely identified by `name`
+3. Permission
+    - An action, or an approval of a mode of access to a resource
+    - Also see wiki [RBAC](https://en.wikipedia.org/wiki/Role-based_access_control)
+    - Uniquely identified by `predicate( + object)` (name),
+      or we can say, `action( + resource)`
+4. Resource
+    - Polymorphic association with permissions
 
 
 ### In one word:
@@ -91,13 +102,13 @@ Roles.which(name: :coder).cannot :fly
     - the role or permission you want to assign **MUST** be defined before
     - option :auto_define_before (before assignment) you may need in some cases
     - class methods, like: `UserRoleGroup.have_permission :fly`
-    
+
 **Definition => Assignment => Querying**
-    
+
 ### Two Concepts of this gem
 
-1. Stored (save in database)
-2. Local (variable value)
+1. Stored (save in database) TODO
+2. Local (variable value) TODO
 
 [Feature List: needs you](https://github.com/zhandao/i_am_i_can/issues/2)
 
@@ -108,33 +119,38 @@ Roles.which(name: :coder).cannot :fly
     ```ruby
     gem 'i_am_i_can'
     ```
-    
+
 2. Generate migrations and models by your subject name:
     
     ```bash
     rails g i_am_i_can:setup <subject_name>
     ```
-    
+
     For example, if your subject name is `user`, it will generate
     model `UserRole`, `UserRoleGroup` and `UserPermission`
-    
+
 3. Add the code returned by the generator to your subject model, like:
 
     ```ruby
     class User
-      act_as_subject
+      has_and_belongs_to_many :stored_roles,
+                              join_table: 'users_and_user_roles', foreign_key: 'user_role_id', class_name: 'UserRole', association_foreign_key: 'user_id'
    
-       # TODO
+      act_as_subject
     end
     ```
-    
+
     [here](#config-options) is some options you can pass to the declaration.
-    
+
 4. Run `rails db:migrate`
 
 That's all!
 
 ## Usage
+
+### Customization
+
+1. association names TODO
 
 ### Config Options
 
@@ -425,6 +441,10 @@ user.becomes_a :master, which_can: [:read], obj: :book
 user.is? :master # => true
 user.can? :read, :book # => true
 ```
+
+#### I. Resource Querying
+
+TODO
 
 ## Development
 

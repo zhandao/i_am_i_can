@@ -57,20 +57,6 @@ module IAmICan
       alias leaves        falls_from
       alias has_not_role  falls_from
       alias has_not_roles falls_from
-
-      def local_role_names
-        @local_role_names ||= [ ]
-      end
-
-      def local_roles
-        defined_local_roles.slice(*local_role_names)
-      end
-
-      def roles
-        local_role_names + stored_role_names
-      end
-
-      alias role_names roles
     end
   end
 end

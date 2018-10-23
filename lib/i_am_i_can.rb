@@ -6,20 +6,17 @@ require 'i_am_i_can/version'
 require 'i_am_i_can/configurable'
 require 'i_am_i_can/reflection'
 require 'i_am_i_can/dynamic_generate'
-require 'i_am_i_can/role/definition'
-require 'i_am_i_can/role/assignment'
+require 'i_am_i_can/role'
 require 'i_am_i_can/permission'
-require 'i_am_i_can/permission/definition'
-require 'i_am_i_can/permission/assignment'
-require 'i_am_i_can/subject/role_querying'
-require 'i_am_i_can/subject/permission_querying'
-require 'i_am_i_can/source'
+require 'i_am_i_can/subject'
+require 'i_am_i_can/resource'
 
 module IAmICan
   def act_as_subject
     i_am_i_can.act = :subject
-    extend  Role::Definition
+    include Subject
 
+    extend  Role::Definition
     include Role::Assignment
     include Subject::RoleQuerying
     include Subject::PermissionQuerying
@@ -32,17 +29,21 @@ module IAmICan
 
   def act_as_role
     i_am_i_can.act = :role
+    include Role
+
     extend  Permission::Definition
     include Permission::Assignment
 
     include Reflection
-    instance_exec(%i[ permission ], &DynamicGenerate.scopes)
+    instance_exec(%i[ subject role_group permission ], &DynamicGenerate.scopes)
     instance_exec(&DynamicGenerate.class_reflections)
     instance_exec(%i[ permission ], &DynamicGenerate.assignment_helpers)
   end
 
   def act_as_role_group
     i_am_i_can.act = :role_group
+    include Role
+
     extend  Permission::Definition
     include Permission::Assignment
 
@@ -54,15 +55,15 @@ module IAmICan
 
   def act_as_permission
     i_am_i_can.act = :permission
-    extend Permission
+    include Permission
 
     include Reflection
     instance_exec(%i[ role role_group ], &DynamicGenerate.scopes)
     instance_exec(&DynamicGenerate.class_reflections)
   end
 
-  def act_as_allowed_source
-    include Source
+  def act_as_allowed_resource
+    include Resource
   end
 
   class Error < StandardError;          end

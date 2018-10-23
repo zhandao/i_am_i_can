@@ -70,21 +70,6 @@ module IAmICan
       end
 
       alias locally_can? temporarily_can?
-
-      def local_permissions
-        @local_permissions ||= [ ]
-      end
-
-      alias local_permission_names local_permissions
-
-      def stored_permission_names
-        stored_permissions.map(&:name)
-      end
-
-      # TODO: show by hash
-      def permissions
-        local_permission_names + stored_permission_names
-      end
     end
   end
 end

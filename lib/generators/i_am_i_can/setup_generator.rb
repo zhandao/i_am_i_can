@@ -55,7 +55,13 @@ module IAmICan
       end
 
       def tips
-        # TODO
+        puts "    Add the code below to #{name_c}:".green
+        puts <<~TIPS
+          has_and_belongs_to_many :stored_roles,
+                                  join_table: '#{subj_role_tb}', foreign_key: '#{role_u}_id', class_name: '#{role_c}', association_foreign_key: '#{name_u}_id'
+
+          act_as_subject
+        TIPS
       end
 
       def self.next_migration_number(dirname)

@@ -9,7 +9,7 @@ module IAmICan
       #
       proc do |keys|
         keys.each do |k|
-          scope :"with_#{_reflect_of_ii(k)}", ->  { includes(_reflect_of_ii(k)) }
+          scope :"with_#{_reflect_of(k)}", ->  { includes(_reflect_of(k)) }
         end
       end
     end
@@ -30,10 +30,10 @@ module IAmICan
       #
       proc do
         %w[ subject role role_group permission ].each do |k|
-          next unless _reflect_of_ii(k)
-          define_singleton_method _reflect_of_ii(k) do
+          next unless _reflect_of(k)
+          define_singleton_method _reflect_of(k) do
             model = i_am_i_can.send("#{k}_model")
-            raise NoMethodError unless (reflect_name = model._reflect_of_ii(i_am_i_can.act))
+            raise NoMethodError unless (reflect_name = model._reflect_of(i_am_i_can.act))
             model.send("with_#{reflect_name}").where(
                 self.name.underscore.pluralize => { id: self.ids }
             )
@@ -45,7 +45,7 @@ module IAmICan
     def assignment_helpers
       # Generate 4 methods for each Content of Assignment
       #
-      # Example for a subject model called User, which has_and_belongs_to_many :stored_roles.
+      # Example for a subject model called User, which `has_and_belongs_to_many :stored_roles`.
       # You call this proc by given contents [:role], then:
       #
       # 1. stored_roles_add
@@ -63,7 +63,7 @@ module IAmICan
       proc do |contents|
         contents.each do |content|
           # TODO: refactoring
-          define_method "#{_reflect_of_ii(content)}_add" do |locate_vals = nil, check_size: nil, **condition|
+          define_method "#{_reflect_of(content)}_add" do |locate_vals = nil, check_size: nil, **condition|
             condition = { name: locate_vals } if locate_vals
             assoc = send("_#{content.to_s.pluralize}")
             records = i_am_i_can.send("#{content}_model").where(condition).where.not(id: assoc.ids)
@@ -72,7 +72,7 @@ module IAmICan
             assoc << records
           end
 
-          define_method "#{_reflect_of_ii(content)}_rmv" do |locate_vals = nil, check_size: nil, **condition|
+          define_method "#{_reflect_of(content)}_rmv" do |locate_vals = nil, check_size: nil, **condition|
             condition = { name: locate_vals } if locate_vals
             assoc = send("_#{content.to_s.pluralize}")
             records = i_am_i_can.send("#{content}_model").where(id: assoc.ids, **condition)
@@ -81,12 +81,12 @@ module IAmICan
             assoc.destroy(records)
           end
 
-          define_method "#{_reflect_of_ii(content).to_s.singularize}_names" do
+          define_method "#{_reflect_of(content).to_s.singularize}_names" do
             send("_#{content.to_s.pluralize}").map(&:name).map(&:to_sym)
           end
 
-          define_singleton_method "#{_reflect_of_ii(content).to_s.singularize}_names" do
-            all.flat_map { |user| user.send("#{_reflect_of_ii(content).to_s.singularize}_name") }.uniq
+          define_singleton_method "#{_reflect_of(content).to_s.singularize}_names" do
+            all.flat_map { |user| user.send("#{_reflect_of(content).to_s.singularize}_name") }.uniq
           end
         end
       end
