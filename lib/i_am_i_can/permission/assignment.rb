@@ -13,7 +13,7 @@ module IAmICan
         preds.each do |pred|
           pms_name = pms_naming(pred, obj)
           covered_items << pms_name if pms_matched?(pms_name, in: stored_permission_names)
-          not_defined_items << pms_name unless stored_permissions_add(pred: pred, **deconstruct_obj(obj))
+          not_defined_items << pms_name unless _stored_permissions_add(pred: pred, **deconstruct_obj(obj))
         end
 
         _pms_assignment_result(preds, obj, not_defined_items, covered_items, strict_mode)
@@ -44,7 +44,7 @@ module IAmICan
         preds.each do |pred|
           pms_name = pms_naming(pred, obj)
           if saved
-            next if stored_permissions_rmv(pred: pred, **deconstruct_obj(obj))
+            next if _stored_permissions_rmv(pred: pred, **deconstruct_obj(obj))
             not_defined_items << pms_name
           else
             next not_defined_items << pms_name unless pms_name.in?(defined_permissions.keys)

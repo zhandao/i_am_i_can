@@ -12,7 +12,7 @@ module IAmICan
 
         roles.map(&__role).each do |role|
           if save
-            failed_items << role unless stored_roles_add(role)
+            failed_items << role unless _stored_roles_add(role)
           else
             next failed_items << role unless role.in?(defined_roles.keys)
             local_role_names << role unless role.in?(local_role_names)
@@ -41,7 +41,7 @@ module IAmICan
 
         roles.each do |role|
           if saved
-            failed_items << role unless stored_roles_rmv(role)
+            failed_items << role unless _stored_roles_rmv(role)
           else
             next failed_items << role unless role.in?(defined_roles.keys)
             local_role_names.delete(role)

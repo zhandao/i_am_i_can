@@ -20,9 +20,7 @@ module IAmICan
     end
 
     def to(pred)
-      roles = Configs.take.subject_model._roles
-      permissions = Configs.take.role_model._permissions
-      allowed_ids = subject.send(roles).send(permissions).where(pred: pred, obj_type: records.name).pluck(:obj_id).uniq
+      allowed_ids = subject._roles._permissions.where(pred: pred, obj_type: records.name).pluck(:obj_id).uniq
       records.where(id: allowed_ids)
     end
   end

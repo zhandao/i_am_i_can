@@ -24,7 +24,7 @@ module IAmICan
     include Reflection
     instance_exec(%i[ role ], &DynamicGenerate.scopes)
     instance_exec(&DynamicGenerate.class_reflections)
-    instance_exec(%i[ role ], &DynamicGenerate.assignment_helpers)
+    instance_exec(%w[ role ], &DynamicGenerate.assignment_helpers)
   end
 
   def acts_as_role
@@ -37,7 +37,7 @@ module IAmICan
     include Reflection
     instance_exec(%i[ subject role_group permission ], &DynamicGenerate.scopes)
     instance_exec(&DynamicGenerate.class_reflections)
-    instance_exec(%i[ permission ], &DynamicGenerate.assignment_helpers)
+    instance_exec(%w[ permission ], &DynamicGenerate.assignment_helpers)
   end
 
   def acts_as_role_group
@@ -50,7 +50,7 @@ module IAmICan
     include Reflection
     instance_exec(%i[ permission role ], &DynamicGenerate.scopes)
     instance_exec(&DynamicGenerate.class_reflections)
-    instance_exec(%i[ role permission ], &DynamicGenerate.assignment_helpers)
+    instance_exec(%w[ role permission ], &DynamicGenerate.assignment_helpers)
   end
 
   def acts_as_permission

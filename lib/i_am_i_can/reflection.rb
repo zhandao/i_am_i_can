@@ -3,12 +3,24 @@ module IAmICan
     extend ActiveSupport::Concern
 
     class_methods do
-      # User._roles => 'stored_roles'
+      def _reflect_of(key)
+        _name = i_am_i_can.send("#{key}_class")
+        reflections.each do |name, reflection|
+          return name if reflection.class_name == _name
+        end; nil
+      end
+
       %w[ subjects roles role_groups permissions ].each do |k|
-        define_method "_#{k}" do
-          v = instance_variable_get("@_#{k}")
+        # User.__roles => 'stored_roles'
+        define_method "__#{k}" do
+          v = instance_variable_get("@__#{k}")
           return v if v.present?
-          instance_variable_set("@_#{k}", _reflect_of(k.singularize))
+          instance_variable_set("@__#{k}", _reflect_of(k.singularize))
+        end
+
+        # User.all._roles == User.all.stored_roles
+        define_method "_#{k}" do
+          send(send("__#{k}")) if send("__#{k}")
         end
       end
     end
@@ -17,7 +29,7 @@ module IAmICan
       # user._roles => Association CollectionProxy, same as: `user.stored_roles`
       %w[ subjects roles role_groups permissions ].each do |k|
         define_method "_#{k}" do
-          send(self.class.send("_#{k}")) if self.class.send("_#{k}")
+          send(self.class.send("__#{k}")) if self.class.send("__#{k}")
         end
       end
     end

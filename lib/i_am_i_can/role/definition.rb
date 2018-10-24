@@ -36,7 +36,7 @@ module IAmICan
       def group_roles *members, by_name:, which_can: [ ], obj: nil
         raise Error, 'Some of members have not been defined' unless (members - defined_stored_role_names).empty?
         raise Error, "Given name #{by_name} has been used by a role" if i_am_i_can.role_model.exists?(name: by_name)
-        i_am_i_can.role_group_model.find_or_create_by!(name: by_name).members_add(members)
+        i_am_i_can.role_group_model.find_or_create_by!(name: by_name)._members_add(members)
       end
 
       alias group_role   group_roles

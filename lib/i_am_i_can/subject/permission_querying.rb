@@ -54,11 +54,11 @@ module IAmICan
       end
 
       def permissions_of_stored_roles
-        stored_roles.stored_permissions.map(&:name)
+        _roles._permissions.map(&:name)
       end
 
       def permissions_of_role_groups
-        stored_roles.related_role_groups.stored_permissions.map(&:name)
+        _roles._role_groups._permissions.map(&:name)
       end
 
       def permissions_of_local_roles

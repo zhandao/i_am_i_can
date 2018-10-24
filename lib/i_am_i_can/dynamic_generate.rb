@@ -48,10 +48,10 @@ module IAmICan
       # Example for a subject model called User, which `has_and_belongs_to_many :stored_roles`.
       # You call this proc by given contents [:role], then:
       #
-      # 1. stored_roles_add
+      # 1. _stored_roles_add
       #   Add roles to a user instance
       #
-      # 2. stored_roles_add
+      # 2. _stored_roles_rmv
       #   Remove roles to a user instance
       #
       # 3. stored_role_names
@@ -63,31 +63,39 @@ module IAmICan
       proc do |contents|
         contents.each do |content|
           # TODO: refactoring
-          define_method "#{_reflect_of(content)}_add" do |locate_vals = nil, check_size: nil, **condition|
+          define_method "_#{_reflect_of(content)}_add" do |locate_vals = nil, check_size: nil, **condition|
             condition = { name: locate_vals } if locate_vals
-            assoc = send("_#{content.to_s.pluralize}")
+            assoc = send("_#{content.pluralize}")
             records = i_am_i_can.send("#{content}_model").where(condition).where.not(id: assoc.ids)
             # will return false if it does nothing
             return false if records.blank? || (check_size && records.count != check_size)
             assoc << records
           end
 
-          define_method "#{_reflect_of(content)}_rmv" do |locate_vals = nil, check_size: nil, **condition|
+          alias_method :"_stored_#{content.pluralize}_add", :"_#{_reflect_of(content)}_add"
+
+          define_method "_#{_reflect_of(content)}_rmv" do |locate_vals = nil, check_size: nil, **condition|
             condition = { name: locate_vals } if locate_vals
-            assoc = send("_#{content.to_s.pluralize}")
+            assoc = send("_#{content.pluralize}")
             records = i_am_i_can.send("#{content}_model").where(id: assoc.ids, **condition)
             # will return false if it does nothing
             return false if records.blank? || (check_size && records.count != check_size)
             assoc.destroy(records)
           end
 
+          alias_method :"_stored_#{content.pluralize}_rmv", :"_#{_reflect_of(content)}_rmv"
+
           define_method "#{_reflect_of(content).to_s.singularize}_names" do
-            send("_#{content.to_s.pluralize}").map(&:name).map(&:to_sym)
+            send("_#{content.pluralize}").map(&:name).map(&:to_sym)
           end
+
+          alias_method :"stored_#{content}_names", :"#{_reflect_of(content).to_s.singularize}_names"
 
           define_singleton_method "#{_reflect_of(content).to_s.singularize}_names" do
             all.flat_map { |user| user.send("#{_reflect_of(content).to_s.singularize}_name") }.uniq
           end
+
+          singleton_class.send(:alias_method, :"stored_#{content}_names", :"#{_reflect_of(content).to_s.singularize}_names")
         end
       end
     end
