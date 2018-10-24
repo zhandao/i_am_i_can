@@ -3,6 +3,6 @@ IAmICan::Configs.set_for(subject: '<%= name_c %>',
                          permission: '<%= @ii_opts[:permission_class] %>'<% unless @ii_opts[:without_group] %>,
                          role_group: '<%= @ii_opts[:role_group_class] %>'<% end %>) do |config|
 <% @ii_opts.except(:role_class, :permission_class, :role_group_class).each do |k, v| %>
-  <%= "config.#{k} = " %><%= v %>
+    <%= "config.#{k} = " %><%= v %>
 <% end %>
 end

@@ -12,7 +12,7 @@ require 'i_am_i_can/subject'
 require 'i_am_i_can/resource'
 
 module IAmICan
-  def act_as_subject
+  def acts_as_subject
     i_am_i_can.act = :subject
     include Subject
 
@@ -27,7 +27,7 @@ module IAmICan
     instance_exec(%i[ role ], &DynamicGenerate.assignment_helpers)
   end
 
-  def act_as_role
+  def acts_as_role
     i_am_i_can.act = :role
     include Role
 
@@ -40,7 +40,7 @@ module IAmICan
     instance_exec(%i[ permission ], &DynamicGenerate.assignment_helpers)
   end
 
-  def act_as_role_group
+  def acts_as_role_group
     i_am_i_can.act = :role_group
     include Role
 
@@ -53,7 +53,7 @@ module IAmICan
     instance_exec(%i[ role permission ], &DynamicGenerate.assignment_helpers)
   end
 
-  def act_as_permission
+  def acts_as_permission
     i_am_i_can.act = :permission
     include Permission
 
@@ -62,7 +62,7 @@ module IAmICan
     instance_exec(&DynamicGenerate.class_reflections)
   end
 
-  def act_as_allowed_resource
+  def acts_as_allowed_resource
     include Resource
   end
 

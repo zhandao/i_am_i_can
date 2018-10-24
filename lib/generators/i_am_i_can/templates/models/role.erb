@@ -8,7 +8,7 @@ class <%= role_c %> < ActiveRecord::Base
   has_and_belongs_to_many :stored_permissions,
                           join_table: '<%= role_pms_tb %>', foreign_key: :<%= permission_u %>_id, class_name: '<%= permission_c %>', association_foreign_key: :<%= role_u %>_id
 
-  act_as_role
+  acts_as_role
 
   # default_scope { with_stored_permissions }
 end

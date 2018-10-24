@@ -55,12 +55,14 @@ module IAmICan
       end
 
       def tips
-        puts "    Add the code below to #{name_c}:".green
+        puts "\nAdd the code below to #{name_c}:".green
         puts <<~TIPS
-          has_and_belongs_to_many :stored_roles,
-                                  join_table: '#{subj_role_tb}', foreign_key: '#{role_u}_id', class_name: '#{role_c}', association_foreign_key: '#{name_u}_id'
-
-          act_as_subject
+          |
+          |  has_and_belongs_to_many :stored_roles,
+          |                          join_table: '#{subj_role_tb}', foreign_key: '#{role_u}_id', class_name: '#{role_c}', association_foreign_key: '#{name_u}_id'
+          |
+          |  acts_as_subject
+          |
         TIPS
       end
 
@@ -85,9 +87,9 @@ module IAmICan
       def permission_up; @ii_opts[:permission_class].underscore.pluralize end
 
       def subj_role_tb; name_up + '_and_' + role_up end
-      def group_role_tb; group_up + '_and_' + role_up end
+      def group_role_tb; group_up + '_and_' + role_up rescue nil end
       def role_pms_tb; role_up + '_and_' + permission_up end
-      def group_pms_tb; group_up + '_and_' + permission_up end
+      def group_pms_tb; group_up + '_and_' + permission_up rescue nil end
     end
   end
 end

@@ -7,8 +7,9 @@ class <%= name_c %>Am<%= name_c %>Can < ActiveRecord::Migration::Current
       t.timestamps
     end
 
-    add_index :<%= role_up %>, :name,
-              unique: true, name: '<%= role_up %>_unique_index', using: :btree
+    add_index :<%= role_up %>, :name, unique: true, name: '<%= role_up %>_unique_index'
+
+    # === end of role table ===
 <% unless @ii_opts[:without_group] %>
     create_table :<%= group_up %>, force: :cascade do |t|
       t.string  :name, null: false
@@ -17,8 +18,10 @@ class <%= name_c %>Am<%= name_c %>Can < ActiveRecord::Migration::Current
       t.timestamps
     end
 
-    add_index :<%= group_up %>, :name,
-              unique: true, name: '<%= group_up %>_unique_index', using: :btree
+    add_index :<%= group_up %>, :name, unique: true, name: '<%= group_up %>_unique_index'
+
+    # === end of role group table ===
+
 <% end %>
     create_table :<%= permission_up %>, force: :cascade do |t|
       t.string  :pred,     null: false
@@ -29,8 +32,11 @@ class <%= name_c %>Am<%= name_c %>Can < ActiveRecord::Migration::Current
       t.timestamps
     end
 
-    add_index :<%= permission_up %>, %i[ pred obj_type obj_id ],
-              unique: true, name: '<%= permission_up %>_unique_index', using: :btree
+    add_index :<%= permission_up %>, %i[ pred obj_type obj_id ], unique: true, name: '<%= permission_up %>_unique_index'
+    ### Open below if you want to use `Resource.that_allow` frequently
+    # add_index :<%= permission_up %>, %i[ pred obj_type ], name: '<%= permission_up %>_resource_search_index'
+
+    # === end of permission table ===
 
     create_table :<%= subj_role_tb %>, id: false, force: :cascade do |t|
       t.belongs_to :<%= name_u %>, null: false#, index: false
@@ -41,6 +47,8 @@ class <%= name_c %>Am<%= name_c %>Can < ActiveRecord::Migration::Current
     # add_index :<%= subj_role_tb %>, :<%= role_u %>_id, name: ':<%= subj_role_tb %>_index2'
     add_index :<%= subj_role_tb %>, [ :<%= name_u %>_id, :<%= role_u %>_id ],
               unique: true, name: '<%= subj_role_tb %>_uniq_index'
+
+    # === end of subject-role table ===
 <% unless @ii_opts[:without_group] %>
     create_table :<%= group_role_tb %>, id: false, force: :cascade do |t|
       t.belongs_to :<%= group_u %>, null: false#, index: false
@@ -52,6 +60,8 @@ class <%= name_c %>Am<%= name_c %>Can < ActiveRecord::Migration::Current
     add_index :<%= group_role_tb %>, [ :<%= group_u %>_id, :<%= role_u %>_id ],
               unique: true, name: '<%= group_role_tb %>_uniq_index'
 
+    # === end of group-role table ===
+
 <% end %>
     create_table :<%= role_pms_tb %>, id: false, force: :cascade do |t|
       t.belongs_to :<%= role_u %>, null: false#, index: false
@@ -62,6 +72,8 @@ class <%= name_c %>Am<%= name_c %>Can < ActiveRecord::Migration::Current
     # add_index :<%= role_pms_tb %>, :<%= permission_u %>_id, name: '<%= role_pms_tb %>_index2'
     add_index :<%= role_pms_tb %>, [ :<%= role_u %>_id, :<%= permission_u %>_id ],
               unique: true, name: '<%= role_pms_tb %>_uniq_index'
+
+    # === end of role-permission table ===
 <% unless @ii_opts[:without_group] %>
     create_table :<%= group_pms_tb %>, id: false, force: :cascade do |t|
       t.belongs_to :<%= group_u %>, null: false#, index: false
@@ -72,6 +84,8 @@ class <%= name_c %>Am<%= name_c %>Can < ActiveRecord::Migration::Current
     # add_index :<%= group_pms_tb %>, :<%= permission_u %>_id, name: '<%= group_pms_tb %>_index2'
     add_index :<%= group_pms_tb %>, [ :<%= group_u %>_id, :<%= permission_u %>_id ],
               unique: true, name: '<%= group_pms_tb %>_uniq_index'
+
+    # === end of group-permission table ===
 
 <% end %>
   end
