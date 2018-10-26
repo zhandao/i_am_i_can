@@ -1,16 +1,16 @@
-require 'i_am_i_can/role/helpers'
+require 'i_am_i_can/role/methods'
 
 module IAmICan
   module Role
     module Assignment
-      include Helpers::Ins
+      include Methods::Ins
 
       def becomes_a *roles, which_can: [ ], obj: nil, auto_define_before: i_am_i_can.auto_define_before, save: i_am_i_can.default_save
         should_define_role = which_can.present? || auto_define_before
         self.class.have_roles *roles, which_can: which_can, obj: obj, save: save if should_define_role
         failed_items = [ ]
 
-        roles.map(&__role).each do |role|
+        roles.map!(&Helpers.role).each do |role|
           if save
             failed_items << role unless _stored_roles_add(role)
           else
@@ -39,7 +39,7 @@ module IAmICan
       def falls_from *roles, saved: i_am_i_can.default_save
         failed_items = [ ]
 
-        roles.each do |role|
+        roles.map!(&Helpers.role).each do |role|
           if saved
             failed_items << role unless _stored_roles_rmv(role)
           else

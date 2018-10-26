@@ -1,11 +1,11 @@
 module IAmICan
   module Permission
-    module Helpers
+    module Methods
       module Cls
         def _pms_definition_result(preds, obj, failed_items)
           prefix = 'Permission Definition Done'
           fail_msg = prefix + ", but #{failed_items} have been defined" if failed_items.present?
-          raise Error, fail_msg if  i_am_i_can.strict_mode && fail_msg
+          raise Error, fail_msg if i_am_i_can.strict_mode && fail_msg
           puts fail_msg || prefix unless ENV['ITEST']
           prefix.present?
         end

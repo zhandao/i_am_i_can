@@ -1,9 +1,9 @@
-require 'i_am_i_can/permission/helpers'
+require 'i_am_i_can/permission/methods'
 
 module IAmICan
   module Permission
     module Assignment
-      include Helpers::Ins
+      include Methods::Ins
 
       # permission assignment for stored role
       def can *preds, obj: nil, strict_mode: false, auto_define_before: i_am_i_can.auto_define_before

@@ -1,6 +1,6 @@
 module IAmICan
   module Role
-    module Helpers
+    module Methods
       module Cls
         def _to_store_role name, **options
           return false if i_am_i_can.role_model.exists?(name: name) || i_am_i_can.role_group_model&.exists?(name: name)
@@ -47,14 +47,6 @@ module IAmICan
           raise Error, fail_msg if i_am_i_can.strict_mode && fail_msg
           puts fail_msg || prefix unless ENV['ITEST']
           prefix.present?
-        end
-
-        def __role
-          proc do |role|
-            next role.to_sym if role.is_a?(String) || role.is_a?(Symbol)
-            next role.name if role.is_a?(i_am_i_can.role_model)
-            # raise error
-          end
         end
 
         def local_role_names

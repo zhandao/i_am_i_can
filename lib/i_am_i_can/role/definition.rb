@@ -1,14 +1,14 @@
-require 'i_am_i_can/role/helpers'
+require 'i_am_i_can/role/methods'
 
 module IAmICan
   module Role
     module Definition
-      include Helpers::Cls
+      include Methods::Cls
 
-      def have_role *names, desc: nil, save: i_am_i_can.default_save, which_can: [ ], obj: nil
+      def have_role *roles, desc: nil, save: i_am_i_can.default_save, which_can: [ ], obj: nil
         failed_items, preds = [ ], which_can
 
-        names.each do |name|
+        roles.map!(&Helpers.role).each do |name|
           description = desc || name.to_s.humanize
           if save
             next failed_items << name unless _to_store_role(name, desc: description)
@@ -20,7 +20,7 @@ module IAmICan
           end
         end
 
-        _role_definition_result(names, failed_items)
+        _role_definition_result(roles, failed_items)
       end
 
       alias have_roles have_role
@@ -34,6 +34,7 @@ module IAmICan
       alias declare_roles has_role
 
       def group_roles *members, by_name:, which_can: [ ], obj: nil
+        members.map!(&Helpers.role)
         raise Error, 'Some of members have not been defined' unless (members - defined_stored_role_names).empty?
         raise Error, "Given name #{by_name} has been used by a role" if i_am_i_can.role_model.exists?(name: by_name)
         i_am_i_can.role_group_model.find_or_create_by!(name: by_name)._members_add(members)

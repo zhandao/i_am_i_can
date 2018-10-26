@@ -1,10 +1,10 @@
-require 'i_am_i_can/permission/helpers'
+require 'i_am_i_can/permission/methods'
 require 'i_am_i_can/permission/p_array'
 
 module IAmICan
   module Permission
     module Definition
-      include Helpers::Cls
+      include Methods::Cls
 
       def have_permission *preds, obj: nil, desc: nil, save: i_am_i_can.default_save
         failed_items = [ ]

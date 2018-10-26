@@ -3,6 +3,7 @@ require 'active_support/core_ext/object/inclusion'
 require 'active_support/core_ext/hash/deep_merge'
 
 require 'i_am_i_can/version'
+require 'i_am_i_can/helpers'
 require 'i_am_i_can/configurable'
 require 'i_am_i_can/reflection'
 require 'i_am_i_can/dynamic_generate'
