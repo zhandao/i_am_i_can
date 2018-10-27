@@ -1,8 +1,8 @@
 class <%= name_c %>Am<%= name_c %>Can < ActiveRecord::Migration::Current
   def change
     create_table :<%= role_up %>, force: :cascade do |t|
-      t.string  :name, null: false
-      t.string  :desc
+      t.string  :name,    null: false
+      t.string  :remarks
 
       t.timestamps
     end
@@ -12,8 +12,8 @@ class <%= name_c %>Am<%= name_c %>Can < ActiveRecord::Migration::Current
     # === end of role table ===
 <% unless @ii_opts[:without_group] %>
     create_table :<%= group_up %>, force: :cascade do |t|
-      t.string  :name, null: false
-      t.string  :desc
+      t.string  :name,    null: false
+      t.string  :remarks
 
       t.timestamps
     end
@@ -27,7 +27,7 @@ class <%= name_c %>Am<%= name_c %>Can < ActiveRecord::Migration::Current
       t.string  :pred,     null: false
       t.string  :obj_type
       t.integer :obj_id
-      t.string  :desc
+      t.string  :remarks
 
       t.timestamps
     end

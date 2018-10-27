@@ -9,35 +9,35 @@ RSpec.describe IAmICan::Role::Assignment do
     people.have_role :admin, :master, :guest, :dev
   end
 
-  describe '#becomes_a & #temporarily_is' do
+  describe '#becomes_a & #is_a_temporary' do
     context 'when using #becomes_a (save by default)' do
       before { he.becomes_a :admin }
       it { expect(:admin).to be_in(his.stored_role_names) }
-      it { expect(:admin).not_to be_in(his.local_role_names) }
+      it { expect(:admin).not_to be_in(his.temporary_role_names) }
 
       # TODO: is reasonable?
-      context 'and then assign the same role by using #temporarily_is' do
-        before { he.temporarily_is :admin }
+      context 'and then assign the same role by using #is_a_temporary' do
+        before { he.is_a_temporary :admin }
         it { expect(:admin).to be_in(his.stored_role_names) }
-        it { expect(:admin).to be_in(his.local_role_names) }
+        it { expect(:admin).to be_in(his.temporary_role_names) }
       end
     end
 
-    context 'when using #temporarily_is (not save)' do
-      before { he.temporarily_is :master }
-      it { expect(:master).to be_in(his.local_role_names) }
+    context 'when using #is_a_temporary (not save)' do
+      before { he.is_a_temporary :master }
+      it { expect(:master).to be_in(his.temporary_role_names) }
       it { expect(:master).not_to be_in(his.stored_role_names) }
     end
 
     context 'when giving a role which is not defined' do
-      it { expect{ he.temporarily_is :someone_else }
+      it { expect{ he.is_a_temporary :someone_else }
                .to raise_error(IAmICan::Error).with_message(/have not been defined/)  }
       it { expect{ he.becomes_a :someone_else }
                .to raise_error(IAmICan::Error).with_message(/have not been defined/)  }
 
-      context 'when setting auto_define_before to true' do
+      context 'when setting auto_definition to true' do
         it do
-          expect{ he.becomes_a :someone_else, auto_define_before: true }.not_to raise_error
+          expect{ he.becomes_a :someone_else, auto_definition: true }.not_to raise_error
           expect(:someone_else).to be_in(his.stored_role_names)
         end
       end
@@ -49,8 +49,10 @@ RSpec.describe IAmICan::Role::Assignment do
     end
 
     context 'when assigning the role which is assigned before' do
+      before { he.becomes_a :admin }
+
       it do
-        expect{ he.becomes_a :admin, :admin }
+        expect{ he.becomes_a :admin }
                .to raise_error(IAmICan::Error).with_message(/have been repeatedly assigned/)
         expect(his.stored_role_names).to eq [:admin]
       end
@@ -82,7 +84,7 @@ RSpec.describe IAmICan::Role::Assignment do
     end
 
     context 'when local' do
-      before { he.temporarily_is :admin }
+      before { he.is_a_temporary :admin }
       it do
         expect(he.is? :admin).to be_truthy
         expect{ he.falls_from :admin, saved: false }.not_to raise_error

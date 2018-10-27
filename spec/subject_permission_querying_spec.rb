@@ -6,7 +6,7 @@ RSpec.describe IAmICan::Subject::PermissionQuerying do
 
   describe '#can? & #can!' do
     context 'temporarily_can?' do
-      before { he.temporarily_is :magician, which_can: [:perform], obj: :magic }
+      before { he.is_a_temporary :magician, which_can: [:perform], obj: :magic }
 
       it do
         expect(he.can? :perform, :magic).to be_truthy

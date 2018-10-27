@@ -10,7 +10,7 @@ ActiveRecord::Schema.define do
 
   create_table "user_roles", force: :cascade do |t|
     t.string "name", null: false
-    t.string "desc"
+    t.string "remarks"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_user_roles_on_name", unique: true
@@ -20,6 +20,7 @@ ActiveRecord::Schema.define do
     t.string "name", null: false
     t.integer "member_ids", default: [ ], array: true
     # t.integer "permission_ids", default: [ ], array: true
+    t.string "remarks"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_user_role_groups_on_name", unique: true
@@ -29,7 +30,7 @@ ActiveRecord::Schema.define do
     t.string "pred", null: false
     t.string "obj_type"
     t.integer "obj_id"
-    t.string "desc"
+    t.string "remarks"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["pred", "obj_type", "obj_id"], name: "permission_unique_index", unique: true

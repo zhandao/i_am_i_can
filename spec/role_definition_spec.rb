@@ -7,7 +7,7 @@ RSpec.describe IAmICan::Role::Definition do
     context 'when using .have_role  (save by default)' do
       before { people.have_role :admin }
       it do
-        expect(:admin).not_to be_in(people.defined_local_roles.names)
+        expect(:admin).not_to be_in(people.defined_temporary_roles.names)
         expect(:admin).to be_in(people.defined_stored_role_names)
       end
     end
@@ -16,7 +16,7 @@ RSpec.describe IAmICan::Role::Definition do
       before { people.declare_role :admin }
       it do
         expect(:admin).not_to be_in(people.defined_stored_role_names)
-        expect(:admin).to be_in(people.defined_local_roles.names)
+        expect(:admin).to be_in(people.defined_temporary_roles.names)
       end
     end
 

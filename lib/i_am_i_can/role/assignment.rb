@@ -3,60 +3,43 @@ require 'i_am_i_can/role/methods'
 module IAmICan
   module Role
     module Assignment
-      include Methods::Ins
-
-      def becomes_a *roles, which_can: [ ], obj: nil, auto_define_before: i_am_i_can.auto_define_before, save: i_am_i_can.default_save
-        should_define_role = which_can.present? || auto_define_before
-        self.class.have_roles *roles, which_can: which_can, obj: obj, save: save if should_define_role
-        failed_items = [ ]
-
-        roles.map!(&Helpers.role).each do |role|
-          if save
-            failed_items << role unless _stored_roles_add(role)
-          else
-            next failed_items << role unless role.in?(defined_roles.keys)
-            local_role_names << role unless role.in?(local_role_names)
-          end
-        end
-
-        _role_assignment_result(roles, failed_items)
+      def becomes_a *roles, which_can: [ ], obj: nil,
+                    _d: i_am_i_can.auto_definition,
+                    auto_definition: _d || which_can.present?,
+                    save: i_am_i_can.disable_temporary || i_am_i_can.saved_by_default
+        self.class.have_roles *roles, which_can: which_can, obj: obj, save: save if auto_definition
+        _roles_assignment(roles, save)
       end
 
-      alias is        becomes_a
-      alias is_a_role becomes_a
-      alias is_roles  becomes_a
-      alias has_role  becomes_a
-      alias has_roles becomes_a
-      alias role_is   becomes_a
-      alias roles_are becomes_a
+      %i[ is is_a_role is_roles has_role has_roles role_is role_are ].each { |aname| alias_method aname, :becomes_a }
 
-      def temporarily_is *roles, **options
+      def is_a_temporary *roles, **options
         becomes_a *roles, save: false, **options
       end
 
-      alias locally_is temporarily_is
-
-      def falls_from *roles, saved: i_am_i_can.default_save
-        failed_items = [ ]
-
-        roles.map!(&Helpers.role).each do |role|
-          if saved
-            failed_items << role unless _stored_roles_rmv(role)
-          else
-            next failed_items << role unless role.in?(defined_roles.keys)
-            local_role_names.delete(role)
-          end
-        end
-
-        _role_assignment_result(roles, failed_items)
+      def falls_from *roles, saved: i_am_i_can.disable_temporary || i_am_i_can.saved_by_default
+        _roles_assignment(:cancel, roles, saved)
       end
 
-      alias is_not_a      falls_from
-      alias will_not_be   falls_from
-      alias removes_role  falls_from
-      alias leaves        falls_from
-      alias has_not_role  falls_from
-      alias has_not_roles falls_from
+      %i[ is_not_a will_not_be removes_role leaves has_not_role has_not_roles ].each { |aname| alias_method aname, :falls_from }
+
+      def is_not_a_temporary *roles
+        falls_from *roles, saved: false
+      end
+
+      def _roles_assignment(action = :assignment, roles, save)
+        roles = roles.group_by(&:class)
+        instances = roles[i_am_i_can.role_model] || []
+        names = roles.values_at(Symbol, String).flatten.compact.uniq.map(&:to_sym)
+        if save
+          assignment = _stored_roles_exec(action, instances, name: names)
+        else
+          to_be_assigned_names = (instances.map(&:name).map(&:to_sym) + names).uniq
+          assignment = _temporary_roles_exec(action, to_be_assigned_names)
+        end
+
+        ResultOf.roles assignment, given: [instances, names]
+      end
     end
   end
 end

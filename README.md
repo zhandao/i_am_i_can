@@ -100,7 +100,7 @@ Resource.that_allow(user).to(:manage) # => Active::Relation
     - instance methods, like: `user.has_role :admin`
 3. Definition
     - the role or permission you want to assign **MUST** be defined before
-    - option :auto_define_before (before assignment) you may need in some cases
+    - option :auto_definition (before assignment) you may need in some cases
     - class methods, like: `UserRoleGroup.have_permission :fly`
 
 **Definition => Assignment => Querying**
@@ -167,7 +167,7 @@ TODO
         2. `has_role` & `has_roles`
     2. save to local variable: `declare_role`. alias `declare_roles`
 3. helpers:
-    1. `defined_local_roles`
+    1. `defined_temporary_roles`
     2. `defined_stored_roles` & `defined_stored_role_names`
     3. `defined_roles`
     
@@ -175,7 +175,7 @@ Methods Explanation:
 ```ruby
 # === Save to DB ===
 # method signature
-have_role *names, desc: nil, save: default_save#, which_can: [ ], obj: nil
+have_role *names, desc: nil, save: saved_by_default#, which_can: [ ], obj: nil
 # examples
 User.have_roles :admin, :master # => 'Role Definition Done' or error message
 User.defined_stored_roles.keys.count # => 2
@@ -184,7 +184,7 @@ User.defined_stored_roles.keys.count # => 2
 # signature as `have_role`
 # examples
 User.declare_role :coder # => 'Role Definition Done' or error message
-User.defined_local_roles.keys.count # => 1
+User.defined_temporary_roles.keys.count # => 1
 
 User.defined_roles.keys.count # => 3
 ```
@@ -224,14 +224,14 @@ User.members_of_role_group(:vip) # => %i[vip1 vip2 vip3]
         1. `is` & `is_a_role` & `is_roles`
         2. `has_role` & `has_roles`
         3. `role_is` & `role_are`
-    2. save to local variable: `temporarily_is`. alias `locally_is`
+    2. save to local variable: `is_a_temporary`.
 3. cancel assign method: `falls_from`. aliases:
     1. `removes_role`
     2. `leaves`
     3. `is_not_a` & `has_not_role` & `has_not_roles`
     4. `will_not_be`
 4. helpers:
-    1. `local_roles` & `local_role_names`
+    1. `temporary_roles` & `temporary_role_names`
     2. `stored_roles` & `stored_role_names`
     3. `roles`
 
@@ -240,7 +240,7 @@ Methods Explanation:
 he = User.take
 # === Save to DB ===
 # method signature
-becomes_a *roles, auto_define_before: auto_define_before, save:  default_save#, which_can: [ ], obj: nil
+becomes_a *roles, auto_definition: auto_definition, save:  saved_by_default#, which_can: [ ], obj: nil
 # examples
 he.becomes_a :admin # => 'Role Definition Done' or error message
 he.stored_roles   # => [<#UserRole id: 1>]
@@ -248,14 +248,14 @@ he.stored_roles   # => [<#UserRole id: 1>]
 # === Save in Local ===
 # signature as `becomes_a`
 # examples
-he.temporarily_is :coder # => 'Role Assignment Done' or error message
-he.local_roles # => [{ coder: { .. } }]
+he.is_a_temporary :coder # => 'Role Assignment Done' or error message
+he.temporary_roles # => [{ coder: { .. } }]
 
 he.roles # => [:admin, :coder]
 
 # === Cancel ===
 # method signature
-falls_from *roles, saved: default_save
+falls_from *roles, saved: saved_by_default
 # examples
 he.falls_from :admin # => 'Role Assignment Done' or error message
 he.removes_roles :coder, saved: false # => 'Role Assignment Done' or error message
@@ -315,7 +315,7 @@ Methods Explanation:
 ```ruby
 # === Save to DB ===
 # method signature
-have_permission *preds, obj: nil, desc: nil, save: default_save
+have_permission *preds, obj: nil, desc: nil, save: saved_by_default
 # examples
 UserRole.have_permission :fly # => 'Permission Definition Done' or error message
 UserRole.defined_stored_permissions.keys.count # => 1
@@ -366,7 +366,7 @@ role = UserRole.which(name: :admin)
 
 # === Save to DB ===
 # method signature
-can *preds, obj: nil, strict_mode: false, auto_define_before: auto_define_before
+can *preds, obj: nil, strict_mode: false, auto_definition: auto_definition
 # examples
 role.can :fly # => 'Permission Assignment Done' or error message
 role.stored_permissions # => [<#UserPermission id: ..>]
@@ -397,7 +397,7 @@ role.permissions.keys.count # => 3
     7. `group_can?`
 3. helpers:
     1. `permissions_of_stored_roles`
-    2. `permissions_of_local_roles`
+    2. `permissions_of_temporary_roles`
     3. `permissions_of_role_groups`
     
 all the `?` methods will return `true` or `false`  

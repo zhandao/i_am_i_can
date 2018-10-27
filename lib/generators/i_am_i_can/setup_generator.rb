@@ -26,17 +26,17 @@ module IAmICan
           @ii_opts[:without_group] = true
         end
 
-        unless yes?('Do yo want it to save role and permission to database by default? y (default) / n')
-          @ii_opts[:default_save] = false
+        if no?('Do yo want it to save role and permission to database by default? y (default) / n')
+          @ii_opts[:saved_by_default] = false
         end
-        # if @ii_opts[:default_save] != false && yes?('Don\'t you need **local** definition and assignment feature? y / n (default)')
-        #   TODO
-        # end
+        if @ii_opts[:saved_by_default] != false && no?('Do you need temporary definition and assignment feature? y (default) / n')
+          @ii_opts[:disable_temporary] = true
+        end
         if yes?('Do you want it to raise error when you are doing wrong definition or assignment? y / n (default)')
           @ii_opts[:strict_mode] = true
         end
         if yes?('Do you want it to auto define the role/permission which is not defined when assigning to subject? y / n (default)')
-          @ii_opts[:auto_define_before] = true
+          @ii_opts[:auto_definition] = true
         end
       end
 
@@ -60,6 +60,8 @@ module IAmICan
           |
           |  has_and_belongs_to_many :stored_roles,
           |                          join_table: '#{subj_role_tb}', foreign_key: '#{role_u}_id', class_name: '#{role_c}', association_foreign_key: '#{name_u}_id'
+          |
+          |  has_many_temporary_roles  
           |
           |  acts_as_subject
           |

@@ -6,14 +6,14 @@ module IAmICan
       include Methods::Ins
 
       # permission assignment for stored role
-      def can *preds, obj: nil, strict_mode: false, auto_define_before: i_am_i_can.auto_define_before
-        self.class.have_permissions *preds, obj: obj if auto_define_before
+      def can *preds, obj: nil, strict_mode: false, auto_definition: i_am_i_can.auto_definition
+        self.class.have_permissions *preds, obj: obj if auto_definition
         not_defined_items, covered_items = [ ], [ ]
 
         preds.each do |pred|
           pms_name = pms_naming(pred, obj)
           covered_items << pms_name if pms_matched?(pms_name, in: stored_permission_names)
-          not_defined_items << pms_name unless _stored_permissions_add(pred: pred, **deconstruct_obj(obj))
+          not_defined_items << pms_name if _stored_permissions_add(pred: pred, **deconstruct_obj(obj)).blank?
         end
 
         _pms_assignment_result(preds, obj, not_defined_items, covered_items, strict_mode)
@@ -21,9 +21,9 @@ module IAmICan
 
       alias has_permission can
 
-      def temporarily_can *preds, obj: nil, strict_mode: false, auto_define_before: i_am_i_can.auto_define_before
-        raise Error, "Permission Assignment: local role `#{name}` was not defined" unless i_am_i_can.subject_model.defined_local_roles.key?(self.name.to_sym)
-        self.class.have_permissions *preds, obj: obj, save: false if auto_define_before
+      def temporarily_can *preds, obj: nil, strict_mode: false, auto_definition: i_am_i_can.auto_definition
+        raise Error, "Permission Assignment: local role `#{name}` was not defined" unless i_am_i_can.subject_model.defined_temporary_roles.key?(self.name.to_sym)
+        self.class.have_permissions *preds, obj: obj, save: false if auto_definition
         not_defined_items, covered_items = [ ], [ ]
 
         preds.each do |pred|
@@ -44,7 +44,7 @@ module IAmICan
         preds.each do |pred|
           pms_name = pms_naming(pred, obj)
           if saved
-            next if _stored_permissions_rmv(pred: pred, **deconstruct_obj(obj))
+            next if _stored_permissions_rmv(pred: pred, **deconstruct_obj(obj)).present?
             not_defined_items << pms_name
           else
             next not_defined_items << pms_name unless pms_name.in?(defined_permissions.keys)

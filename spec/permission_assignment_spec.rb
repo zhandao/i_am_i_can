@@ -33,12 +33,12 @@ RSpec.describe IAmICan::Permission::Assignment do
 
       context 'but obj is been covered' do
         before { role.can :manage, obj: User }
-        it { expect{ role.can :manage, obj: user, auto_define_before: true }
+        it { expect{ role.can :manage, obj: user, auto_definition: true }
                  .to raise_error(IAmICan::Error).with_message(/\[:manage_User_1\] have been covered/) }
       end
 
       context 'and second obj cover the first' do
-        before { role.can :manage, obj: user, auto_define_before: true }
+        before { role.can :manage, obj: user, auto_definition: true }
 
         it do
           expect{ role.can :manage, obj: User }.not_to raise_error

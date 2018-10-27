@@ -5,6 +5,8 @@ class RoleGroup < ActiveRecord::Base
   has_and_belongs_to_many :members,
                           join_table: '<%= group_role_tb %>', foreign_key: :<%= role_u %>_id, class_name: '<%= role_c %>', association_foreign_key: :<%= group_u %>_id
 
+  has_many_temporary_permissions
+
   acts_as_role_group
 
   # default_scope { with_members.with_stored_permissions) }

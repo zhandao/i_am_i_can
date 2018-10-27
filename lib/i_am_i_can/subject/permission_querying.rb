@@ -39,7 +39,7 @@ module IAmICan
       end
 
       def temporarily_can? pred, obj
-        i_am_i_can.permission_model.matched?(pred: pred, obj: obj, in: permissions_of_local_roles)
+        i_am_i_can.permission_model.matched?(pred: pred, obj: obj, in: permissions_of_temporary_roles)
       end
 
       alias locally_can? temporarily_can?
@@ -61,8 +61,8 @@ module IAmICan
         _roles._role_groups._permissions.map(&:name)
       end
 
-      def permissions_of_local_roles
-        local_roles.map { |(name, info)| info[:permissions] }.flatten.uniq
+      def permissions_of_temporary_roles
+        temporary_roles.map { |(name, info)| info[:permissions] }.flatten.uniq
       end
     end
   end

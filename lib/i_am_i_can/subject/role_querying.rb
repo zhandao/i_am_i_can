@@ -5,7 +5,7 @@ module IAmICan
       # === Role Querying ===
 
       def is? role
-        role.to_sym.in?(local_role_names) || role.to_sym.in?(stored_role_names)
+        role.to_sym.in?(temporary_role_names) || role.to_sym.in?(stored_role_names)
       end
 
       alias is_role?  is?

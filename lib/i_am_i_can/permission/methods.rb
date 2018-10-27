@@ -32,7 +32,7 @@ module IAmICan
         end
 
         def defined_stored_permissions
-          i_am_i_can.permission_model.all.map { |pms| [ pms.name, pms.desc ] }.to_h
+          i_am_i_can.permission_model.all.map { |pms| [ pms.name, pms.remarks ] }.to_h
         end
 
         def defined_permissions
@@ -40,7 +40,7 @@ module IAmICan
         end
 
         def pms_of_defined_local_role(role_name)
-          i_am_i_can.subject_model.defined_local_roles[role_name.to_sym]&.[](:permissions) || []
+          i_am_i_can.subject_model.defined_temporary_roles[role_name.to_sym]&.[](:permissions) || []
         end
       end
 

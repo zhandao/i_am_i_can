@@ -6,17 +6,16 @@ module IAmICan
     module Definition
       include Methods::Cls
 
-      def have_permission *preds, obj: nil, desc: nil, save: i_am_i_can.default_save
+      def have_permission *preds, obj: nil, save: i_am_i_can.saved_by_default
         failed_items = [ ]
 
         preds.each do |pred|
           pms_name = pms_naming(pred, obj)
-          description = desc || pms_name.to_s.tr('_', ' ')
           if save
-            failed_items << pms_name unless _to_store_permission(pred, obj, desc: description)
+            failed_items << pms_name unless _to_store_permission(pred, obj)
           else
             failed_items << pms_name if pms_name.in?(defined_local_permissions.keys)
-            defined_local_permissions[pms_name] ||= { desc: description }
+            defined_local_permissions[pms_name] ||= { }
           end
         end
 
