@@ -9,6 +9,10 @@ module IAmICan
       def which(name:, **conditions)
         find_by!(name: name, **conditions)
       end
+
+      def names
+        self.pluck(:name).map(&:to_sym)
+      end
     end
 
     included do

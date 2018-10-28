@@ -26,7 +26,7 @@ module IAmICan
         temporary_role_names + stored_role_names
       end
 
-      return if disable_temporary
+      # return if disable_temporary
       # 1. defined_temporary_roles
       cattr_accessor(:defined_temporary_roles) { { } }
       # 2. To alias above by given assoc name

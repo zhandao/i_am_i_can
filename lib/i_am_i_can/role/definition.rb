@@ -17,9 +17,7 @@ module IAmICan
         ResultOf.roles definition, given: roles
       end
 
-      alias have_roles have_role
-      alias has_role   have_role
-      alias has_roles  have_role
+      %i[ have_roles has_role has_roles ].each { |aname| alias_method aname, :have_role }
 
       def declare_role *names, **options
         have_role *names, save: false, **options
@@ -28,25 +26,19 @@ module IAmICan
       alias declare_roles has_role
 
       def group_roles *members, by_name:, which_can: [ ], obj: nil
-        raise Error, 'Some of members have not been defined' unless (members - defined_stored_role_names).empty?
+        raise Error, 'Some of members have not been defined' unless (members - i_am_i_can.role_model.all.names).empty?
         raise Error, "Given name #{by_name} has been used by a role" if i_am_i_can.role_model.exists?(name: by_name)
         i_am_i_can.role_group_model.find_or_create_by!(name: by_name)._members_add(name: members)
       end
 
-      alias group_role   group_roles
-      alias groups_role  group_roles
-      alias groups_roles group_roles
+      %i[ group_role groups_role groups_roles ].each { |aname| alias_method aname, :group_roles }
 
       def have_and_group_roles *members, by_name:
-        has_roles *members
+        have_roles *members
         group_roles *members, by_name: by_name
       end
 
       alias has_and_groups_roles have_and_group_roles
-
-      def self.extended(kls)
-        kls.delegate :defined_stored_roles, :defined_roles, to: kls
-      end
     end
 
     def self.modeling(objs)

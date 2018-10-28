@@ -168,8 +168,7 @@ TODO
     2. save to local variable: `declare_role`. alias `declare_roles`
 3. helpers:
     1. `defined_temporary_roles`
-    2. `defined_stored_roles` & `defined_stored_role_names`
-    3. `defined_roles`
+    2. `defined_roles`
     
 Methods Explanation:
 ```ruby
@@ -178,7 +177,7 @@ Methods Explanation:
 have_role *names, desc: nil, save: saved_by_default#, which_can: [ ], obj: nil
 # examples
 User.have_roles :admin, :master # => 'Role Definition Done' or error message
-User.defined_stored_roles.keys.count # => 2
+UserRole.count # => 2
 
 # === Save in Local ===
 # signature as `have_role`
@@ -186,7 +185,7 @@ User.defined_stored_roles.keys.count # => 2
 User.declare_role :coder # => 'Role Definition Done' or error message
 User.defined_temporary_roles.keys.count # => 1
 
-User.defined_roles.keys.count # => 3
+User.defined_roles.count # => 3
 ```
 
 #### B. [Grouping Roles](https://github.com/zhandao/i_am_i_can/blob/master/lib/i_am_i_can/role/definition.rb)

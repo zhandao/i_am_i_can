@@ -61,7 +61,7 @@ RSpec.describe IAmICan::Role::Assignment do
     describe 'which_can' do
       before { he.becomes_a :coder, which_can: %i[read write], obj: :code }
       it do
-        expect(:coder).to be_in(people.defined_stored_role_names)
+        expect(:coder).to be_in(UserRole.all.names)
         expect(UserRole.defined_stored_pms_names).to contain(%i[read_code write_code])
         expect(UserRole.which(name: :coder).can? :read, obj: :code).to be_truthy
         expect(he.is? :coder).to be_truthy

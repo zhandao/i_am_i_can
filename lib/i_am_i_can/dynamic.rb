@@ -117,7 +117,7 @@ module IAmICan
         # 5. _temporary_roles_add
         #    Add temporary roles to a user instance
         define_method "_temporary#{_plural}_add" do |names|
-          object_names = (names & defined_roles.keys) - temporary_role_names
+          object_names = (names & self.class.defined_role_names) - temporary_role_names
           temporary_role_names.concat(object_names)
           object_names
         end
