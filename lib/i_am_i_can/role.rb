@@ -1,5 +1,7 @@
 require 'i_am_i_can/role/definition'
 require 'i_am_i_can/role/assignment'
+require 'i_am_i_can/role_group/definition'
+require 'i_am_i_can/role_group/assignment'
 
 module IAmICan
   module Role

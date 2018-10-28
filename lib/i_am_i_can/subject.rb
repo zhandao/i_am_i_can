@@ -16,6 +16,19 @@ module IAmICan
       def members_of_role_group name
         i_am_i_can.role_group_model.find_by!(name: name).member_names.sort
       end
+
+      def defined_roles
+        defined_temporary_roles.map { |name, val| { name => val } } + i_am_i_can.role_model.all
+      end
+
+      def defined_role_names
+        i_am_i_can.role_model.all.names + defined_temporary_roles.keys
+      end
+
+      # TODO
+      def defined_role_groups
+        i_am_i_can.role_group_model.all.map { |group| [ group.name.to_sym, group.member_names.map(&:to_sym).sort ] }.to_h
+      end
     end
 
     included do

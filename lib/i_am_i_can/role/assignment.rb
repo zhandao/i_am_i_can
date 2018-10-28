@@ -1,5 +1,3 @@
-require 'i_am_i_can/role/methods'
-
 module IAmICan
   module Role
     module Assignment

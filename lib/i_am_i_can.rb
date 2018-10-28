@@ -3,11 +3,11 @@ require 'active_support/core_ext/object/inclusion'
 require 'active_support/core_ext/hash/deep_merge'
 
 require 'i_am_i_can/version'
-require 'i_am_i_can/association_class_methods'
+require 'i_am_i_can/support/association_class_methods'
+require 'i_am_i_can/support/configurable'
+require 'i_am_i_can/support/reflection'
 require 'i_am_i_can/helpers/result_of'
-require 'i_am_i_can/configurable'
-require 'i_am_i_can/reflection'
-require 'i_am_i_can/dynamic'
+require 'i_am_i_can/helpers/dynamic'
 require 'i_am_i_can/role'
 require 'i_am_i_can/permission'
 require 'i_am_i_can/subject'
@@ -20,6 +20,7 @@ module IAmICan
 
     extend  Role::Definition
     include Role::Assignment
+    extend  RoleGroup::Definition
     include Subject::RoleQuerying
     include Subject::PermissionQuerying
 
@@ -52,6 +53,7 @@ module IAmICan
   def acts_as_role_group
     i_am_i_can.act = :role_group
     include Role
+    # include RoleGroup
 
     extend  Permission::Definition
     include Permission::Assignment

@@ -202,8 +202,7 @@ Overview:
 3. shortcut combination method: `have_and_group_roles` (alias `has_and_groups_roles`)  
     it will do: roles definition => roles grouping
 4. helpers:
-    1. `defined_role_groups` & `defined_role_group_names`
-    2. `members_of_role_group`
+    1. `members_of_role_group`
     
 Methods Explanation:
 ```ruby
@@ -211,7 +210,7 @@ Methods Explanation:
 group_roles *members, by_name:, #which_can: [ ], obj: nil
 # examples
 User.have_and_group_roles :vip1, :vip2, :vip3, by_name: :vip
-User.defined_role_group_names # => [:vip]
+UserRoleGroup.all.names # => [:vip]
 User.members_of_role_group(:vip) # => %i[vip1 vip2 vip3]
 ```
 
