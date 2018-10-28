@@ -28,9 +28,7 @@ module IAmICan
       end
 
       def _roles_assignment(action = :assignment, roles, save)
-        roles = roles.group_by(&:class)
-        instances = roles[i_am_i_can.role_model] || []
-        names = roles.values_at(Symbol, String).flatten.compact.uniq.map(&:to_sym)
+        instances, names = Role.extract(roles, i_am_i_can)
         if save
           assignment = _stored_roles_exec(action, instances, name: names)
         else
@@ -38,7 +36,7 @@ module IAmICan
           assignment = _temporary_roles_exec(action, to_be_assigned_names)
         end
 
-        ResultOf.role assignment, given: [instances, names]
+        ResultOf.role assignment, i_am_i_can, given: [instances, names]
       end
     end
   end

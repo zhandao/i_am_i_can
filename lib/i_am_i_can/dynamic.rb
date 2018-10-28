@@ -79,6 +79,8 @@ module IAmICan
           objects
         end
 
+        # _stored_roles_exec
+        #   Add / Remove (by passing action :cancel) roles to a user instance
         define_method "_#{_reflect_of(content)}_exec" do |action = :assignment, instances = [ ], **conditions|
           collection = send(_plural)
           if conditions.present? && action == :assignment
