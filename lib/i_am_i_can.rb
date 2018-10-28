@@ -30,6 +30,7 @@ module IAmICan
     instance_exec(%i[ role ], &Dynamic.scopes)
     instance_exec(&Dynamic.class_reflections)
     instance_exec(%w[ role ], &Dynamic.assignment_helpers)
+    instance_exec(%w[ role ], &Dynamic.definition_helpers)
   end
 
   def acts_as_role

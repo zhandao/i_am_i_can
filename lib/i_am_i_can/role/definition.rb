@@ -6,21 +6,15 @@ module IAmICan
       include Methods::Cls
 
       def have_role *roles, save: i_am_i_can.saved_by_default, which_can: [ ], obj: nil
-        failed_items, preds = [ ], which_can
-
-        roles.each do |name|
-          if save
-            next failed_items << name unless _to_store_role(name)
-            # next failed_items << name unless _create_roles(name)
-            i_am_i_can.role_model.which(name: name).can *preds, obj: obj, auto_definition: true, strict_mode: true if which_can.present?
-          else
-            next failed_items << name if defined_temporary_roles.key?(name)
-            defined_temporary_roles[name] ||= { permissions: [ ] }
-            local_role_which(name: name, can: preds, obj: obj, auto_definition: true, strict_mode: true) if which_can.present?
-          end
+        roles.map!(&:to_sym)
+        if save
+          definition = _create_roles(roles.map { |role| { name: role } })
+        else
+          definition = _define_tmp_roles(roles)
         end
 
-        _role_definition_result(roles, failed_items)
+        Role.modeling(definition).each { |r| r.can *which_can, obj: obj, auto_definition: true } if which_can.present?
+        ResultOf.roles definition, given: roles
       end
 
       alias have_roles have_role
@@ -51,8 +45,13 @@ module IAmICan
       alias has_and_groups_roles have_and_group_roles
 
       def self.extended(kls)
-        kls.delegate :defined_temporary_roles, :defined_stored_roles, :defined_roles, to: kls
+        kls.delegate :defined_stored_roles, :defined_roles, to: kls
       end
+    end
+
+    def self.modeling(objs)
+      return objs if objs.first.is_a?(Configs.take.role_model)
+      objs.map { |obj| Configs.take.role_model.new(name: obj) }
     end
   end
 end

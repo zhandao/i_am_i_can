@@ -26,9 +26,11 @@ RSpec.describe IAmICan::Role::Definition do
     end
 
     context 'when defining the role which is defined before' do
+      before { people.have_roles :admin }
+
       it 'saves the first one, and raise error in saving the last one' do
-        expect{ people.have_roles :admin, :admin }
-            .to raise_error(IAmICan::Error).with_message(/\[:admin\] have been used by other role or group/)
+        expect{ people.have_roles :admin }
+            .to raise_error(IAmICan::Error).with_message(/\[:admin\] have been used by other roles/)
         expect(people.defined_stored_role_names.size).to eq 1
       end
     end
@@ -46,11 +48,6 @@ RSpec.describe IAmICan::Role::Definition do
       it 'pushes the NEW members into the list' do
         expect(role_group_records.last.member_ids).to have_size(4)
       end
-    end
-
-    context 'when giving role name which is used by defining a group' do
-      it { expect{ people.have_role :vip }
-               .to raise_error(IAmICan::Error).with_message(/\[:vip\] have been used by other role or group/) }
     end
 
     context 'nested group' do

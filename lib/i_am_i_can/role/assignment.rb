@@ -38,7 +38,7 @@ module IAmICan
           assignment = _temporary_roles_exec(action, to_be_assigned_names)
         end
 
-        ResultOf.roles assignment, given: [instances, names]
+        ResultOf.role assignment, given: [instances, names]
       end
     end
   end

@@ -7,6 +7,7 @@ module IAmICan
 
       # permission assignment for stored role
       def can *preds, obj: nil, strict_mode: false, auto_definition: i_am_i_can.auto_definition
+        return temporarily_can(*preds, obj: obj, strict_mode: strict_mode, auto_definition: auto_definition) if new_record?
         self.class.have_permissions *preds, obj: obj if auto_definition
         not_defined_items, covered_items = [ ], [ ]
 

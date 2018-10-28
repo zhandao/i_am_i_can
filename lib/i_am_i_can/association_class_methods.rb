@@ -18,8 +18,11 @@ module IAmICan
 
       alias_method name, :temporary_roles if name
 
-      # TODO
       define_method :roles do
+        temporary_roles.map { |tr| { name: tr[:name] } } + _roles
+      end
+
+      define_method :role_names do
         temporary_role_names + stored_role_names
       end
 

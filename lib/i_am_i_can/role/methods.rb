@@ -2,21 +2,17 @@ module IAmICan
   module Role
     module Methods
       module Cls
-        def _to_store_role name, **options
-          return false if i_am_i_can.role_model.exists?(name: name) || i_am_i_can.role_group_model&.exists?(name: name)
-          i_am_i_can.role_model.create!(name: name, **options)
-        end
-
-        def _role_definition_result(names, failed_items)
-          prefix = 'Role Definition Done'
-          fail_msg = prefix + ", but name #{failed_items} have been used by other role or group" if failed_items.present?
-          raise Error, fail_msg if i_am_i_can.strict_mode && fail_msg
-          puts fail_msg || prefix unless ENV['ITEST']
-          prefix.present?
-        end
-
-        # def defined_temporary_roles
-        #   @temporary_roles ||= { }
+        # def _to_store_role name, **options
+        #   return false if i_am_i_can.role_model.exists?(name: name) || i_am_i_can.role_group_model&.exists?(name: name)
+        #   i_am_i_can.role_model.create!(name: name, **options)
+        # end
+        #
+        # def _role_definition_result(names, failed_items)
+        #   prefix = 'Role Definition Done'
+        #   fail_msg = prefix + ", but name #{failed_items} have been used by other role or group" if failed_items.present?
+        #   raise Error, fail_msg if i_am_i_can.strict_mode && fail_msg
+        #   puts fail_msg || prefix unless ENV['ITEST']
+        #   prefix.present?
         # end
 
         def defined_stored_role_names

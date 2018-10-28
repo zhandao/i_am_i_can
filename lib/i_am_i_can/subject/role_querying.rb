@@ -51,7 +51,7 @@ module IAmICan
 
       def is_in_role_group? name
         group_members = self.class.members_of_role_group(name)
-        (roles & group_members).present?
+        (role_names & group_members).present?
       end
 
       alias in_role_group? is_in_role_group?

@@ -148,10 +148,19 @@ module IAmICan
         _plural = '_' + content.to_s.pluralize
 
         # 1. _create_roles
-        #    Add temporary roles to a user instance
-        define_method "_create#{_plural}" do |*objects|
+        #    Define and store roles of Subject
+        define_singleton_method "_create#{_plural}" do |objects|
           content_cls.constantize.create(objects)
               .reject {|record| record.new_record? }
+        end
+
+        # 2. _define_tmp_roles
+        #    define temporary roles of Subject
+        define_singleton_method "_define_tmp#{_plural}" do |objects|
+          definition = send("defined_temporary#{_plural}")
+          object_names = objects - definition.keys
+          definition.merge!(object_names.map { |name| [name, { permissions: [ ] }] }.to_h)
+          object_names
         end
       end }
     end

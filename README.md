@@ -428,7 +428,7 @@ You can use it when defining role even assigning role.
 User.have_role :coder, which_can: [:perform], obj: :magic
 UserRole.which(name: :coder).can? :perform, :magic # => true
 # save in local
-User.local_role_which(name: :local_role, can: [:perform], obj: :magic)
+User.temporary_role_which(name: :local_role).can :perform, obj: :magic
 UserRole.new(name: :local_role).temporarily_can? :perform, :magic # => true
 
 # === use when assigning role ===
