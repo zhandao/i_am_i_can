@@ -5,6 +5,8 @@ RSpec.describe IAmICan::Subject::RoleQuerying do
   let(:he) { subject }
   let(:his) { subject }
 
+  cls_cleaning
+
   before do
     people.have_role :admin, :master, :guest, :dev
   end

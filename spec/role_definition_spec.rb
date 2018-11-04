@@ -3,6 +3,8 @@ RSpec.describe IAmICan::Role::Definition do
   let(:people) { subject }
   let(:role_group_records) { UserRoleGroup }
 
+  cls_cleaning
+
   describe '.have_role & .declare_role' do
     context 'when using .have_role  (save by default)' do
       before { people.have_role :admin }

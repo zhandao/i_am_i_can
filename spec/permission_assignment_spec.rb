@@ -5,6 +5,8 @@ RSpec.describe IAmICan::Permission::Assignment do
   let(:permission_records) { UserPermission }
   let(:user) { User.create(id: 1) }
 
+  cls_cleaning
+
   describe '#can (save case)' do
     before { roles.has_permission :manage, obj: User }
 

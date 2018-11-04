@@ -41,7 +41,7 @@ module IAmICan
       if config.strict_mode && failed_items.present?
         raise Error, msg
       else
-        puts fail_msg || prefix unless ENV['ITEST']
+        puts msg unless ENV['ITEST']
         assignment
       end
     end

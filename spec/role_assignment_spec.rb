@@ -5,6 +5,8 @@ RSpec.describe IAmICan::Role::Assignment do
   let(:he) { subject }
   let(:his) { subject }
 
+  cls_cleaning
+
   before do
     people.have_role :admin, :master, :guest, :dev
   end
@@ -53,7 +55,7 @@ RSpec.describe IAmICan::Role::Assignment do
 
       it do
         expect{ he.becomes_a :admin }
-               .to raise_error(IAmICan::Error).with_message(/have been repeatedly assigned/)
+            .to raise_error(IAmICan::Error).with_message(/have been repeatedly assigned/)
         expect(his.stored_role_names).to eq [:admin]
       end
     end
@@ -71,28 +73,26 @@ RSpec.describe IAmICan::Role::Assignment do
   end
 
   describe '#falls_from' do
-    context 'when saving' do
-      before { he.becomes_a :admin }
-      it do
-        expect(he.is? :admin).to be_truthy
-        expect{ he.falls_from :admin }.not_to raise_error
-        expect(he.is? :admin).to be_falsey
-      end
-
-      it { expect{ he.falls_from :someone_else }
-               .to raise_error(IAmICan::Error).with_message(/have not been defined/)  }
+    before { he.becomes_a :admin }
+    it do
+      expect(he.is? :admin).to be_truthy
+      expect{ he.falls_from :admin }.not_to raise_error
+      expect(he.is? :admin).to be_falsey
     end
 
-    context 'when local' do
-      before { he.is_a_temporary :admin }
-      it do
-        expect(he.is? :admin).to be_truthy
-        expect{ he.falls_from :admin, saved: false }.not_to raise_error
-        expect(he.is? :admin).to be_falsey
-      end
+    it { expect{ he.falls_from :someone_else }
+             .to raise_error(IAmICan::Error).with_message(/have not been defined/)  }
+  end
 
-      it { expect{ he.falls_from :someone_else, saved: false }
-               .to raise_error(IAmICan::Error).with_message(/have not been defined/)  }
+  describe '#is_not_a_temporary' do
+    before { he.is_a_temporary :admin }
+    it do
+      expect(he.is? :admin).to be_truthy
+      expect{ he.is_not_a_temporary :admin }.not_to raise_error
+      expect(he.is? :admin).to be_falsey
     end
+
+    it { expect{ he.is_not_a_temporary :someone_else }
+             .to raise_error(IAmICan::Error).with_message(/have not been defined/)  }
   end
 end

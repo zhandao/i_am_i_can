@@ -5,6 +5,8 @@ RSpec.describe IAmICan::Permission::Definition do
   let(:permission_records) { UserPermission }
   let(:user) { User.create(id: 1) }
 
+  cls_cleaning
+
   describe '.has_permission & .declare_permission' do
     context '.has_permission (save by default)' do
       before { roles.has_permission :manage, obj: User }

@@ -62,7 +62,9 @@ module IAmICan
       end
 
       def permissions_of_temporary_roles
-        temporary_roles.map { |(name, info)| info[:permissions] }.flatten.uniq
+        stored_roles_part = i_am_i_can.role_model.where(id: temporary_roles.map { |r| r[:id] }.compact)._permissions.map(&:name)
+        tmp_roles_part = temporary_roles.flat_map { |role| role.key?(:id) ? [] : role[:permissions] }.uniq
+        stored_roles_part + tmp_roles_part
       end
     end
   end

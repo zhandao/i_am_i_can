@@ -48,7 +48,7 @@ he.falls_from :admin
 Roles.which(name: :coder).cannot :fly
 
 # Get allowed resources:
-Resource.that_allow(user).to(:manage) # => Active::Relation
+Resource.that_allow(user, to: :manage) # => Active::Relation
 ```
 
 ## Concepts and Overview

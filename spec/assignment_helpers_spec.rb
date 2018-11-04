@@ -6,6 +6,8 @@ RSpec.describe IAmICan::Dynamic do
   let(:his) { subject }
   let(:roles) { UserRole }
 
+  cls_cleaning
+
   before do
     people.have_role :admin, :master, :guest, :dev
   end

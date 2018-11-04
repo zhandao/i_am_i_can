@@ -4,6 +4,8 @@ RSpec.describe IAmICan::Subject::PermissionQuerying do
   let(:he) { subject }
   let(:his) { subject }
 
+  cls_cleaning
+
   describe '#can? & #can!' do
     context 'temporarily_can?' do
       before { he.is_a_temporary :magician, which_can: [:perform], obj: :magic }

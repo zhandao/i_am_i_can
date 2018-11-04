@@ -40,7 +40,7 @@ module IAmICan
         end
 
         def pms_of_defined_local_role(role_name)
-          i_am_i_can.subject_model.defined_temporary_roles[role_name.to_sym]&.[](:permissions) || []
+          (i_am_i_can.subject_model.defined_temporary_roles[role_name.to_sym] ||= { })[:permissions] ||= [ ]
         end
       end
 

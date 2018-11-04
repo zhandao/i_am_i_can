@@ -10,9 +10,9 @@ RSpec.describe IAmICan::Resource do
   end
 
   describe '.that_allow.to' do
-    it('works with single subject') { expect(Resource.that_allow(user).to(:manage)).to eq([ resource ]) }
+    it('works with single subject') { expect(Resource.that_allow(user, to: :manage)).to eq([ resource ]) }
 
     before { User.create }
-    it('works with subjects') { expect(Resource.that_allow(User.all).to(:manage)).to eq([ resource ]) }
+    it('works with subjects') { expect(Resource.that_allow(User.all, to: :manage)).to eq([ resource ]) }
   end
 end

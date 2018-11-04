@@ -61,3 +61,7 @@ end
 class Hash
   alias names keys
 end
+
+def cls_cleaning
+  before { User.defined_temporary_roles = { } }
+end

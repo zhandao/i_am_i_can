@@ -18,6 +18,9 @@ module IAmICan
     end
 
     included do
+      def attributes
+        super.symbolize_keys
+      end
     end
   end
 end

@@ -67,6 +67,8 @@ module IAmICan
           collection << objects
           objects
         end
+        #
+        alias_method "_stored#{_plural}_add", "_#{_reflect_of(content)}_add"
 
         # 2. _stored_roles_rmv
         #   Remove roles to a user instance
@@ -78,6 +80,8 @@ module IAmICan
           collection.destroy(objects)
           objects
         end
+        #
+        alias_method "_stored#{_plural}_rmv", "_#{_reflect_of(content)}_rmv"
 
         # _stored_roles_exec
         #   Add / Remove (by passing action :cancel) roles to a user instance
@@ -92,6 +96,8 @@ module IAmICan
           action == :assignment ? collection << objects : collection.destroy(objects)
           objects
         end
+        #
+        alias_method "_stored#{_plural}_exec", "_#{_reflect_of(content)}_exec"
 
 
         stored_content_names = "#{_reflect_of(content).singularize}_names"
@@ -118,22 +124,33 @@ module IAmICan
 
         # 5. _temporary_roles_add
         #    Add temporary roles to a user instance
-        define_method "_temporary#{_plural}_add" do |names|
-          object_names = (names & self.class.defined_role_names) - temporary_role_names
-          temporary_role_names.concat(object_names)
-          object_names
+        define_method "_temporary#{_reflect_of(content)}_add" do |names|
+          names -= temporary_role_names
+          temporary_roles.concat([
+              *(stored_roles = i_am_i_can.role_model.where(name: names)).map(&:attributes),
+              *(tmp_roles = defined_temporary_roles.slice(*names).map { |k,v| v.merge(name: k) })
+          ])
+          stored_roles.names + tmp_roles.map { |r| r[:name] }
         end
+        #
+        alias_method "_temporary#{_plural}_add", "_temporary#{_reflect_of(content)}_add"
 
         # 6. _temporary_roles_rmv
         #    Remove temporary roles to a user instance
-        define_method "_temporary#{_plural}_rmv" do |names|
-          @temporary_role_names -= object_names = names & temporary_role_names
-          object_names
-        end
-
-        define_method "_temporary#{_plural}_exec" do |action = :assignment, names|
-          send("_temporary#{_plural}_" + (action == :assignment ? 'add' : 'rmv'), names)
+        define_method "_temporary#{_reflect_of(content)}_rmv" do |names|
+          (names & temporary_role_names).each do |name|
+            temporary_roles.reject! { |i| i[:name].to_sym == name }
           end
+        end
+        #
+        alias_method "_temporary#{_plural}_rmv", "_temporary#{_reflect_of(content)}_rmv"
+
+        # 6. exec
+        define_method "_temporary#{_reflect_of(content)}_exec" do |action = :assignment, names|
+          send("_temporary#{_plural}_" + (action == :assignment ? 'add' : 'rmv'), names)
+        end
+        #
+        alias_method "_temporary#{_plural}_exec", "_temporary#{_reflect_of(content)}_exec"
       end }
     end
 
