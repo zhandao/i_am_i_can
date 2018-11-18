@@ -42,9 +42,7 @@ module IAmICan
     included do
       # like: manage_User_1
       def name
-        otp = "_#{obj_type}" if obj_type.present?
-        oid = "_#{obj_id}" if obj_id.present?
-        [pred, otp, oid].join.to_sym
+        [pred, obj_type, obj_id].compact.join('_').to_sym
       end
 
       # def assign_to role: nil, group: nil

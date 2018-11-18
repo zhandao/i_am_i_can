@@ -301,7 +301,7 @@ he.is_in_role_group? :vip # return true if he has a role which is in the group :
         2. `has_permission` & `has_permissions`
     2. save to local variable: `declare_permission`. alias `declare_permissions`
 3. helpers:
-    1. `defined_local_permissions`
+    1. `defined_tmp_permissions`
     2. `defined_stored_permissions`
     3. `defined_permissions`
 4. class method: `which(name:)`
@@ -316,17 +316,17 @@ Methods Explanation:
 have_permission *preds, obj: nil, desc: nil, save: saved_by_default
 # examples
 UserRole.have_permission :fly # => 'Permission Definition Done' or error message
-UserRole.defined_stored_permissions.keys.count # => 1
+UserRole.defined_stored_permissions.count # => 1
 UserRoleGroup.have_permissions *%i[read write], obj: Book.find(1) # => 'Permission Definition Done' or error message
-UserRoleGroup.defined_stored_permissions.keys.count # => 1
+UserRoleGroup.defined_stored_permissions.count # => 1
 
 # === Save in Local ===
 # signature as `have_permission`
 # examples
 UserRole.declare_permission :perform, obj: :magic # => 'Permission Definition Done' or error message
-UserRole.defined_local_permissions.keys.count # => 1
+UserRole.defined_tmp_permissions.count # => 1
 
-UserRole.defined_permissions.keys.count # => 2
+UserRole.defined_permission_names.count # => 2
 
 # === class methods ===
 UserRole.which(name: :admin)

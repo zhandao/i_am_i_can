@@ -2,7 +2,7 @@ module IAmICan
   module ResultOf
     module Role
       def roles definition, i_am_i_can, given: [ ]
-        ResultOf.(definition, [[], given], config: i_am_i_can,
+        ResultOf.(definition, [ [], given ], config: i_am_i_can,
                 msg_prefix: 'Role Definition: ',
                 fail_msg: 'have been used by other roles!'
         )
@@ -29,10 +29,23 @@ module IAmICan
       ResultOf.include self
     end
 
+    module Permission
+      def permission assignment, i_am_i_can, given: [ ]
+        ResultOf.(assignment, given, config: i_am_i_can,
+                msg_prefix: 'Permission Assignment: ',
+                fail_msg: 'have not been defined or have been repeatedly assigned!'
+        )
+      end
+
+      ResultOf.include self
+    end
+
     def call(assignment, given, msg_prefix:, fail_msg:, config:)
       instances, names = given
+      instances.map!(&:name).map!(&:to_sym)
       assignment = assignment.map(&:name).map(&:to_sym) unless assignment.first.is_a?(Symbol)
-      to_be_assigned_names = (instances.map(&:name).map(&:to_sym) + names).uniq
+
+      to_be_assigned_names = (instances + names).uniq
       failed_items = to_be_assigned_names - assignment
 
       msg = msg_prefix + (assignment.blank? ? 'do nothing' : "#{assignment} DONE")
@@ -41,7 +54,7 @@ module IAmICan
       if config.strict_mode && failed_items.present?
         raise Error, msg
       else
-        puts msg unless ENV['ITEST']
+        Rails.logger.info(msg) unless ENV['ITEST']
         assignment
       end
     end

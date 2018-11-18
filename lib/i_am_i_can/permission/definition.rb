@@ -14,8 +14,8 @@ module IAmICan
           if save
             failed_items << pms_name unless _to_store_permission(pred, obj)
           else
-            failed_items << pms_name if pms_name.in?(defined_local_permissions.keys)
-            defined_local_permissions[pms_name] ||= { }
+            # failed_items << pms_name if pms_name.in?(defined_tmp_permissions.keys)
+            defined_tmp_permissions << { pred: pms_name, **deconstruct_obj(obj) }
           end
         end
 
@@ -33,7 +33,7 @@ module IAmICan
       alias declare_permissions declare_permission
 
       def self.extended(kls)
-        kls.delegate :defined_permissions, :pms_naming, :deconstruct_obj, :pms_of_defined_local_role, to: kls
+        kls.delegate :defined_permission_names, :pms_naming, :deconstruct_obj, :pms_of_defined_local_role, to: kls
       end
     end
   end

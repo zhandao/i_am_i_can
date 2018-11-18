@@ -62,8 +62,8 @@ module IAmICan
         #
         define_method "_#{_reflect_of(content)}_add" do |instances = [ ], **conditions|
           collection = send(_plural)
-          query_result = content_cls.constantize.where(conditions).where.not(id: collection.ids) if conditions.present?
-          objects = [*(query_result || [ ]), *(instances - collection)].uniq
+          query_result = conditions.present? ? content_cls.constantize.where(conditions).where.not(id: collection.ids) : [ ]
+          objects = [*query_result, *(instances - collection)].uniq
           collection << objects
           objects
         end
@@ -75,8 +75,8 @@ module IAmICan
         #
         define_method "_#{_reflect_of(content)}_rmv" do |instances = [ ], **conditions|
           collection = send(_plural)
-          query_result = content_cls.constantize.where(id: collection.ids, **conditions) if conditions.present?
-          objects = [*(query_result || [ ]), *(instances & collection)].uniq
+          query_result = conditions.present? ? content_cls.constantize.where(id: collection.ids, **conditions) : [ ]
+          objects = [*query_result, *(instances & collection)].uniq
           collection.destroy(objects)
           objects
         end

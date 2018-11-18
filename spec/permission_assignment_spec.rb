@@ -23,33 +23,14 @@ RSpec.describe IAmICan::Permission::Assignment do
       context 'but obj is not given' do
         # TODO: is reasonable?
         it 'assigns all the permissions which are matched by the pred to the role' do
-          expect{ role.can :manage }.not_to raise_error
-          expect(:manage_User).to be_in(role.stored_permission_names)
+          expect{ role.can :manage }
+              .to raise_error(IAmICan::Error).with_message(/\[:manage\] have not been defined/)
         end
       end
 
       context 'but obj is not defined' do
         it { expect{ role.can :manage, obj: :user }
                  .to raise_error(IAmICan::Error).with_message(/\[:manage_user\] have not been defined/) }
-      end
-
-      context 'but obj is been covered' do
-        before { role.can :manage, obj: User }
-        it { expect{ role.can :manage, obj: user, auto_definition: true }
-                 .to raise_error(IAmICan::Error).with_message(/\[:manage_User_1\] have been covered/) }
-      end
-
-      context 'and second obj cover the first' do
-        before { role.can :manage, obj: user, auto_definition: true }
-
-        it do
-          expect{ role.can :manage, obj: User }.not_to raise_error
-          # expect(:manage_User_1).not_to be_in(role.stored_permission_names) # TODO
-          expect(:manage_User).to be_in(role.stored_permission_names)
-          expect(role.can? :manage, User).to be_truthy
-          expect(role.can? :manage, User.create(id: 2)).to be_truthy
-          expect(role.can? :manage, user).to be_truthy
-        end
       end
     end
 
