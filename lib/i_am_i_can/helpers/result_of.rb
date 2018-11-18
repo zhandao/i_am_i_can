@@ -30,6 +30,13 @@ module IAmICan
     end
 
     module Permission
+      def permissions definition, i_am_i_can, given: [ ]
+        ResultOf.(definition, [ [], given ], config: i_am_i_can,
+                msg_prefix: 'Permission Definition: ',
+                fail_msg: 'have been used by other permissions!'
+        )
+      end
+
       def permission assignment, i_am_i_can, given: [ ]
         ResultOf.(assignment, given, config: i_am_i_can,
                 msg_prefix: 'Permission Assignment: ',

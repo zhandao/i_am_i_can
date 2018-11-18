@@ -4,7 +4,7 @@ module IAmICan
       def group_roles *members, by_name:, which_can: [ ], obj: nil
         group = (i = i_am_i_can).role_group_model.where(name: by_name).first_or_create
         instances, names = Role.extract(members, i)
-        assignment = group._members_add(instances, name: names)
+        assignment = group._members_exec(:assignment, instances, name: names)
         ResultOf.members assignment, i, given: [instances, names]
       end
 

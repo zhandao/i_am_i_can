@@ -14,21 +14,21 @@ RSpec.describe IAmICan::Dynamic do
 
   describe '#_stored_roles_add' do
     context 'when passing an condition' do
-      before { he._stored_roles_add(name: :guest) }
+      before { he._stored_roles_exec(:assignment, name: :guest) }
 
-      it { expect(he._stored_roles_add(name: [:admin, :dev])).to eq(roles.where(name: [:admin, :dev])) }
+      it { expect(he._stored_roles_exec(:assignment, name: [:admin, :dev])).to eq(roles.where(name: [:admin, :dev])) }
     end
 
     context 'when passing instances' do
-      before { he._stored_roles_add(name: :guest) }
+      before { he._stored_roles_exec(:assignment, name: :guest) }
 
-      it { expect(he._stored_roles_add(roles.all)).to eq(roles.where(name: [:admin, :master, :dev])) }
+      it { expect(he._stored_roles_exec(:assignment, roles.all)).to eq(roles.where(name: [:admin, :master, :dev])) }
     end
 
     context 'when passing both' do
-      before { he._stored_roles_add(name: :guest) }
+      before { he._stored_roles_exec(:assignment, name: :guest) }
 
-      it { expect(he._stored_roles_add([roles.which(name: :dev)], { name: :admin })).to eq(roles.where(name: [:admin, :dev])) }
+      it { expect(he._stored_roles_exec(:assignment, [roles.which(name: :dev)], { name: :admin })).to eq(roles.where(name: [:admin, :dev])) }
     end
   end
 end

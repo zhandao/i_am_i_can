@@ -55,35 +55,7 @@ module IAmICan
         content_cls = i_am_i_can.send("#{content}_class")
         _plural = '_' + content.to_s.pluralize
 
-        # 1. _stored_roles_add([UserRole.which(name: :master)], { name: :admin })
-        #   Add roles to a user instance
-        #   # In the case of permission assignment:
-        #   #    _stored_permissions_add(pred: [:read, :write], obj_type: 'Book', obj_id: 1)
-        #
-        define_method "_#{_reflect_of(content)}_add" do |instances = [ ], **conditions|
-          collection = send(_plural)
-          query_result = conditions.present? ? content_cls.constantize.where(conditions).where.not(id: collection.ids) : [ ]
-          objects = [*query_result, *(instances - collection)].uniq
-          collection << objects
-          objects
-        end
-        #
-        alias_method "_stored#{_plural}_add", "_#{_reflect_of(content)}_add"
-
-        # 2. _stored_roles_rmv
-        #   Remove roles to a user instance
-        #
-        define_method "_#{_reflect_of(content)}_rmv" do |instances = [ ], **conditions|
-          collection = send(_plural)
-          query_result = conditions.present? ? content_cls.constantize.where(id: collection.ids, **conditions) : [ ]
-          objects = [*query_result, *(instances & collection)].uniq
-          collection.destroy(objects)
-          objects
-        end
-        #
-        alias_method "_stored#{_plural}_rmv", "_#{_reflect_of(content)}_rmv"
-
-        # _stored_roles_exec
+        # 1. _stored_roles_exec
         #   Add / Remove (by passing action :cancel) roles to a user instance
         define_method "_#{_reflect_of(content)}_exec" do |action = :assignment, instances = [ ], **conditions|
           collection = send(_plural)
@@ -119,33 +91,6 @@ module IAmICan
         end
         #
         singleton_class.send(:alias_method, "stored_#{content}_names", stored_content_names)
-
-        # 5. _temporary_roles_add
-        #    Add temporary roles to a user instance
-        define_method "_temporary#{_reflect_of(content)}_add" do |names|
-          names -= temporary_role_names
-          temporary_roles.concat((roles = i_am_i_can.role_model.where(name: names)).map(&:attributes))
-          roles.names
-        end
-        #
-        alias_method :_temporary_roles_add, "_temporary#{_reflect_of(content)}_add"
-
-        # 6. _temporary_roles_rmv
-        #    Remove temporary roles to a user instance
-        define_method "_temporary#{_reflect_of(content)}_rmv" do |names|
-          (names & temporary_role_names).each do |name|
-            temporary_roles.reject! { |i| i[:name].to_sym == name }
-          end
-        end
-        #
-        alias_method :_temporary_roles_rmv, "_temporary#{_reflect_of(content)}_rmv"
-
-        # 6. exec
-        define_method "_temporary#{_reflect_of(content)}_exec" do |action = :assignment, names|
-          send("_temporary#{_plural}_" + (action == :assignment ? 'add' : 'rmv'), names)
-        end
-        #
-        alias_method :_temporary_roles_exec, "_temporary#{_reflect_of(content)}_exec"
       end }
     end
 

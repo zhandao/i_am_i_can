@@ -44,6 +44,7 @@ module IAmICan
     instance_exec(%i[ subject role_group permission ], &Dynamic.scopes)
     instance_exec(&Dynamic.class_reflections)
     instance_exec(%w[ permission ], &Dynamic.assignment_helpers)
+    instance_exec(%w[ permission ], &Dynamic.definition_helpers)
 
     before_create { self.remarks ||= name.to_s.humanize }
     validates :name, uniqueness: true
@@ -61,6 +62,7 @@ module IAmICan
     instance_exec(%i[ permission role ], &Dynamic.scopes)
     instance_exec(&Dynamic.class_reflections)
     instance_exec(%w[ role permission ], &Dynamic.assignment_helpers)
+    instance_exec(%w[ permission ], &Dynamic.definition_helpers)
 
     before_create { self.remarks ||= name.to_s.humanize }
     validates :name, uniqueness: true
