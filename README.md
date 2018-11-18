@@ -174,7 +174,7 @@ Methods Explanation:
 ```ruby
 # === Save to DB ===
 # method signature
-have_role *names, desc: nil, save: saved_by_default#, which_can: [ ], obj: nil
+have_role *names, desc: nil, save: true#, which_can: [ ], obj: nil
 # examples
 User.have_roles :admin, :master # => 'Role Definition Done' or error message
 UserRole.count # => 2
@@ -238,7 +238,7 @@ Methods Explanation:
 he = User.take
 # === Save to DB ===
 # method signature
-becomes_a *roles, auto_definition: auto_definition, save:  saved_by_default#, which_can: [ ], obj: nil
+becomes_a *roles, auto_definition: auto_definition, save:  true#, which_can: [ ], obj: nil
 # examples
 he.becomes_a :admin # => 'Role Definition Done' or error message
 he.stored_roles   # => [<#UserRole id: 1>]
@@ -253,7 +253,7 @@ he.roles # => [:admin, :coder]
 
 # === Cancel ===
 # method signature
-falls_from *roles, saved: saved_by_default
+falls_from *roles, saved: true
 # examples
 he.falls_from :admin # => 'Role Assignment Done' or error message
 he.removes_roles :coder, saved: false # => 'Role Assignment Done' or error message
@@ -313,7 +313,7 @@ Methods Explanation:
 ```ruby
 # === Save to DB ===
 # method signature
-have_permission *preds, obj: nil, desc: nil, save: saved_by_default
+have_permission *preds, obj: nil, desc: nil
 # examples
 UserRole.have_permission :fly # => 'Permission Definition Done' or error message
 UserRole.defined_stored_permissions.count # => 1

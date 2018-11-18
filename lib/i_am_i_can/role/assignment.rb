@@ -4,8 +4,8 @@ module IAmICan
       def becomes_a *roles, which_can: [ ], obj: nil,
                     _d: i_am_i_can.auto_definition,
                     auto_definition: _d || which_can.present?,
-                    save: i_am_i_can.disable_temporary || i_am_i_can.saved_by_default
-        self.class.have_roles *roles, which_can: which_can, obj: obj, save: save if auto_definition
+                    save: true
+        self.class.have_roles *roles, which_can: which_can, obj: obj if auto_definition
         _roles_assignment(roles, save)
       end
 
@@ -15,7 +15,7 @@ module IAmICan
         becomes_a *roles, save: false, **options
       end
 
-      def falls_from *roles, saved: i_am_i_can.disable_temporary || i_am_i_can.saved_by_default
+      def falls_from *roles, saved: true
         _roles_assignment(:cancel, roles, saved)
       end
 

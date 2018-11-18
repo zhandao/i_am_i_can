@@ -26,12 +26,6 @@ module IAmICan
           @ii_opts[:without_group] = true
         end
 
-        if no?('Do yo want it to save role and permission to database by default? y (default) / n')
-          @ii_opts[:saved_by_default] = false
-        end
-        if @ii_opts[:saved_by_default] != false && no?('Do you need temporary definition and assignment feature? y (default) / n')
-          @ii_opts[:disable_temporary] = true
-        end
         if yes?('Do you want it to raise error when you are doing wrong definition or assignment? y / n (default)')
           @ii_opts[:strict_mode] = true
         end

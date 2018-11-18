@@ -15,7 +15,6 @@ RSpec.describe IAmICan::Permission::Assignment do
         before { role.can :manage, obj: User }
 
         it 'assigns the permissions which are matched by the pred and obj' do
-          expect(:manage_User).not_to be_in(role.local_permission_names)
           expect(:manage_User).to be_in(role.stored_permission_names)
         end
       end
@@ -77,31 +76,15 @@ RSpec.describe IAmICan::Permission::Assignment do
   end
 
   describe 'role#cannot' do
-    context 'when saving' do
-      before { roles.have_permissions :talk_to, obj: user }
-      before { role.can :talk_to, obj: user }
+    before { roles.have_permissions :talk_to, obj: user }
+    before { role.can :talk_to, obj: user }
 
-      it do
-        expect(role.can? :talk_to, user).to be_truthy
-        expect{ role.cannot :talk_to, obj: user }.not_to raise_error
-        expect{ role.cannot :talk_to, obj: User.create(id: 2) }
-            .to raise_error(IAmICan::Error).with_message(/\[:talk_to_User_2\] have not been defined/)
-        expect(role.can? :talk_to, user).to be_falsey
-      end
-    end
-
-    context 'when local' do
-      let(:role) { User.declare_role :role; roles.new(name: :role) }
-      before { roles.declare_permission :talk_to, obj: user }
-      before { role.temporarily_can :talk_to, obj: user }
-
-      it do
-        expect(role.temporarily_can? :talk_to, user).to be_truthy
-        expect{ role.cannot :talk_to, obj: user, saved: false }.not_to raise_error
-        expect{ role.cannot :talk_to, obj: User.create(id: 2), saved: false }
-            .to raise_error(IAmICan::Error).with_message(/\[:talk_to_User_2\] have not been defined/)
-        expect(role.temporarily_can? :talk_to, user).to be_falsey
-      end
+    it do
+      expect(role.can? :talk_to, user).to be_truthy
+      expect{ role.cannot :talk_to, obj: user }.not_to raise_error
+      expect{ role.cannot :talk_to, obj: User.create(id: 2) }
+          .to raise_error(IAmICan::Error).with_message(/\[:talk_to_User_2\] have not been defined/)
+      expect(role.can? :talk_to, user).to be_falsey
     end
   end
 end

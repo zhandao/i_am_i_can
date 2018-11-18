@@ -1,25 +1,16 @@
 module IAmICan
   module Role
     module Definition
-      def have_role *roles, save: i_am_i_can.saved_by_default, which_can: [ ], obj: nil
+      def have_role *roles, which_can: [ ], obj: nil
         return unless roles.first.class.in?([ Symbol, String ])
         roles.map!(&:to_sym) ; i = i_am_i_can
-        definition = save \
-          ? _create_roles(roles.map { |role| { name: role } }) \
-          : _define_tmp_roles(roles)
+        definition = _create_roles(roles.map { |role| { name: role } })
 
         Role.modeling(roles, i).each { |r| r.can *which_can, obj: obj, auto_definition: true } if which_can.present?
         ResultOf.roles definition, i, given: roles
       end
 
       %i[ have_roles has_role has_roles ].each { |aname| alias_method aname, :have_role }
-
-      # TODO: rename
-      def declare_role *names, **options
-        have_role *names, save: false, **options
-      end
-
-      alias declare_roles has_role
     end
 
     def self.modeling(objs, i_am_i_can)

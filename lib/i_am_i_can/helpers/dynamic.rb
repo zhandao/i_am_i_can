@@ -120,20 +120,15 @@ module IAmICan
         #
         singleton_class.send(:alias_method, "stored_#{content}_names", stored_content_names)
 
-        next if i_am_i_can.disable_temporary
-
         # 5. _temporary_roles_add
         #    Add temporary roles to a user instance
         define_method "_temporary#{_reflect_of(content)}_add" do |names|
           names -= temporary_role_names
-          temporary_roles.concat([
-              *(stored_roles = i_am_i_can.role_model.where(name: names)).map(&:attributes),
-              *(tmp_roles = defined_temporary_roles.slice(*names).map { |k,v| v.merge(name: k) })
-          ])
-          stored_roles.names + tmp_roles.map { |r| r[:name] }
+          temporary_roles.concat((roles = i_am_i_can.role_model.where(name: names)).map(&:attributes))
+          roles.names
         end
         #
-        alias_method "_temporary#{_plural}_add", "_temporary#{_reflect_of(content)}_add"
+        alias_method :_temporary_roles_add, "_temporary#{_reflect_of(content)}_add"
 
         # 6. _temporary_roles_rmv
         #    Remove temporary roles to a user instance
@@ -143,14 +138,14 @@ module IAmICan
           end
         end
         #
-        alias_method "_temporary#{_plural}_rmv", "_temporary#{_reflect_of(content)}_rmv"
+        alias_method :_temporary_roles_rmv, "_temporary#{_reflect_of(content)}_rmv"
 
         # 6. exec
         define_method "_temporary#{_reflect_of(content)}_exec" do |action = :assignment, names|
           send("_temporary#{_plural}_" + (action == :assignment ? 'add' : 'rmv'), names)
         end
         #
-        alias_method "_temporary#{_plural}_exec", "_temporary#{_reflect_of(content)}_exec"
+        alias_method :_temporary_roles_exec, "_temporary#{_reflect_of(content)}_exec"
       end }
     end
 
@@ -171,15 +166,6 @@ module IAmICan
         define_singleton_method "_create#{_plural}" do |objects|
           content_cls.constantize.create(objects)
               .reject {|record| record.new_record? }
-        end
-
-        # 2. _define_tmp_roles
-        #    define temporary roles of Subject
-        define_singleton_method "_define_tmp#{_plural}" do |objects|
-          definition = send("defined_temporary#{_plural}")
-          object_names = objects - definition.keys
-          definition.merge!(object_names.map { |name| [name, { permissions: [ ] }] }.to_h)
-          object_names
         end
       end }
     end

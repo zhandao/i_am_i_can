@@ -5,20 +5,12 @@ RSpec.describe IAmICan::Role::Definition do
 
   cls_cleaning
 
-  describe '.have_role & .declare_role' do
-    context 'when using .have_role  (save by default)' do
+  describe '.have_role' do
+    context 'normally' do
       before { people.have_role :admin }
       it do
         expect(:admin).not_to be_in(people.defined_temporary_roles.names)
         expect(:admin).to be_in(UserRole.all.names)
-      end
-    end
-
-    context 'when using .declare_role (not save)' do
-      before { people.declare_role :admin }
-      it do
-        expect(:admin).not_to be_in(UserRole.all.names)
-        expect(:admin).to be_in(people.defined_temporary_roles.names)
       end
     end
 

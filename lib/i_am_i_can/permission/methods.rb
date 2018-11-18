@@ -1,5 +1,3 @@
-require 'i_am_i_can/permission/pms_array'
-
 module IAmICan
   module Permission
     module Methods
@@ -25,24 +23,8 @@ module IAmICan
           i_am_i_can.permission_model.deconstruct_obj(obj)
         end
 
-        def defined_tmp_permissions
-          @defined_tmp_permissions ||= { }
-        end
-
         def defined_stored_pms_names
           i_am_i_can.permission_model.all.map(&:name)
-        end
-
-        def defined_stored_permissions
-          i_am_i_can.permission_model.all
-        end
-
-        def defined_permission_names
-          defined_tmp_permissions.deep_merge(defined_stored_permissions)
-        end
-
-        def pms_of_defined_local_role(role_name)
-          (i_am_i_can.subject_model.defined_temporary_roles[role_name.to_sym] ||= { })[:permissions] ||= { id: [], index: [] }
         end
       end
 
@@ -59,17 +41,6 @@ module IAmICan
 
         def pms_matched?(pms_name, plist)
           i_am_i_can.permission_model.matched?(pms_name, in: plist[:in])
-        end
-
-        def local_permissions
-          @local_permissions ||= [ ]
-        end
-
-        alias local_permission_names local_permissions
-
-        # TODO: show by hash
-        def permissions
-          local_permission_names + stored_permission_names
         end
       end
     end

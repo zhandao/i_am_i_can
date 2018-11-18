@@ -62,12 +62,7 @@ module IAmICan
       end
 
       def permissions_of_temporary_roles
-        stored_roles_part = i_am_i_can.role_model.where(id: temporary_roles.map { |r| r[:id] }.compact)._permissions.map(&:name)
-        tmp_roles_part_ids = temporary_roles.map { |role| role.key?(:id) ? nil : role[:permissions] }.compact
-                             .reduce({})  { |a, b| a.merge(b) { |_, x, y| [x, y] } }
-        tmp_roles_part = i_am_i_can.permission_model.where(id: tmp_roles_part_ids[:id]).map(&:name) +
-            defined_tmp_permissions.get(tmp_roles_part_ids[:index]).names
-        stored_roles_part + tmp_roles_part
+        i_am_i_can.role_model.where(id: temporary_roles.map { |tr| tr[:id] })._permissions.map(&:name)
       end
     end
   end

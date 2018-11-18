@@ -1,11 +1,7 @@
 module IAmICan
   module Association_ClassMethods
     def has_many_temporary_roles(name: nil)
-      disable_temporary = Configs.get(self.name).disable_temporary
-      no_method = -> { raise NoMethodError, 'You have set the temporary feature to disable.' }
-
       define_method :temporary_role_names do
-        no_method.call if disable_temporary
         # @temporary_role_names ||= [ ]
         temporary_roles.map { |role| role[:name].to_sym }
       end
@@ -13,7 +9,6 @@ module IAmICan
       alias_method "#{name.to_s.singularize}_names", :temporary_role_names if name
 
       define_method :temporary_roles do
-        no_method.call if disable_temporary
         # defined_temporary_roles.slice(*temporary_role_names)
         @temporary_roles ||= [ ]
       end
@@ -28,7 +23,6 @@ module IAmICan
         temporary_role_names + stored_role_names
       end
 
-      # return if disable_temporary
       # 1. defined_temporary_roles
       cattr_accessor(:defined_temporary_roles) { { } }
       # 2. To alias above by given assoc name

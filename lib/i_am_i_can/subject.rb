@@ -18,11 +18,11 @@ module IAmICan
       end
 
       def defined_roles
-        defined_temporary_roles.map { |name, val| { name => val } } + i_am_i_can.role_model.all
+        i_am_i_can.role_model.all
       end
 
       def defined_role_names
-        i_am_i_can.role_model.all.names + defined_temporary_roles.keys
+        i_am_i_can.role_model.all.names
       end
 
       # TODO

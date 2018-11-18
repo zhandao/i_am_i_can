@@ -25,8 +25,7 @@ module IAmICan
     include Subject::PermissionQuerying
 
     include Reflection
-    method_override = "Do not set the role association name to `roles` in #{name} model"
-    raise method_override if !i_am_i_can.disable_temporary && _reflect_of(:role) == 'roles'
+    raise "Do not set the role association name to `roles` in #{name} model" if _reflect_of(:role) == 'roles'
 
     instance_exec(%i[ role ], &Dynamic.scopes)
     instance_exec(&Dynamic.class_reflections)
