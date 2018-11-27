@@ -9,7 +9,7 @@ module IAmICan
         _roles_assignment(roles, save)
       end
 
-      %i[ is is_a_role is_roles has_role has_roles role_is role_are ].each { |aname| alias_method aname, :becomes_a }
+      %i[ is is_a is_a_role is_roles has_role has_roles role_is role_are ].each { |aname| alias_method aname, :becomes_a }
 
       def is_a_temporary *roles, **options
         becomes_a *roles, save: false, **options

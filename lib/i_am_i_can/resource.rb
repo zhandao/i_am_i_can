@@ -7,7 +7,7 @@ module IAmICan
       # Book.that_allow(User.last, to: :write)
       scope :that_allow, -> (subject, to:) do
         allowed_ids = subject._roles._permissions.where(pred: to, obj_type: self.name).pluck(:obj_id).uniq
-        allowed_ids += Array(subject).map(&:permissions_of_temporary_roles).map { |name| name.to_s.split('_')[2].to_i }.compact.uniq
+        allowed_ids += Array(subject).map(&:permissions_of_temporary_roles).map(&:name).map { |name| name.to_s.split('_')[2].to_i }.compact.uniq
         where(id: allowed_ids)
       end
     end

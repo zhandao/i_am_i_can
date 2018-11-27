@@ -1,5 +1,4 @@
 require 'i_am_i_can/permission/methods'
-require 'i_am_i_can/permission/p_array'
 
 module IAmICan
   module Permission
@@ -15,7 +14,7 @@ module IAmICan
       %i[ have_permissions has_permission has_permissions ].each { |aname| alias_method aname, :have_permission }
 
       def self.extended(kls)
-        kls.delegate :pms_naming, :deconstruct_obj, to: kls
+        kls.delegate :deconstruct_obj, to: kls
       end
     end
   end

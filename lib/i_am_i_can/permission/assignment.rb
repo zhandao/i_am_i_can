@@ -3,8 +3,6 @@ require 'i_am_i_can/permission/methods'
 module IAmICan
   module Permission
     module Assignment
-      include Methods::Ins
-
       def can *preds,
               resource: nil, obj: resource,
               _d: i_am_i_can.auto_definition, auto_definition: _d
@@ -27,10 +25,8 @@ module IAmICan
       end
 
       # `can? :manage, User` / `can? :manage, obj: User`
-      def can? pred, obj0 = nil, obj: nil
-        obj = obj0 || obj
-        pms_name = pms_naming(pred, obj)
-        pms_matched?(pms_name, in: stored_permission_names)
+      def can? pred, o = nil, obj: o
+        _permissions.matched?(pred, obj)
       end
     end
   end

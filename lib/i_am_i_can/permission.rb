@@ -1,4 +1,3 @@
-require 'i_am_i_can/permission/p_array'
 require 'i_am_i_can/permission/definition'
 require 'i_am_i_can/permission/assignment'
 
@@ -7,19 +6,16 @@ module IAmICan
     extend ActiveSupport::Concern
 
     class_methods do
-      def matched?(pms_name = nil, pred: nil, obj: nil, **options)
-        PArray.new(options[:in]).matched?(pms_name || naming(pred, obj))
+      def matched?(pred, obj)
+        _ = deconstruct_obj(obj)
+        where(pred: pred,
+              obj_type: [nil, _[:obj_type]],
+              obj_id: [nil, _[:obj_id]])
+            .present?
       end
 
       def which(pred:, obj: nil, **conditions)
         find_by!(pred: pred, **deconstruct_obj(obj), **conditions)
-      end
-
-      def naming(pred, obj)
-        obj_type, obj_id = deconstruct_obj(obj).values
-        otp = "_#{obj_type}" if obj_type.present?
-        oid = "_#{obj_id}" if obj_id.present?
-        [pred, otp, oid].join.to_sym
       end
 
       def deconstruct_obj(obj)
