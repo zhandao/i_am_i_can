@@ -8,10 +8,7 @@ RSpec.describe IAmICan::Role::Definition do
   describe '.have_role' do
     context 'normally' do
       before { people.have_role :admin }
-      it do
-        expect(:admin).not_to be_in(people.defined_temporary_roles.names)
-        expect(:admin).to be_in(UserRole.all.names)
-      end
+      it { expect(:admin).to be_in(UserRole.all.names) }
     end
 
     context 'when giving multi roles' do

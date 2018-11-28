@@ -2,9 +2,7 @@ require 'i_am_i_can/configs/config'
 
 module IAmICan
   module Configs
-    cattr_accessor :configs do
-      { }
-    end
+    cattr_accessor :configs, default: { }
 
     def self.set_for(subject:, role:, permission:, role_group: nil, &block)
       config = Config.new(subject, role, permission, role_group)

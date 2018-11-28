@@ -36,6 +36,10 @@ module IAmICan
           { obj_type: obj.to_s, obj_id: nil }
         end
       end
+
+      def names
+        all.map(&:name)
+      end
     end
 
     included do
@@ -45,17 +49,9 @@ module IAmICan
       end
 
       # def assign_to role: nil, group: nil
-      #   obj = if role
-      #           role.is_a?(Symbol) ? i_am_i_can.role_model.find(name: role) : role
-      #         else
-      #           group.is_a?(Symbol) ? i_am_i_can.role_group_model.find(name: role) : group
-      #         end
-      #   obj.have_permission self.pred, obj: self.obj
       # end
-      #
-      # alias is_assigned_to assign_to
 
-      # :user, User, user
+      # returns :user, User, user
       def obj
         return obj_type.constantize.find(obj_id) if obj_id.present?
         obj_type[/[A-Z]/] ? obj_type.constantize : obj_type.to_sym

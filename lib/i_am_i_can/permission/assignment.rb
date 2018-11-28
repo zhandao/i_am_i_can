@@ -18,13 +18,9 @@ module IAmICan
 
       def _permissions_assignment(action = :assignment, preds, obj)
         permissions = preds.product(Array[obj]).map { |(p, o)| { pred: p, **deconstruct_obj(o) } }
-        assignment = _stored_permissions_exec(action, permissions.reduce({ }) { |a, b| a.merge(b) { |_, x, y| [x, y] } })
+        assignment = _stored_permissions_exec(action,
+                                              permissions.reduce({ }) { |a, b| a.merge(b) { |_, x, y| [x, y] } })
         ResultOf.permission assignment, i_am_i_can, given: [[], permissions.map { |pms| pms.values.compact.join('_').to_sym }]
-      end
-
-      # `can? :manage, User` / `can? :manage, obj: User`
-      def can? pred, o = nil, obj: o
-        _permissions.matched?(pred, obj)
       end
     end
   end

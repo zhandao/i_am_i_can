@@ -7,7 +7,7 @@ module IAmICan
 
     class_methods do
       def members_of_role_group name
-        i_am_i_can.role_group_model.find_by!(name: name).member_names.sort
+        i_am_i_can.role_group_model.find_by!(name: name)._roles.names.sort
       end
 
       def defined_roles
@@ -16,7 +16,7 @@ module IAmICan
 
       # TODO
       def defined_role_groups
-        i_am_i_can.role_group_model.all.map { |group| [ group.name.to_sym, group.member_names.map(&:to_sym).sort ] }.to_h
+        i_am_i_can.role_group_model.all.map { |group| [ group.name.to_sym, group._roles.names.map(&:to_sym).sort ] }.to_h
       end
     end
 

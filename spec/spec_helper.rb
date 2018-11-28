@@ -63,5 +63,5 @@ class Hash
 end
 
 def cls_cleaning
-  before { User.defined_temporary_roles = { } }
+  # before { User.defined_temporary_roles = { } }
 end

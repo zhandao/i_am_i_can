@@ -15,7 +15,7 @@ module IAmICan
 
     class_methods do
       # def that_allow(subject)
-      #   ThatAllow.new(sel、f, subject)
+      #   ThatAllow.new(self, subject)
       # end
     end
   end
@@ -29,9 +29,6 @@ module IAmICan
   #   end
   #
   #   def to(pred)
-  #     allowed_ids = subject._roles._permissions.where(pred: pred, obj_type: records.name).pluck(:obj_id).uniq
-  #     allowed_ids += Array(subject).map(&:permissions_of_temporary_roles).map { |name| name.to_s.split('_')[2].to_i }.compact.uniq
-  #     records.where(id: allowed_ids)
   #   end
   # end
 end

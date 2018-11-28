@@ -14,13 +14,13 @@ RSpec.describe IAmICan::Role::Assignment do
   describe '#becomes_a & #is_a_temporary' do
     context 'when using #becomes_a (save by default)' do
       before { he.becomes_a :admin }
-      it { expect(:admin).to be_in(his.stored_role_names) }
+      it { expect(:admin).to be_in(his._roles.names) }
       it { expect(:admin).not_to be_in(his.temporary_role_names) }
 
       # TODO: is reasonable?
       context 'and then assign the same role by using #is_a_temporary' do
         before { he.is_a_temporary :admin }
-        it { expect(:admin).to be_in(his.stored_role_names) }
+        it { expect(:admin).to be_in(his._roles.names) }
         it { expect(:admin).to be_in(his.temporary_role_names) }
       end
     end
@@ -28,7 +28,7 @@ RSpec.describe IAmICan::Role::Assignment do
     context 'when using #is_a_temporary (not save)' do
       before { he.is_a_temporary :master }
       it { expect(:master).to be_in(his.temporary_role_names) }
-      it { expect(:master).not_to be_in(his.stored_role_names) }
+      it { expect(:master).not_to be_in(his._roles.names) }
     end
 
     context 'when giving a role which is not defined' do
@@ -40,14 +40,14 @@ RSpec.describe IAmICan::Role::Assignment do
       context 'when setting auto_definition to true' do
         it do
           expect{ he.becomes_a :someone_else, auto_definition: true }.not_to raise_error
-          expect(:someone_else).to be_in(his.stored_role_names)
+          expect(:someone_else).to be_in(his._roles.names)
         end
       end
     end
 
     context 'when giving multi roles' do
       before { he.becomes_a :dev, :guest }
-      it { expect(his.stored_role_names).to contain(%i[dev guest]) }
+      it { expect(his._roles.names).to contain(%i[dev guest]) }
     end
 
     context 'when assigning the role which is assigned before' do
@@ -56,7 +56,7 @@ RSpec.describe IAmICan::Role::Assignment do
       it do
         expect{ he.becomes_a :admin }
             .to raise_error(IAmICan::Error).with_message(/have been repeatedly assigned/)
-        expect(his.stored_role_names).to eq [:admin]
+        expect(his._roles.names).to eq [:admin]
       end
     end
 

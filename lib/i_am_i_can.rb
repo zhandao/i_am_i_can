@@ -25,8 +25,6 @@ module IAmICan
     include Subject::PermissionQuerying
 
     include Reflection
-    raise "Do not set the role association name to `roles` in #{name} model" if _reflect_of(:role) == 'roles'
-
     instance_exec(%i[ role ], &Dynamic.scopes)
     instance_exec(&Dynamic.class_reflections)
     instance_exec(%w[ role ], &Dynamic.assignment_helpers)

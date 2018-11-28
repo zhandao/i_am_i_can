@@ -15,7 +15,7 @@ RSpec.describe IAmICan::Permission::Assignment do
         before { role.can :manage, obj: User }
 
         it 'assigns the permissions which are matched by the pred and obj' do
-          expect(:manage_User).to be_in(role.stored_permission_names)
+          expect(:manage_User).to be_in(role._permissions.names)
         end
       end
 

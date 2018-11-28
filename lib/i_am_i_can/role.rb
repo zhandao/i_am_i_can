@@ -18,8 +18,13 @@ module IAmICan
     end
 
     included do
-      def attributes
-        super.symbolize_keys
+      # def attributes
+      #   super.symbolize_keys
+      # end
+
+      # `can? :manage, User` / `can? :manage, obj: User`
+      def can? pred, o = nil, obj: o
+        _permissions.matched?(pred, obj)
       end
     end
   end
