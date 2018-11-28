@@ -21,10 +21,6 @@ module IAmICan
         i_am_i_can.role_model.all
       end
 
-      def defined_role_names
-        i_am_i_can.role_model.all.names
-      end
-
       # TODO
       def defined_role_groups
         i_am_i_can.role_group_model.all.map { |group| [ group.name.to_sym, group.member_names.map(&:to_sym).sort ] }.to_h

@@ -29,10 +29,6 @@ module IAmICan
           { obj_type: obj.to_s, obj_id: nil }
         end
       end
-
-      def exists?(pred, obj)
-        super(pred: pred, **deconstruct_obj(obj))
-      end
     end
 
     included do
