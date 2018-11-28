@@ -20,11 +20,8 @@ module IAmICan
       end
 
       define_method :roles do
-        temporary_roles + _roles
-      end
-
-      define_method :role_names do
-        temporary_role_names + stored_role_names
+        ids = (temporary_roles.map(&:id) + _roles.ids).uniq
+        i_am_i_can.role_model.where(id: ids)
       end
 
       # 1. defined_temporary_roles

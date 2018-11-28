@@ -1,5 +1,3 @@
-require 'i_am_i_can/permission/methods'
-
 module IAmICan
   module Permission
     module Assignment

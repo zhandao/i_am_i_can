@@ -6,12 +6,19 @@ module IAmICan
     extend ActiveSupport::Concern
 
     class_methods do
-      def matched?(pred, obj)
+      def matched(preds, obj)
         _ = deconstruct_obj(obj)
-        where(pred: pred,
+        where(pred: preds,
               obj_type: [nil, _[:obj_type]],
               obj_id: [nil, _[:obj_id]])
-            .present?
+      end
+
+      def matched?(preds, obj)
+        matched(preds, obj).present?
+      end
+
+      def matched_all?(preds, obj)
+        matched(preds, obj).count == Array(preds).count
       end
 
       def which(pred:, obj: nil, **conditions)

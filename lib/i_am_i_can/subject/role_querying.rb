@@ -4,8 +4,8 @@ module IAmICan
 
       # === Role Querying ===
 
-      def is? role
-        role.to_sym.in?(temporary_role_names) || role.to_sym.in?(stored_role_names)
+      def is? role_name
+        roles.find_by(name: role_name).present?
       end
 
       alias is_role?  is?
@@ -23,8 +23,8 @@ module IAmICan
       alias is_role!  is!
       alias has_role! is!
 
-      def is_one_of? *roles
-        roles.each { |role| return true if is? role } && false
+      def is_one_of? *role_names
+        roles.where(name: role_names).present?
       end
 
       alias is_one_of_roles? is_one_of?
@@ -35,8 +35,8 @@ module IAmICan
 
       alias is_one_of_roles! is_one_of!
 
-      def is_every? *roles
-        roles.each { |role| return false if isnt? role } && true
+      def is_every? *role_names
+        roles.where(name: role_names).count == role_names.count
       end
 
       alias is_every_role_in? is_every?
@@ -51,7 +51,7 @@ module IAmICan
 
       def is_in_role_group? name
         group_members = self.class.members_of_role_group(name)
-        (role_names & group_members).present?
+        (roles.names & group_members).present?
       end
 
       alias in_role_group? is_in_role_group?

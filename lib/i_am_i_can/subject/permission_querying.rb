@@ -16,7 +16,17 @@ module IAmICan
         true
       end
 
+      def can_one_of? preds, o = nil, obj: o
+        can? preds, obj
+      end
+
+      def can_one_of! preds, o = nil, obj: o
+        raise InsufficientPermission unless can_one_of? preds, obj
+        true
+      end
+
       def can_each? preds, o = nil, obj: o
+        # TODO: using `matched_all?`
         preds.each { |pred| return false if cannot? pred, obj } && true
       end
 
@@ -28,16 +38,8 @@ module IAmICan
 
       alias can_every! can_each!
 
-      def can_one_of? preds, o = nil, obj: o
-        preds.each { |pred| return true if can? pred, obj } && false
-      end
-
-      def can_one_of! preds, o = nil, obj: o
-        raise InsufficientPermission unless can_one_of? preds, obj
-        true
-      end
-
       def temporarily_can? pred, obj
+        return false if temporary_roles.blank?
         valid_temporary_roles._permissions.matched?(pred, obj)
       end
 
