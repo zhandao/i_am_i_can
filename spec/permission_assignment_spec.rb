@@ -10,18 +10,18 @@ RSpec.describe IAmICan::Permission::Assignment do
   describe '#can (save case)' do
     before { roles.has_permission :manage, obj: User }
 
-    context 'when giving pred is defined' do
+    context 'when giving action is defined' do
       context 'and obj is defined' do
         before { role.can :manage, obj: User }
 
-        it 'assigns the permissions which are matched by the pred and obj' do
+        it 'assigns the permissions which are matched by the action and obj' do
           expect(:manage_User).to be_in(role._permissions.names)
         end
       end
 
       context 'but obj is not given' do
         # TODO: is reasonable?
-        it 'assigns all the permissions which are matched by the pred to the role' do
+        it 'assigns all the permissions which are matched by the action to the role' do
           expect{ role.can :manage }
               .to raise_error(IAmICan::Error).with_message(/\[:manage\] have not been defined/)
         end
@@ -33,7 +33,7 @@ RSpec.describe IAmICan::Permission::Assignment do
       end
     end
 
-    context 'when giving pred is not defined' do
+    context 'when giving action is not defined' do
       it { expect{ role.can :fly }
                .to raise_error(IAmICan::Error).with_message(/\[:fly\] have not been defined/) }
     end
@@ -49,7 +49,7 @@ RSpec.describe IAmICan::Permission::Assignment do
     before { roles.has_permission :manage, obj: User }
     before { role.can :manage, obj: User }
 
-    context 'when querying by correct pred' do
+    context 'when querying by correct action' do
       it { expect(role.can? :fly).to be_truthy }
       it { expect(role.can? :manage, User).to be_truthy }
 
@@ -71,7 +71,7 @@ RSpec.describe IAmICan::Permission::Assignment do
     end
 
     context 'when querying by not defined perd' do
-      it { expect(role.can? :xpred).to be_falsey }
+      it { expect(role.can? :xaction).to be_falsey }
     end
   end
 

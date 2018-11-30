@@ -23,8 +23,8 @@ module IAmICan
       # end
 
       # `can? :manage, User` / `can? :manage, obj: User`
-      def can? pred, o = nil, obj: o
-        _permissions.matched?(pred, obj)
+      def can? action, o = nil, obj: o
+        _permissions.matched?(action, obj)
       end
     end
   end

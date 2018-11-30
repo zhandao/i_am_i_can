@@ -6,23 +6,23 @@ module IAmICan
     extend ActiveSupport::Concern
 
     class_methods do
-      def matched(preds, obj)
+      def matched(actions, obj)
         _ = deconstruct_obj(obj)
-        where(pred: preds,
+        where(action: actions,
               obj_type: [nil, _[:obj_type]],
               obj_id: [nil, _[:obj_id]])
       end
 
-      def matched?(preds, obj)
-        matched(preds, obj).present?
+      def matched?(actions, obj)
+        matched(actions, obj).present?
       end
 
-      def matched_all?(preds, obj)
-        matched(preds, obj).count == Array(preds).count
+      def matched_all?(actions, obj)
+        matched(actions, obj).count == Array(actions).count
       end
 
-      def which(pred:, obj: nil, **conditions)
-        find_by!(pred: pred, **deconstruct_obj(obj), **conditions)
+      def which(action:, obj: nil, **conditions)
+        find_by!(action: action, **deconstruct_obj(obj), **conditions)
       end
 
       def deconstruct_obj(obj)
@@ -45,7 +45,7 @@ module IAmICan
     included do
       # like: manage_User_1
       def name
-        [pred, obj_type, obj_id].compact.join('_').to_sym
+        [action, obj_type, obj_id].compact.join('_').to_sym
       end
 
       # def assign_to role: nil, group: nil

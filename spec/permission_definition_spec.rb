@@ -10,9 +10,9 @@ RSpec.describe IAmICan::Permission::Definition do
   context '.has_permission' do
     before { roles.has_permission :manage, obj: User }
     it { expect(:manage_User).to be_in permission_records.all.map(&:name) }
-    it { expect(permission_records.last).to have_attributes(pred: 'manage', obj_type: 'User', obj_id: nil) }
+    it { expect(permission_records.last).to have_attributes(action: 'manage', obj_type: 'User', obj_id: nil) }
 
-    context 'when giving multi preds' do
+    context 'when giving multi actions' do
       context 'without obj' do
         before { roles.has_permissions :fly, :run, :jump }
         it { expect(permission_records.all.map(&:name)).to contain(%i[fly run jump])}

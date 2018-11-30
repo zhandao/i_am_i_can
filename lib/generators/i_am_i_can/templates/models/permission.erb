@@ -12,9 +12,9 @@ end
 
 __END__
 
-  string  :pred,     null: false
+  string  :action,     null: false
   string  :obj_type
   integer :obj_id
   string  :desc
 
-  index %i[ pred obj_type obj_id ], unique: true
+  index %i[ action obj_type obj_id ], unique: true

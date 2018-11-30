@@ -62,7 +62,6 @@ Resource.that_allow(user, to: :manage) # => ActiveRecord_Relation[]
 2. [Installation And Setup](#installation-and-setup)
 
 3. [Usage](#usage)
-    - [Customization](#customization)
     - [Config Options](#config-options)
     - [Methods and helpers](#methods-and-helpers)
         - [A. Role Definition](#a-role-definition)
@@ -332,7 +331,7 @@ he.is_in_role_group? :vip # return true if he has at least one role of the group
 Explanation:
 ```ruby
 # === method signature ===
-have_permission *preds, obj: nil
+have_permission *actions, obj: nil
 # It is not recommended to pass an array of objects
 
 # === examples ===
@@ -360,7 +359,7 @@ UserRole.have_permission :fly
 
 # === Assignment ===
 # method signature
-can *preds, resource: nil, obj: resource,
+can *actions, resource: nil, obj: resource,
     _d: config.auto_definition, auto_definition: _d
 # examples
 role.can :fly # => 'Permission Assignment Done' or error message
@@ -432,6 +431,7 @@ user.can? :read, :book # => true
 2. scopes:
     1. `that_allow`
 
+Explanation:
 ```ruby
 # === method signature ===
 scope :that_allow, -> (subject, to:) { }
@@ -488,10 +488,10 @@ Book.that_allow(User.last, to: :write)
     has_and_belongs_to_many :related_roles
     has_and_belongs_to_many :related_role_groups
  
-    # 1. [class method] which(pred:, obj: nil, **conditions)
+    # 1. [class method] which(action:, obj: nil, **conditions)
     #    the same as `find_by!`
-    UserPermission.which(pred: :read, obj: Book.first)
-    UserPermission.which(pred: :read, obj_type: 'Book', obj_id: 1)
+    UserPermission.which(action: :read, obj: Book.first)
+    UserPermission.which(action: :read, obj_type: 'Book', obj_id: 1)
 
     # 2. [class method] names
     UserPermission.all.names # => symbol array

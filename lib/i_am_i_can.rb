@@ -75,7 +75,7 @@ module IAmICan
     instance_exec(&Dynamic.class_reflections)
 
     before_create { self.remarks ||= name.to_s.humanize }
-    validates :pred, uniqueness: { scope: %i[ obj_type obj_id ] }
+    validates :action, uniqueness: { scope: %i[ obj_type obj_id ] }
   end
 
   def acts_as_allowed_resource

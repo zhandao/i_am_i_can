@@ -8,7 +8,7 @@ module IAmICan
       scope :that_allow, -> (subject, to:) do
         tmp_role_ids = Array(subject).flat_map(&:temporary_roles).map(&:id).uniq
         allowed_ids = subject.i_am_i_can.role_model.where(id: (subject._roles.ids + tmp_role_ids).uniq)
-                          ._permissions.where(pred: to, obj_type: self.name).pluck(:obj_id).uniq
+                          ._permissions.where(action: to, obj_type: self.name).pluck(:obj_id).uniq
         where(id: allowed_ids)
       end
     end
@@ -28,7 +28,7 @@ module IAmICan
   #     self.subject = subject
   #   end
   #
-  #   def to(pred)
+  #   def to(action)
   #   end
   # end
 end

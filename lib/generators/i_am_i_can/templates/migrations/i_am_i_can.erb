@@ -24,7 +24,7 @@ class <%= name_c %>Am<%= name_c %>Can < ActiveRecord::Migration::Current
 
 <% end %>
     create_table :<%= permission_up %>, force: :cascade do |t|
-      t.string  :pred,     null: false
+      t.string  :action,   null: false
       t.string  :obj_type
       t.integer :obj_id
       t.string  :remarks
@@ -32,9 +32,9 @@ class <%= name_c %>Am<%= name_c %>Can < ActiveRecord::Migration::Current
       t.timestamps
     end
 
-    add_index :<%= permission_up %>, %i[ pred obj_type obj_id ], unique: true, name: '<%= permission_up %>_unique_index'
+    add_index :<%= permission_up %>, %i[ action obj_type obj_id ], unique: true, name: '<%= permission_up %>_unique_index'
     ### Open below if you want to use `Resource.that_allow` frequently
-    # add_index :<%= permission_up %>, %i[ pred obj_type ], name: '<%= permission_up %>_resource_search_index'
+    # add_index :<%= permission_up %>, %i[ action obj_type ], name: '<%= permission_up %>_resource_search_index'
 
     # === end of permission table ===
 
