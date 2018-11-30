@@ -53,6 +53,7 @@ module IAmICan
 
       # returns :user, User, user
       def obj
+        return if obj_type.blank?
         return obj_type.constantize.find(obj_id) if obj_id.present?
         obj_type[/[A-Z]/] ? obj_type.constantize : obj_type.to_sym
       end

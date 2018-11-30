@@ -1,6 +1,7 @@
 module IAmICan
   module Subject
     module PermissionQuerying
+      # TODO: without: :group
       def can? pred, o = nil, obj: o, without_group: false
         temporarily_can?(pred, obj) ||
             stored_can?(pred, obj) ||

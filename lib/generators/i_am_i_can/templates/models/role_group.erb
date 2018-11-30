@@ -1,5 +1,5 @@
 class RoleGroup < ActiveRecord::Base
-  has_and_belongs_to_many :stored_permissions,
+  has_and_belongs_to_many :permissions,
                           join_table: '<%= group_pms_tb %>', foreign_key: :<%= permission_u %>_id, class_name: '<%= permission_c %>', association_foreign_key: :<%= group_u %>_id
 
   has_and_belongs_to_many :members,

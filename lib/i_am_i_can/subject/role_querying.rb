@@ -50,7 +50,7 @@ module IAmICan
       # === Group Querying ===
 
       def is_in_role_group? name
-        group_members = self.class.members_of_role_group(name)
+        group_members = i_am_i_can.role_group_model.find_by!(name: name)._roles.names
         (roles.names & group_members).present?
       end
 
