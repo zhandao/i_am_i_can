@@ -15,7 +15,7 @@ require 'i_am_i_can/resource'
 
 module IAmICan
   def acts_as_subject
-    i_am_i_can.act = :subject
+    i_am_i_can&.act = :subject
     include Subject
 
     extend  Role::Definition
@@ -32,7 +32,7 @@ module IAmICan
   end
 
   def acts_as_role
-    i_am_i_can.act = :role
+    i_am_i_can&.act = :role
     include Role
 
     extend  Permission::Definition
@@ -49,7 +49,7 @@ module IAmICan
   end
 
   def acts_as_role_group
-    i_am_i_can.act = :role_group
+    i_am_i_can&.act = :role_group
     include Role
     # include RoleGroup
 
@@ -67,7 +67,7 @@ module IAmICan
   end
 
   def acts_as_permission
-    i_am_i_can.act = :permission
+    i_am_i_can&.act = :permission
     include Permission
 
     include Reflection

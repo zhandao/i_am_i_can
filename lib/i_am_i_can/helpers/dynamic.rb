@@ -53,7 +53,7 @@ module IAmICan
       # You call the proc below by given contents [:role], then:
       #
       proc { |contents| contents.each do |content|
-        content_cls = i_am_i_can.send("#{content}_class")
+        content_cls = i_am_i_can.send("#{content}_class") rescue next
         _plural = '_' + content.to_s.pluralize
 
         # _stored_roles_exec
@@ -86,7 +86,7 @@ module IAmICan
       # You call the proc below by given contents [:role], then:
       #
       proc { |contents| contents.each do |content|
-        content_cls = i_am_i_can.send("#{content}_class")
+        content_cls = i_am_i_can.send("#{content}_class") rescue next
         _plural = '_' + content.to_s.pluralize
 
         # _create_roles

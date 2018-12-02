@@ -59,7 +59,7 @@ Resource.that_allow(user, to: :manage) # => ActiveRecord_Relation[]
     - [Three steps to use this gem](#three-steps-to-use-this-gem)
     - [Two Concepts of this gem](#two-concepts-of-this-gem)
 
-2. [Installation And Setup](#installation-and-setup)
+2. [Installation and Setup](#installation-and-setup)
 
 3. [Usage](#usage)
     - [Config Options](#config-options)
@@ -135,7 +135,7 @@ Resource.that_allow(user, to: :manage) # => ActiveRecord_Relation[]
 
 [Feature List: needs you](https://github.com/zhandao/i_am_i_can/issues/2)
 
-## Installation And Setup
+## Installation and Setup
 
 1. Add this line to your application's Gemfile and then `bundle`:
 
