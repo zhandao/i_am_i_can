@@ -9,6 +9,7 @@ module IAmICan
     end
 
     included do
+      define_model_callbacks :role_assign, :cancel_role_assign, :role_update
     end
   end
 end

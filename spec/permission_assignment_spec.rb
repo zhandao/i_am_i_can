@@ -87,4 +87,17 @@ RSpec.describe IAmICan::Permission::Assignment do
       expect(role.can? :talk_to, user).to be_falsey
     end
   end
+
+  describe '#can_only' do
+    before { roles.have_permissions :create, :update, :destroy, obj: user }
+    before { role.can :create, obj: user }
+
+    it do
+      expect(role.can? :create, user).to be_truthy
+      expect{ role.can_only :update, :destroy, obj: user }.to change(role._permissions, :count).by 1
+      expect(role.can? :create, user).to be_falsey
+      expect(role.can? :update, user).to be_truthy
+      expect(role.can? :destroy, user).to be_truthy
+    end
+  end
 end

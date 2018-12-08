@@ -95,4 +95,20 @@ RSpec.describe IAmICan::Role::Assignment do
     it { expect{ he.is_not_a_temporary :someone_else }
              .to raise_error(IAmICan::Error).with_message(/have not been defined/)  }
   end
+
+  describe '#is_only_a' do
+    before { he.becomes_a :admin }
+
+    it do
+      expect(he.is? :admin).to be_truthy
+      expect{ he.is_only_a :master }.not_to change(he._roles, :count)
+      expect(he.is? :admin).to be_falsey
+      expect(he.is? :master).to be_truthy
+
+      expect{ he.is_only_a :guest, :dev }.to change(he._roles, :count).by 1
+      expect(he.is? :master).to be_falsey
+      expect(he.is? :guest).to be_truthy
+      expect(he.is? :dev).to be_truthy
+    end
+  end
 end

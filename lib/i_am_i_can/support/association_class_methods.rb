@@ -35,8 +35,8 @@ module IAmICan
         end
       end
 
-      define_method :_temporary_roles_exec do |action = :assignment, names|
-        send('_temporary_roles_' + (action == :assignment ? 'add' : 'rmv'), names)
+      define_method :_temporary_roles_exec do |action = :assign, names|
+        send('_temporary_roles_' + (action == :assign ? 'add' : 'rmv'), names)
       end
     end
   end

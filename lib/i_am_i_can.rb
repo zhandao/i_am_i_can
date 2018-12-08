@@ -53,6 +53,7 @@ module IAmICan
     include Role
     # include RoleGroup
 
+    include Role::Grouping
     extend  Permission::Definition
     include Permission::Assignment
 

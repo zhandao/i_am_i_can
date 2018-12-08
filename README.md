@@ -58,6 +58,7 @@ Resource.that_allow(user, to: :manage) # => ActiveRecord_Relation[]
     - [About role group](#about-role-group)
     - [Three steps to use this gem](#three-steps-to-use-this-gem)
     - [Two Concepts of this gem](#two-concepts-of-this-gem)
+    - [How it work?](#how-it-work)
 
 2. [Installation and Setup](#installation-and-setup)
 
@@ -132,6 +133,17 @@ Resource.that_allow(user, to: :manage) # => ActiveRecord_Relation[]
 
 1. Stored (save in database) TODO
 2. Temporary (save in instance variable) TODO
+
+### How it work?
+
+Very simple. Really simple. Sooooo Simple.
+
+1. To define something, you actually `create` records.
+    [see here](https://github.com/zhandao/i_am_i_can/blob/master/lib/i_am_i_can/helpers/dynamic.rb#L92)
+2. To assign something, you actually call one of the activerecord association methods.
+    [see here](https://github.com/zhandao/i_am_i_can/blob/master/lib/i_am_i_can/helpers/dynamic.rb#L67)
+2. To query  something, you actually call the querying interfaces of activerecord.
+    [see here](https://github.com/zhandao/i_am_i_can/tree/master/lib/i_am_i_can/subject)
 
 [Feature List: needs you](https://github.com/zhandao/i_am_i_can/issues/2)
 
@@ -251,7 +263,13 @@ UserRoleGroup.which(name: :vip).members.names # => %i[vip1 vip2 vip3]
         3. `is_not_a` / `has_not_role` / `has_not_roles`
         4. `will_not_be`
     2. `is_not_a_temporary`
-4. helpers:
+4. replacement assignment by calling: `is_only_a`, alias `currently_is`.
+    (makes the role collection contain only the supplied roles, by adding and deleting as appropriate)
+5. callbacks - before / after / around:
+    1. `role_assign`: assignment
+    2. `cancel_role_assign`: cancel assignment
+    3. `role_update`: 
+6. helpers:
     1. relation with stored role, defaults to `stored_roles`.
     2. `temporary_roles` and `valid_temporary_roles`
     3. `roles`
@@ -287,6 +305,12 @@ is_not_a_temporary *roles
 he.falls_from :admin         # => 'Role Assignment Done' or error message
 he.is_not_a_temporary :coder # => 'Role Assignment Done' or error message
 he.roles # => []
+
+# === Replacement Assignment ===
+# method signature
+is_only_a *roles
+# examples
+he.is_only_a :role1, :role2
 ```
 
 #### D. [Role / Group Querying](https://github.com/zhandao/i_am_i_can/blob/master/lib/i_am_i_can/subject/role_querying.rb)
@@ -347,6 +371,12 @@ UserPermission.count # => 1 + 2
 1. caller: role / role group instance, like `UserRole.which(name: :admin)`
 2. assignment by calling `can`. alias `has_permission`
 3. cancel assignment by calling `cannot`. alias `is_not_allowed_to`
+4. replacement assignment by calling: `can_only`,.
+    (makes the permission collection contain only the supplied permissions, by adding and deleting as appropriate)
+5. callbacks - before / after / around:
+    1. `permission_assign`: assignment
+    2. `cancel_permission_assign`: cancel assignment
+    3. `permission_update`: replacement assignment
 4. helpers:
     1. relation with stored permission, defaults to `permissions`.
 
@@ -359,11 +389,23 @@ UserRole.have_permission :fly
 
 # === Assignment ===
 # method signature
-can *actions, resource: nil, obj: resource,
+can *actions, resource: nil, obj: resource, # you can use `resource` or `obj` 
     _d: config.auto_definition, auto_definition: _d
 # examples
 role.can :fly # => 'Permission Assignment Done' or error message
 role.permissions # => [<#UserPermission id: ..>]
+
+# === Cancel Assignment ===
+# method signature
+cannot *actions, resource: nil, obj: resource
+# examples
+role.cannot :fly
+
+# === Replacement Assignment ===
+# method signature
+can_only *actions, resource: nil, obj: resource
+# examples
+role.can_only :run
 ```
 
 #### G. [Permission Querying](https://github.com/zhandao/i_am_i_can/blob/master/lib/i_am_i_can/subject/role_querying.rb)
@@ -397,8 +439,8 @@ he.can?    :perform, obj: :magic
 he.cannot? :perform, :magic
 he.can!    :perform, :magic
 
-he.can_each?   %i[fly jump] # return false if he can not `fly` or `jump`
-he.can_one_of! %i[fly jump] # return true if he can `fly` or `jump`
+he.can_each?   %i[ fly jump ] # return false if he can not `fly` or `jump`
+he.can_one_of! %i[ fly jump ] # return true if he can `fly` or `jump`
 ```
 
 #### H. Shortcut Combinations - which_can

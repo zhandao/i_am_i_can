@@ -1,7 +1,7 @@
 require 'i_am_i_can/role/definition'
 require 'i_am_i_can/role/assignment'
+require 'i_am_i_can/role/grouping'
 require 'i_am_i_can/role_group/definition'
-require 'i_am_i_can/role_group/assignment'
 
 module IAmICan
   module Role
@@ -18,9 +18,7 @@ module IAmICan
     end
 
     included do
-      # def attributes
-      #   super.symbolize_keys
-      # end
+      define_model_callbacks :permission_assign, :cancel_permission_assign, :permission_update
 
       # `can? :manage, User` / `can? :manage, obj: User`
       def can? action, o = nil, obj: o

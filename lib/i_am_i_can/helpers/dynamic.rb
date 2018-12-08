@@ -55,21 +55,19 @@ module IAmICan
       proc { |contents| contents.each do |content|
         content_cls = i_am_i_can.send("#{content}_class") rescue next
         _plural = '_' + content.to_s.pluralize
+        __plural = send("_#{_plural}")
 
         # _stored_roles_exec
         #   Add / Remove (by passing action :cancel) roles to a user instance
-        define_method "_#{_reflect_of(content)}_exec" do |action = :assignment, instances = [ ], **conditions|
-          collection = send(_plural)
-          if conditions.present? && action == :assignment
-            # Role.where(name: [...]).where.not(id: roles.ids)
-            query_result = content_cls.constantize.where(conditions).where.not(id: collection.ids)
-          elsif conditions.present? && action == :cancel
-            # Role.where(id: roles.ids, name: [...])
-            query_result = content_cls.constantize.where(id: collection.ids, **conditions)
-          end
+        define_method "_#{_reflect_of(content)}_exec" do |action = :assign, instances = [ ], **conditions|
+          collection, objects = send(_plural), [ ]
+          records = conditions.present? ? content_cls.constantize.where(conditions) : [ ]
 
-          objects = [*(query_result || [ ]), *(instances - collection)].uniq
-          action == :assignment ? collection << objects : collection.destroy(objects)
+          case action
+          when :assign  then collection << objects = (records + instances).uniq - collection
+          when :cancel  then collection.destroy objects = (records + instances).uniq & collection
+          when :replace then send("#{__plural}=", objects = (records + instances).uniq) # collection=
+          end
           objects
         end
         #
