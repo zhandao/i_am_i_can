@@ -37,6 +37,13 @@ RSpec.describe IAmICan::Permission::Assignment do
       it { expect{ role.can :fly }
                .to raise_error(IAmICan::Error).with_message(/\[:fly\] have not been defined/) }
     end
+
+    context 'when passing instance of permissions' do
+      before { roles.has_permission *%i[ read write ], obj: user }
+      before { expect{ role.can *permission_records.all }.not_to raise_error }
+
+      it { expect(role._permissions.names).to eq %i[ manage_User read_User_1 write_User_1 ] }
+    end
   end
 
   describe '#temporarily_can (not save)' do

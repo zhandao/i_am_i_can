@@ -25,11 +25,18 @@ module IAmICan
         end
       end
 
-      def _permissions_assignment(action = :assign, actions, obj)
-        permissions = actions.product(Array[obj]).map { |(p, o)| { action: p, **deconstruct_obj(o) } }
-        assignment = _stored_permissions_exec(action,
-                                              permissions.reduce({ }) { |a, b| a.merge(b) { |_, x, y| [x, y] } })
-        ResultOf.permission assignment, i_am_i_can, given: [[], permissions.map { |pms| pms.values.compact.join('_').to_sym }]
+      def _permissions_assignment(exec = :assign, actions, obj)
+        if actions.first.is_a?(i_am_i_can.permission_model)
+          exec_arg, names = actions, actions.map(&:name)
+        else
+          objs = obj ? Array(obj) : [nil]
+          permissions = actions.product(objs).map { |(p, o)| { action: p, **deconstruct_obj(o) } }
+          exec_arg = permissions.reduce({ }) { |a, b| a.merge(b) { |_, x, y| [x, y] } }
+          names = permissions.map { |pms| pms.values.compact.join('_').to_sym }
+        end
+
+        assignment = _stored_permissions_exec(exec, exec_arg)
+        ResultOf.permission assignment, i_am_i_can, given: [[], names]
       end
     end
   end

@@ -23,12 +23,24 @@ RSpec.describe IAmICan::Role::Assignment do
         it { expect(:admin).to be_in(his._roles.names) }
         it { expect(:admin).to be_in(his.temporary_role_names) }
       end
+
+      context 'and passing instances of role' do
+        before { he.becomes_a *UserRole.where(name: %i[ master guest ]) }
+        it { expect(:master).to be_in(his._roles.names) }
+        it { expect(:guest).to be_in(his._roles.names) }
+      end
     end
 
     context 'when using #is_a_temporary (not save)' do
-      before { he.is_a_temporary :master }
-      it { expect(:master).to be_in(his.temporary_role_names) }
-      it { expect(:master).not_to be_in(his._roles.names) }
+      before { he.is_a_temporary :admin }
+      it { expect(:admin).to be_in(his.temporary_role_names) }
+      it { expect(:admin).not_to be_in(his._roles.names) }
+
+      context 'and passing instances of role' do
+        before { he.is_a_temporary *UserRole.where(name: %i[ master guest ]) }
+        it { expect(:master).to be_in(his.temporary_role_names) }
+        it { expect(:guest).to be_in(his.temporary_role_names) }
+      end
     end
 
     context 'when giving a role which is not defined' do
