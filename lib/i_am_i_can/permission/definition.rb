@@ -1,8 +1,8 @@
 module IAmICan
   module Permission
     module Definition
-      def have_permission *actions, obj: nil
-        permissions = actions.product(Array[obj]).map { |(p, o)| { action: p, **deconstruct_obj(o) } }
+      def have_permission *actions, obj: nil, remarks: nil
+        permissions = actions.product(Array[obj]).map { |(p, o)| { action: p, **deconstruct_obj(o), remarks: remarks } }
         definition = _create_permissions(permissions)
         ResultOf.roles definition, i_am_i_can, given: permissions.map { |pms| pms.values.compact.join('_').to_sym }
       end

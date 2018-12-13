@@ -1,10 +1,10 @@
 module IAmICan
   module Role
     module Definition
-      def have_role *roles, which_can: [ ], obj: nil
+      def have_role *roles, which_can: [ ], obj: nil, remarks: nil
         return unless roles.first.class.in?([ Symbol, String ])
         roles.map!(&:to_sym) ; i = i_am_i_can
-        definition = _create_roles(roles.map { |role| { name: role } })
+        definition = _create_roles(roles.map { |role| { name: role, remarks: remarks } })
 
         Role.modeling(roles, i).each { |r| r.can *which_can, obj: obj, auto_definition: true } if which_can.present?
         ResultOf.roles definition, i, given: roles
