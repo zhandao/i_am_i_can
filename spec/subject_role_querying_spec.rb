@@ -19,6 +19,21 @@ RSpec.describe IAmICan::Subject::RoleQuerying do
     it { expect{ he.is! :someone }.to raise_error(IAmICan::VerificationFailed) }
   end
 
+  describe 'for testing role assignment with expire time' do
+    context 'when giving :expires_at' do
+      before { he.is_a :admin, expires_at: 1.years.after }
+      it { expect(he.is? :admin).to be_truthy }
+
+      before { he.is_a :master, expires_at: 1.years.ago }
+      it { expect(people.first.is? :master).to be_falsey }
+    end
+
+    context 'when giving :expires_in' do
+      before { he.is_a :admin, expires_in: 1.years }
+      it { expect(he.is? :admin).to be_truthy }
+    end
+  end
+
   describe '#is_one_of? #is_one_of!' do
     # TODO
   end

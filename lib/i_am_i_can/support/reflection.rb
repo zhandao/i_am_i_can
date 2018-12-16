@@ -27,8 +27,10 @@ module IAmICan
     included do
       # user._roles => Association CollectionProxy, same as: `user.stored_roles`
       %w[ subjects roles role_groups permissions ].each do |k|
+        delegate "__#{k}", to: self
+
         define_method "_#{k}" do
-          send(self.class.send("__#{k}")) rescue (raise NoMethodError)
+          send(send("__#{k}")) rescue (raise NoMethodError)
         end
       end
     end

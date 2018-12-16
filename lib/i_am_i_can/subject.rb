@@ -10,6 +10,11 @@ module IAmICan
 
     included do
       define_model_callbacks :role_assign, :cancel_role_assign, :role_update
+
+      Object.const_set (role_assoc_class = reflections[__roles].options[:join_table].camelize),
+                       Class.new(ActiveRecord::Base)
+      has_many :"assoc_with_#{__roles}", -> { where('expire_at IS NULL OR expire_at > ?', Time.current) },
+               class_name: role_assoc_class
     end
   end
 end

@@ -41,11 +41,12 @@ class <%= name_c %>Am<%= name_c %>Can < ActiveRecord::Migration::Current
     create_table :<%= subj_role_tb %>, id: false, force: :cascade do |t|
       t.belongs_to :<%= name_u %>, null: false#, index: false
       t.belongs_to :<%= role_u %>, null: false#, index: false
+      t.datetime   :expire_at
     end
 
     # add_index :<%= subj_role_tb %>, :<%= name_u %>_id, name: ':<%= subj_role_tb %>_index1'
     # add_index :<%= subj_role_tb %>, :<%= role_u %>_id, name: ':<%= subj_role_tb %>_index2'
-    add_index :<%= subj_role_tb %>, [ :<%= name_u %>_id, :<%= role_u %>_id ],
+    add_index :<%= subj_role_tb %>, [ :<%= name_u %>_id, :<%= role_u %>_id, :expire_at ],
               unique: true, name: '<%= subj_role_tb %>_uniq_index'
 
     # === end of subject-role table ===

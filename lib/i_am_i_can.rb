@@ -16,6 +16,7 @@ require 'i_am_i_can/resource'
 module IAmICan
   def acts_as_subject
     i_am_i_can&.act = :subject
+    include Reflection
     include Subject
 
     extend  Role::Definition
@@ -24,7 +25,6 @@ module IAmICan
     include Subject::RoleQuerying
     include Subject::PermissionQuerying
 
-    include Reflection
     instance_exec(%i[ role ], &Dynamic.scopes)
     instance_exec(&Dynamic.class_reflections)
     instance_exec(%w[ role ], &Dynamic.assignment_helpers)
@@ -33,12 +33,12 @@ module IAmICan
 
   def acts_as_role
     i_am_i_can&.act = :role
+    include Reflection
     include Role
 
     extend  Permission::Definition
     include Permission::Assignment
 
-    include Reflection
     instance_exec(%i[ subject role_group permission ], &Dynamic.scopes)
     instance_exec(&Dynamic.class_reflections)
     instance_exec(%w[ permission ], &Dynamic.assignment_helpers)
@@ -50,6 +50,7 @@ module IAmICan
 
   def acts_as_role_group
     i_am_i_can&.act = :role_group
+    include Reflection
     include Role
     # include RoleGroup
 
@@ -57,7 +58,6 @@ module IAmICan
     extend  Permission::Definition
     include Permission::Assignment
 
-    include Reflection
     instance_exec(%i[ permission role ], &Dynamic.scopes)
     instance_exec(&Dynamic.class_reflections)
     instance_exec(%w[ role permission ], &Dynamic.assignment_helpers)
@@ -69,9 +69,9 @@ module IAmICan
 
   def acts_as_permission
     i_am_i_can&.act = :permission
+    include Reflection
     include Permission
 
-    include Reflection
     instance_exec(%i[ role role_group ], &Dynamic.scopes)
     instance_exec(&Dynamic.class_reflections)
 

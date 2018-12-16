@@ -168,8 +168,9 @@ Very simple. Really simple. Sooooo Simple.
 
     ```ruby
     class User
-      has_and_belongs_to_many :stored_roles,
-                              join_table: 'users_and_user_roles', foreign_key: 'user_role_id', class_name: 'UserRole', association_foreign_key: 'user_id'
+      has_and_belongs_to_many :stored_roles, -> { where('expire_at IS NULL OR expire_at > ?', Time.current) },
+                              join_table: 'users_and_user_roles', foreign_key: 'user_id', 
+                              class_name: 'UserRole', association_foreign_key: 'user_role_id'
       has_many_temporary_roles
       acts_as_subject
     end
@@ -255,7 +256,7 @@ UserRoleGroup.which(name: :vip).members.names # => %i[vip1 vip2 vip3]
         2. `has_role` / `has_roles`
         3. `role_is` / `role_are`
     2. `is_a_temporary`: just like the name, the assignment occurs only
-       in instance variable (will be in the cache).
+       in **instance variable** not in database (will be in the cache).
 3. cancel assignment by calling:
     1. `falls_from`, or it's aliases:
         1. `removes_role`
@@ -273,6 +274,7 @@ UserRoleGroup.which(name: :vip).members.names # => %i[vip1 vip2 vip3]
     1. relation with stored role, defaults to `stored_roles`.
     2. `temporary_roles` and `valid_temporary_roles`
     3. `roles`
+    4. `assoc_with_<roles>`, like: `assoc_with_stored_roles`
 
 Explanation:
 ```ruby
@@ -284,10 +286,23 @@ User.have_roles :admin, :coder
 # method signature
 becomes_a *roles, which_can: [ ], obj: nil,
                   _d: config.auto_definition,
-                  auto_definition: _d || which_can.present?
-# examples
+                  auto_definition: _d || which_can.present?,
+                  expires_in: nil, expires_at: (expires_in.after if expires_in)
+# 1. example of giving Symbol to `roles` params
 he.becomes_a :admin # => 'Role Assignment Done' or error message
 he.stored_roles     # => [<#UserRole id: 1>]
+# 2. example of giving role instances to `roles` params
+he.becomes_a *UserRole.all # => 'Role Assignment Done' or error message
+he.stored_roles     # => [<#UserRole id: 1>, <#UserRole id: 2>]
+# 3. `expires` (subject assocates roles with a `expire_at` scope)
+he.is_a :visitor, expires_in: 1.hour # or `expires_at: 1.hour.after`
+he.is? :visitor     # => true
+#   an hour later ...
+he.is? :visitor     # => false
+
+# assoc_with_<roles>: for getting the relation records between subject and it's roles
+he.assoc_with_stored_roles # => UsersAndUserRoles::ActiveRecord_Associations_CollectionProxy
+
 
 # === Temporary Assignment ===
 # signature as `becomes_a`
@@ -394,6 +409,8 @@ can *actions, resource: nil, obj: resource, # you can use `resource` or `obj`
 # examples
 role.can :fly # => 'Permission Assignment Done' or error message
 role.permissions # => [<#UserPermission id: ..>]
+# you can also passing permission instances to `actions` params, like:
+role.can *UserPermission.all
 
 # === Cancel Assignment ===
 # method signature

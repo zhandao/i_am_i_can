@@ -45,6 +45,7 @@ ActiveRecord::Schema.define do
   create_table "users_and_user_roles", id: false, force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "user_role_id", null: false
+    t.datetime "expire_at"
     t.index ["user_id"], name: 'user_role_index1'
     # t.index ["user_role_id"], name: 'user_role_index2'
     t.index ["user_id", "user_role_id"], unique: true, name: 'user_role_uniq'

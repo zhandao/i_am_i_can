@@ -52,8 +52,9 @@ module IAmICan
         puts "\nAdd the code below to #{name_c}:".green
         puts <<~TIPS
           |
-          |  has_and_belongs_to_many :stored_roles,
-          |                          join_table: '#{subj_role_tb}', foreign_key: '#{role_u}_id', class_name: '#{role_c}', association_foreign_key: '#{name_u}_id'
+          |  has_and_belongs_to_many :stored_roles, -> { where('expire_at IS NULL OR expire_at > ?', Time.current) },
+          |                          join_table: '#{subj_role_tb}', foreign_key: '#{name_u}_id', 
+          |                          class_name: '#{role_c}', association_foreign_key: '#{role_u}_id'
           |
           |  has_many_temporary_roles  
           |
