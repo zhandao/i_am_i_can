@@ -26,13 +26,13 @@ module IAmICan
       end
 
       def _permissions_assignment(exec = :assign, actions, obj)
-        if actions.first.is_a?(i_am_i_can.permission_model)
+        if actions.flatten!.first.is_a?(i_am_i_can.permission_model)
           exec_arg, names = actions, actions.map(&:name)
         else
           objs = obj ? Array(obj) : [nil]
-          permissions = actions.product(objs).map { |(p, o)| { action: p, **deconstruct_obj(o) } }
-          exec_arg = permissions.reduce({ }) { |a, b| a.merge(b) { |_, x, y| [x, y] } }
-          names = permissions.map { |pms| pms.values.compact.join('_').to_sym }
+          permissions = actions.product(objs).map { |(p, o)| { action: p, **deconstruct_obj(o) }.values }
+          exec_arg = { action: permissions.map(&:first), obj_type: permissions.map { |v| v[1] }, obj_id: permissions.map(&:last) }
+          names = permissions.map { |pms| pms.compact.join('_').to_sym }
         end
 
         assignment = _stored_permissions_exec(exec, exec_arg)

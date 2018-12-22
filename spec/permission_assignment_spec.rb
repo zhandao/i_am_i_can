@@ -8,7 +8,8 @@ RSpec.describe IAmICan::Permission::Assignment do
   cls_cleaning
 
   describe '#can (save case)' do
-    before { roles.has_permission :manage, obj: User }
+    before { roles.have_permission :manage, obj: User }
+    before { roles.have_permissions *%i[ read write ], obj: user }
 
     context 'when giving action is defined' do
       context 'and obj is defined' do
@@ -38,11 +39,17 @@ RSpec.describe IAmICan::Permission::Assignment do
                .to raise_error(IAmICan::Error).with_message(/\[:fly\] have not been defined/) }
     end
 
-    context 'when passing instance of permissions' do
-      before { roles.has_permission *%i[ read write ], obj: user }
+    context 'when passing instances of permission' do
       before { expect{ role.can *permission_records.all }.not_to raise_error }
 
       it { expect(role._permissions.names).to eq %i[ manage_User read_User_1 write_User_1 ] }
+    end
+
+    context 'when passing actions' do
+      context 'with one obj' do
+        before { expect { role.can *%i[ read write ], obj: user }.not_to raise_error }
+        it { expect(role._permissions.names).to eq %i[ read_User_1 write_User_1 ] }
+      end
     end
   end
 

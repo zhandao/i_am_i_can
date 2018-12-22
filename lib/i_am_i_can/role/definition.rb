@@ -2,7 +2,7 @@ module IAmICan
   module Role
     module Definition
       def have_role *roles, which_can: [ ], obj: nil, remarks: nil
-        return unless roles.first.class.in?([ Symbol, String ])
+        return unless roles.flatten!.first.class.in?([ Symbol, String ])
         roles.map!(&:to_sym) ; i = i_am_i_can
         definition = _create_roles(roles.map { |role| { name: role, remarks: remarks } })
 

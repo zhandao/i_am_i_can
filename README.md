@@ -292,7 +292,7 @@ becomes_a *roles, which_can: [ ], obj: nil,
 he.becomes_a :admin # => 'Role Assignment Done' or error message
 he.stored_roles     # => [<#UserRole id: 1>]
 # 2. example of giving role instances to `roles` params
-he.becomes_a *UserRole.all # => 'Role Assignment Done' or error message
+he.becomes_a UserRole.all # => 'Role Assignment Done' or error message
 he.stored_roles     # => [<#UserRole id: 1>, <#UserRole id: 2>]
 # 3. `expires` (subject assocates roles with a `expire_at` scope)
 he.is_a :visitor, expires_in: 1.hour # or `expires_at: 1.hour.after`
@@ -410,7 +410,7 @@ can *actions, resource: nil, obj: resource, # you can use `resource` or `obj`
 role.can :fly # => 'Permission Assignment Done' or error message
 role.permissions # => [<#UserPermission id: ..>]
 # you can also passing permission instances to `actions` params, like:
-role.can *UserPermission.all
+role.can UserPermission.all
 
 # === Cancel Assignment ===
 # method signature

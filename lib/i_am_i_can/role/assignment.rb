@@ -37,11 +37,11 @@ module IAmICan
       def _roles_assignment(action = :assign, roles, save, exp: nil)
         instances, names = Role.extract(roles, i_am_i_can)
         if save
-          assignment = _stored_roles_exec(action, instances, name: names)
+          assignment = _stored_roles_exec(action.flatten!, instances, name: names)
           _set_roles_expire(exp, assignment.map(&:id)) if exp
         else
           to_be_assigned_names = (instances.map(&:name).map(&:to_sym) + names).uniq
-          assignment = _temporary_roles_exec(action, to_be_assigned_names)
+          assignment = _temporary_roles_exec(action.flatten!, to_be_assigned_names)
         end
 
         ResultOf.role assignment, i_am_i_can, given: [instances, names]
