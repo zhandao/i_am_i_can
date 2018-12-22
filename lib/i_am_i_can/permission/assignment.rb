@@ -26,12 +26,12 @@ module IAmICan
       end
 
       def _permissions_assignment(exec = :assign, actions, obj)
-        if actions.flatten!.first.is_a?(i_am_i_can.permission_model)
+        if actions.tap(&:flatten!).first.is_a?(i_am_i_can.permission_model)
           exec_arg, names = actions, actions.map(&:name)
         else
           objs = obj ? Array(obj) : [nil]
           permissions = actions.product(objs).map { |(p, o)| { action: p, **deconstruct_obj(o) }.values }
-          exec_arg = { action: permissions.map(&:first), obj_type: permissions.map { |v| v[1] }, obj_id: permissions.map(&:last) }
+          exec_arg = { action: permissions.map(&:first).uniq, obj_type: permissions.map { |v| v[1] }.uniq, obj_id: permissions.map(&:last).uniq }
           names = permissions.map { |pms| pms.compact.join('_').to_sym }
         end
 

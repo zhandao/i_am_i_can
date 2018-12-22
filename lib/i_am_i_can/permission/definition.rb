@@ -2,7 +2,7 @@ module IAmICan
   module Permission
     module Definition
       def have_permission *actions, obj: nil, remarks: nil
-        return unless actions.flatten!.first.class.in?([ Symbol, String ])
+        return unless actions.tap(&:flatten!).first.class.in?([ Symbol, String ])
         objs = obj ? Array(obj) : [nil]
         permissions = actions.product(objs).map { |(p, o)| { action: p, **deconstruct_obj(o), remarks: remarks } }
         definition = _create_permissions(permissions)
