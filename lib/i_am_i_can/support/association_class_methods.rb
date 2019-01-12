@@ -23,20 +23,23 @@ module IAmICan
       #
       alias_method "#{name.to_s.singularize}_names", :temporary_role_names if name
 
-      define_method :_temporary_roles_add do |names|
-        names -= temporary_role_names
-        temporary_roles.concat(roles = i_am_i_can.role_model.where(name: names))
-        roles.names
+      define_method :_temporary_roles_add do |instances = nil, name: nil|
+        roles = instances.present? ? instances : i_am_i_can.role_model.where(name: name - temporary_role_names)
+        temporary_roles.concat(roles)
+        roles.map(&:name).map(&:to_sym)
       end
 
-      define_method :_temporary_roles_rmv do |names|
-        (names & temporary_role_names).each do |n|
-          temporary_roles.reject! { |i| i.name.to_sym == n }
+      define_method :_temporary_roles_rmv do |instances = nil, name: nil|
+        if instances.present?
+          self.temporary_roles -= instances
+          instances.map(&:name).map(&:to_sym)
+        else
+          (name & temporary_role_names).each { |n| self.temporary_roles.reject! { |i| i.name.to_sym == n } }
         end
       end
 
-      define_method :_temporary_roles_exec do |action = :assign, names|
-        send('_temporary_roles_' + (action == :assign ? 'add' : 'rmv'), names)
+      define_method :_temporary_roles_exec do |action = :assign, instances = nil, name: nil|
+        send('_temporary_roles_' + (action == :assign ? 'add' : 'rmv'), instances, name: name)
       end
     end
   end

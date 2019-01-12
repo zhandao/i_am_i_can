@@ -61,7 +61,7 @@ module IAmICan
       if config.strict_mode && failed_items.present?
         raise Error, msg
       else
-        Rails.logger.info(msg) unless ENV['ITEST']
+        Rails.logger.info("  * #{msg}".green) unless ENV['ITEST']
         assignment
       end
     end
