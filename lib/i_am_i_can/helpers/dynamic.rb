@@ -10,9 +10,20 @@ module IAmICan
       #
       # scope :with_stored_roles, -> { includes(:stored_roles) }
       #
+      # Usage:
+      #   User.with_stored_roles(role_id = 1)
+      #   User.with_stored_roles?(role_id = 1)
       proc do |keys|
         keys.each do |k|
-          scope :"with_#{_reflect_of(k)}", ->  { includes(_reflect_of(k)) }
+          scope :"with_#{_reflect_of(k)}", -> (ids = nil) do
+            break includes(_reflect_of(k)) unless ids
+            includes(_reflect_of(k)).where(
+                i_am_i_can.send("#{k}_class").underscore.pluralize => { id: ids })
+          end
+
+          define_singleton_method :"with_#{_reflect_of(k)}?" do |ids|
+            send(:"with_#{_reflect_of(k)}", ids).present?
+          end
         end
       end
     end

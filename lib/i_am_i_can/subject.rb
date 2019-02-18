@@ -17,6 +17,14 @@ module IAmICan
                        Class.new(ActiveRecord::Base)
       has_many :"assoc_with_#{__roles}", -> { where('expire_at IS NULL OR expire_at > ?', Time.current) },
                class_name: role_assoc_class
+
+      def get_roles(with_tmp: true)
+        if with_tmp && (tmp_ids = try(:temporary_roles)&.map(&:id)).present?
+          i_am_i_can.role_model.where(id: (tmp_ids + _roles.ids).uniq)
+        else
+          _roles
+        end
+      end
     end
   end
 end

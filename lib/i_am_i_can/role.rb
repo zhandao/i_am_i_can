@@ -17,6 +17,11 @@ module IAmICan
       def names
         self.pluck(:name).map(&:to_sym)
       end
+
+      def can?(action, obj)
+        send("with_#{_reflect_of('permission')}?",
+             i_am_i_can.permission_model.matched(action, obj).ids)
+      end
     end
 
     included do

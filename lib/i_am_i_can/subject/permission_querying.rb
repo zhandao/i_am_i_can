@@ -42,12 +42,12 @@ module IAmICan
       alias can_every! can_each!
 
       def temporarily_can? action, obj
-        return false if temporary_roles.blank?
-        valid_temporary_roles._permissions.matched?(action, obj)
+        return false if try(:temporary_roles).blank?
+        valid_temporary_roles.can?(action, obj)
       end
 
       def stored_can? action, obj
-        _roles._permissions.matched?(action, obj)
+        _roles.can?(action, obj)
       end
 
       def group_can? action, obj, without_group = false

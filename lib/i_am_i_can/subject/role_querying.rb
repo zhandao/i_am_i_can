@@ -6,45 +6,53 @@ module IAmICan
 
       # === Role Querying ===
 
-      def is? role_name
-        roles.find_by(name: role_name).present?
+      def is? role_name, with_tmp: true
+        role_id = i_am_i_can.role_model.find_by(name: role_name)&.id
+        return false unless role_id
+        get_roles(with_tmp: with_tmp).exists?(id: role_id)
       end
 
       alias is_role?  is?
       alias has_role? is?
 
-      def isnt? role
-      !is? role
+      def isnt? role_name, with_tmp: true
+      !is? role_name, with_tmp: with_tmp
       end
 
-      def is! role
-        raise VerificationFailed if isnt? role
+      def is! role_name, with_tmp: true
+        raise VerificationFailed if isnt? role_name, with_tmp: with_tmp
         true
       end
 
       alias is_role!  is!
       alias has_role! is!
 
-      def is_one_of? *role_names
-        roles.where(name: role_names).present?
+      def is_one_of? *role_names, with_tmp: true
+        role_ids = i_am_i_can.role_model.where(name: role_names).ids
+        return false if role_ids.blank?
+        get_roles(with_tmp: with_tmp).exists?(id: role_ids)
       end
 
       alias is_one_of_roles? is_one_of?
 
-      def is_one_of! *roles
-        raise VerificationFailed unless is_one_of? *roles
+      def is_one_of! *role_names, with_tmp: true
+        raise VerificationFailed unless is_one_of? *role_names, with_tmp: with_tmp
+        true
       end
 
       alias is_one_of_roles! is_one_of!
 
-      def is_every? *role_names
-        roles.where(name: role_names).count == role_names.count
+      def is_every? *role_names, with_tmp: true
+        role_ids = i_am_i_can.role_model.where(name: role_names).ids
+        return false if role_ids.size != role_names.size
+        get_roles(with_tmp: with_tmp).where(id: role_ids).size == role_names.size
       end
 
       alias is_every_role_in? is_every?
 
-      def is_every! *roles
-        roles.each { |role| is! role } && true
+      def is_every! *role_names, with_tmp: true
+        raise VerificationFailed unless is_every?(*role_names, with_tmp: true)
+        true
       end
 
       alias is_every_role_in! is_every!
@@ -53,7 +61,7 @@ module IAmICan
 
       def is_in_role_group? name
         group_members = i_am_i_can.role_group_model.find_by!(name: name)._roles.names
-        (roles.names & group_members).present?
+        (get_roles.names & group_members).present?
       end
 
       alias in_role_group? is_in_role_group?

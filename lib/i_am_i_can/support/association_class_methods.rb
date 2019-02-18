@@ -13,12 +13,6 @@ module IAmICan
         i_am_i_can.role_model.where(id: temporary_roles.map(&:id))
       end
 
-      raise "Do not set the role association name to `roles` in #{self.class.name} model" if respond_to?(:roles)
-      define_method :roles do
-        ids = (temporary_roles.map(&:id) + _roles.ids).uniq
-        i_am_i_can.role_model.where(id: ids)
-      end
-
       define_method :temporary_role_names do
         temporary_roles.map(&:name).map(&:to_sym)
       end
