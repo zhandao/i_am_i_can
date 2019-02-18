@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'active_record'
 require 'active_support/core_ext/object/inclusion'
 require 'active_support/core_ext/hash/deep_merge'

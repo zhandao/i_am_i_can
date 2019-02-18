@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class <%= role_c %> < ActiveRecord::Base
   has_and_belongs_to_many :related_users,
                           join_table: '<%= subj_role_tb %>', foreign_key: :<%= role_u %>_id,

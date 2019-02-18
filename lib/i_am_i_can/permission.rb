@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'i_am_i_can/permission/definition'
 require 'i_am_i_can/permission/assignment'
 

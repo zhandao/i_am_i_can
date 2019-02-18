@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class <%= permission_c %> < ActiveRecord::Base
   has_and_belongs_to_many :related_roles,
                           join_table: '<%= role_pms_tb %>', foreign_key: :<%= permission_u %>_id,

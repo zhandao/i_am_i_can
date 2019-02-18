@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module IAmICan
   module Association_ClassMethods
     def has_many_temporary_roles(name: nil)

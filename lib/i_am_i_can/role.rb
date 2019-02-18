@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'i_am_i_can/role/definition'
 require 'i_am_i_can/role/assignment'
 require 'i_am_i_can/role/grouping'
