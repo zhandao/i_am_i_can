@@ -11,7 +11,7 @@ module IAmICan
     end
 
     included do
-      define_model_callbacks :role_assign, :cancel_role_assign, :role_update
+      define_model_callbacks :role_assign, :cancel_role_assign, :role_update, :role_none
 
       Object.const_set (role_assoc_class = reflections[__roles].options[:join_table].camelize),
                        Class.new(ActiveRecord::Base)

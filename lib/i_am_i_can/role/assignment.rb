@@ -7,7 +7,7 @@ module IAmICan
                     _d: i_am_i_can.auto_definition, auto_definition: _d || which_can.present?,
                     expires_in: nil, expires_at: (expires_in.after if expires_in), save: true
         self.class.have_roles *roles, which_can: which_can, obj: obj if auto_definition
-        run_callbacks(:role_assign) do
+        run_callbacks(save ? :role_assign : :role_none) do
           _roles_assignment(roles, save, exp: expires_at)
         end
       end
@@ -17,7 +17,7 @@ module IAmICan
       end
 
       def falls_from *roles, saved: true
-        run_callbacks(:cancel_role_assign) do
+        run_callbacks(saved ? :cancel_role_assign : :role_none) do
           _roles_assignment(:cancel, roles, saved)
         end
       end
