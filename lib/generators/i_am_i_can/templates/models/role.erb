@@ -2,16 +2,16 @@
 
 class <%= role_c %> < ActiveRecord::Base
   has_and_belongs_to_many :related_users,
-                          join_table: '<%= subj_role_tb %>', foreign_key: :<%= role_u %>_id,
-                          class_name: '<%= name_c %>', association_foreign_key: :<%= name_u %>_id
+                          join_table: '<%= subj_role_tb %>', foreign_key: :<%= name_u %>_id,
+                          class_name: '<%= name_c %>', association_foreign_key: :<%= role_u %>_id
 <% unless @ii_opts[:without_group] %>
   has_and_belongs_to_many :related_groups,
-                          join_table: '<%= group_role_tb %>', foreign_key: :<%= role_u %>_id,
-                          class_name: '<%= group_c %>', association_foreign_key: :<%= group_u %>_id
+                          join_table: '<%= group_role_tb %>', foreign_key: :<%= group_u %>_id,
+                          class_name: '<%= group_c %>', association_foreign_key: :<%= role_u %>_id
 <% end %>
   has_and_belongs_to_many :permissions,
-                          join_table: '<%= role_pms_tb %>', foreign_key: :<%= role_u %>_id,
-                          class_name: '<%= permission_c %>', association_foreign_key: :<%= permission_u %>_id
+                          join_table: '<%= role_pms_tb %>', foreign_key: :<%= permission_u %>_id,
+                          class_name: '<%= permission_c %>', association_foreign_key: :<%= role_u %>_id
 
   acts_as_role
 

@@ -2,12 +2,12 @@
 
 class <%= permission_c %> < ActiveRecord::Base
   has_and_belongs_to_many :related_roles,
-                          join_table: '<%= role_pms_tb %>', foreign_key: :<%= permission_u %>_id,
-                          class_name: '<%= role_c %>', association_foreign_key: :<%= role_u %>_id
+                          join_table: '<%= role_pms_tb %>', foreign_key: :<%= role_u %>_id,
+                          class_name: '<%= role_c %>', association_foreign_key: :<%= permission_u %>_id
 <% unless @ii_opts[:without_group] %>
   has_and_belongs_to_many :related_role_groups,
-                          join_table: '<%= group_pms_tb %>', foreign_key: :<%= permission_u %>_id,
-                          class_name: '<%= group_c %>', association_foreign_key: :<%= group_u %>_id
+                          join_table: '<%= group_pms_tb %>', foreign_key: :<%= group_u %>_id,
+                          class_name: '<%= group_c %>', association_foreign_key: :<%= permission_u %>_id
 <% end %>
   belongs_to :resource, polymorphic: true
 
